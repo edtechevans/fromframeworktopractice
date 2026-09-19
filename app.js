@@ -290,15 +290,15 @@
     const count = selectedCount();
     if (count < 3) {
       const nextBlock = [1, 2, 3].find((block) => !state.selections[block]) || activeBlock;
-      mobileDockStatus.textContent = `${count} of 3 sessions chosen`;
-      mobileDockAction.textContent = count === 0 ? "Choose Block 1" : `Choose Block ${nextBlock}`;
+      mobileDockStatus.textContent = `${count} of 3 workshops chosen`;
+      mobileDockAction.textContent = count === 0 ? "Choose Session 1" : `Choose Session ${nextBlock}`;
       mobileDockAction.dataset.action = "block";
       mobileDockAction.dataset.block = String(nextBlock);
       return;
     }
 
     if (!detailsComplete()) {
-      mobileDockStatus.textContent = "3 of 3 sessions chosen";
+      mobileDockStatus.textContent = "3 of 3 workshops chosen";
       mobileDockAction.textContent = "Add my details";
       mobileDockAction.dataset.action = "details";
       delete mobileDockAction.dataset.block;
@@ -321,7 +321,7 @@
           data-block-tab="${block.block}"
           aria-selected="${active ? "true" : "false"}">
           <span>${escapeHtml(block.label)}</span>
-          <small>${chosen ? escapeHtml(chosen.title) : "Choose one session"}</small>
+          <small>${chosen ? escapeHtml(chosen.title) : "Choose one workshop"}</small>
         </button>`;
     }).join("");
 
@@ -342,7 +342,7 @@
     const matching = blockSessions.filter((session) => sessionMatches(session)).length;
 
     if (filtersActive()) {
-      matchSummary.textContent = `${matching} tagged ${matching === 1 ? "match" : "matches"} in Block ${activeBlock} · all sessions still shown`;
+      matchSummary.textContent = `${matching} tagged ${matching === 1 ? "match" : "matches"} in Session ${activeBlock} · all sessions still shown`;
     } else {
       matchSummary.textContent = "Showing all sessions";
     }
@@ -350,7 +350,7 @@
     blocksRoot.innerHTML = `
       <section class="block-panel" role="tabpanel">
         <div class="block-panel-heading">
-          <strong>Block ${activeBlock}</strong>
+          <strong>Session ${activeBlock}</strong>
           <span>10 sessions · up to 15 participants each</span>
         </div>
 
@@ -362,7 +362,7 @@
           <div class="panel-footer">
             <button type="button" class="next-block" data-next-block="${activeBlock + 1}"
               ${state.selections[activeBlock] ? "" : "disabled"}>
-              Continue to Block ${activeBlock + 1} →
+              Continue to Session ${activeBlock + 1} →
             </button>
           </div>` : ""}
       </section>`;
@@ -398,6 +398,7 @@
               ${match && !chosen ? '<span class="match-badge">MATCH</span>' : ""}
             </span>
             <span class="session-mini-tags">
+              <span class="mini-tag room-mini">Room ${escapeHtml(session.room)}</span>
               <span class="mini-tag">${escapeHtml(audienceMini)}</span>
               <span class="mini-tag">${escapeHtml(facetsMini)}</span>
               <span class="mini-tag">${escapeHtml(session.format)}</span>
@@ -410,6 +411,7 @@
         </button>
 
         <div class="mobile-session-detail">
+          <p class="mobile-room">Room ${escapeHtml(session.room)}</p>
           <p class="mobile-presenter">${escapeHtml(session.presenters)}</p>
           <p>${escapeHtml(session.blurb)}</p>
           <div class="tag-row">${tagRow(session.audiences)}</div>
@@ -486,12 +488,13 @@
     const capacity = capacityInfo(session.id);
     const chosen = state.selections[session.block] === session.id;
 
-    detailBlockLabel.textContent = `Block ${session.block} · ${session.format}`;
+    detailBlockLabel.textContent = `Session ${session.block} · Room ${session.room} · ${session.format}`;
     detailCapacity.textContent = capacity.label;
     detailCapacity.className = `capacity-pill ${capacity.className}`;
 
     sessionDetail.innerHTML = `
       <h3>${escapeHtml(session.title)}</h3>
+      <p class="room-line">Room ${escapeHtml(session.room)}</p>
       <p class="presenter-line">${escapeHtml(session.presenters)}</p>
       <p class="blurb-line">${escapeHtml(session.blurb)}</p>
 
@@ -555,17 +558,17 @@
       if (!session) {
         return `
           <div class="review-item empty">
-            <span>Block ${block}</span>
-            <strong>Choose a session</strong>
+            <span>Session ${block}</span>
+            <strong>Choose a workshop</strong>
           </div>`;
       }
 
       return `
         <div class="review-item">
-          <span>Block ${block}</span>
+          <span>Session ${block}</span>
           <strong>${escapeHtml(session.title)}</strong>
-          <small>${escapeHtml(session.presenters)}</small>
-          ${state.confirmed ? "" : `<button class="review-remove" type="button" data-remove-block="${block}" aria-label="Remove Block ${block} selection">Remove</button>`}
+          <small>${escapeHtml(session.presenters)} · Room ${escapeHtml(session.room)}</small>
+          ${state.confirmed ? "" : `<button class="review-remove" type="button" data-remove-block="${block}" aria-label="Remove Session ${block} selection">Remove</button>`}
         </div>`;
     }).join("");
 
@@ -680,9 +683,10 @@
 
       return `
         <article class="saved-card">
-          <span class="saved-block">Block ${block}</span>
+          <span class="saved-block">Session ${block}</span>
           <h3>${escapeHtml(session.title)}</h3>
           <span class="saved-presenter">${escapeHtml(session.presenters)}</span>
+          <span class="saved-room">Room ${escapeHtml(session.room)}</span>
           <p>${escapeHtml(session.blurb)}</p>
           <div class="tag-row">${tagRow(session.facets, "facet")}</div>
           <div class="tag-row">${tagRow(session.audiences)}</div>
@@ -727,7 +731,7 @@
             <button type="button" class="day-session ${mine ? "is-mine" : ""}" data-day-session="${session.id}">
               <span>
                 <strong>${escapeHtml(session.title)}</strong>
-                <small>${escapeHtml(audienceMini)} · ${escapeHtml(session.facets.join(" · "))}</small>
+                <small>Room ${escapeHtml(session.room)} · ${escapeHtml(audienceMini)} · ${escapeHtml(session.facets.join(" · "))}</small>
               </span>
               ${mine
                 ? '<span class="mine-badge">MY SESSION</span>'
@@ -824,7 +828,7 @@
     }
 
     if (!allChoicesComplete()) {
-      throw new Error("Please choose one session in each block.");
+      throw new Error("Please choose one workshop in Session 1, Session 2 and Session 3.");
     }
   }
 
