@@ -163,3 +163,84 @@ footer i{color:#ef334d;font-style:normal;padding:0 .2rem}
   html{scroll-behavior:auto}
   *{transition:none!important}
 }
+
+/* Compact programme layout v2 */
+.aisg-logo{display:block;width:clamp(150px,14vw,215px);height:auto;object-fit:contain}
+.brand-copy{border-left:1px solid var(--line);padding-left:.85rem}
+.hero{min-height:500px}
+.hero-grid{padding-top:clamp(3rem,6vw,5.5rem);padding-bottom:8.6rem;grid-template-columns:minmax(0,1.4fr) minmax(300px,.6fr)}
+.framework-official{padding:1rem;max-width:370px;justify-self:end}
+.framework-official .framework-title{padding:.2rem .2rem .85rem}
+.framework-image-shell{aspect-ratio:1/1;display:grid;place-items:center;overflow:hidden;border-radius:1rem;background:linear-gradient(145deg,#f9fafb,#edf2f6)}
+.framework-image-shell img{display:block;width:100%;height:100%;object-fit:cover;object-position:center 45%}
+.framework-official .cycle{font-size:.61rem;letter-spacing:.08em;gap:.45rem;padding:.68rem .55rem}
+.registration-shell{max-width:1320px;padding-top:clamp(3.5rem,7vw,6rem)}
+.name-card{margin-bottom:1.25rem}
+.booking-layout{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:1.25rem;align-items:start}
+#blocks{border:1px solid var(--line);border-radius:1.15rem;background:#fff;padding:1.25rem;box-shadow:0 14px 42px rgba(8,30,60,.05)}
+.block-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:.55rem;margin-bottom:1rem}
+.block-tab{min-height:54px;border:1px solid #d6dfe8;border-radius:.78rem;background:#f8fafc;color:var(--navy);padding:.55rem .75rem;text-align:left;cursor:pointer;transition:.15s ease}
+.block-tab span,.block-tab small{display:block}
+.block-tab span{font-weight:800;font-size:.84rem}
+.block-tab small{margin-top:.12rem;color:#778699;font-size:.67rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.block-tab:hover{border-color:#9caaba;background:#fff}
+.block-tab[aria-selected="true"]{background:var(--navy);border-color:var(--navy);color:#fff}
+.block-tab[aria-selected="true"] small{color:#d8e1e9}
+.block-tab.is-complete::after{content:"✓";float:right;margin-top:-1.75rem;color:var(--red);font-weight:900}
+.block-tab[aria-selected="true"].is-complete::after{color:#fff}
+.block-panel-heading{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:.75rem}
+.block-panel-heading strong{color:var(--navy);font-size:.9rem}
+.block-panel-heading span{color:#758397;font-size:.72rem}
+.session-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.55rem;margin-top:0}
+.session-card{display:block;position:relative;cursor:pointer}
+.session-card input{position:absolute;opacity:0;pointer-events:none}
+.session-row{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:.7rem;min-height:64px;border:1px solid #dce4ec;border-radius:.78rem;padding:.68rem .72rem;background:#fff;transition:.15s ease}
+.session-card:hover .session-row{border-color:#9caaba;box-shadow:0 7px 22px rgba(8,30,60,.06);transform:translateY(-1px)}
+.session-card input:focus-visible+.session-row{outline:3px solid var(--navy);outline-offset:2px}
+.session-card input:checked+.session-row{border:2px solid var(--navy);background:#f5f8fb}
+.selection-dot{width:18px;height:18px;border-radius:999px;border:2px solid #aab6c2;background:#fff;box-shadow:inset 0 0 0 4px #fff}
+.session-card input:checked+.session-row .selection-dot{border-color:var(--red);background:var(--red)}
+.session-copy{min-width:0}
+.session-copy strong,.session-copy small{display:block}
+.session-copy strong{color:var(--navy);font-size:.84rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.session-copy small{margin-top:.08rem;color:#8995a4;font-size:.64rem}
+.session-row .capacity{font-size:.64rem;white-space:nowrap}
+.session-card.is-full{cursor:not-allowed}
+.session-card.is-full .session-row{background:#f5f6f8;opacity:.65}
+.session-card.is-full:hover .session-row{transform:none;box-shadow:none;border-color:#dce4ec}
+.panel-footer{display:flex;justify-content:flex-end;margin-top:.85rem}
+.next-block{border:0;border-radius:999px;background:#edf2f6;color:var(--navy);padding:.62rem 1rem;font-size:.76rem;font-weight:800;cursor:pointer}
+.next-block:hover{background:#dfe7ee}
+.next-block:disabled{opacity:.45;cursor:not-allowed}
+.review-card.selection-rail{position:sticky;top:98px;bottom:auto;margin:0;z-index:10;padding:1rem;display:grid;gap:.75rem}
+.preview-card{border:1px solid var(--line);border-radius:.9rem;background:var(--soft);padding:.9rem}
+.preview-card .rail-kicker{margin:0;color:var(--red);font-size:.63rem;font-weight:850;letter-spacing:.14em}
+.preview-card h3{margin:.25rem 0 .25rem;color:var(--navy);font-size:1rem}
+.preview-card p{margin:.2rem 0;color:#65758a;font-size:.78rem;line-height:1.5}
+.preview-card .preview-presenter{color:var(--red);font-weight:760}
+.preview-meta{display:flex;align-items:center;justify-content:space-between;gap:.5rem;margin-top:.65rem!important;padding-top:.65rem;border-top:1px solid var(--line);font-size:.67rem!important}
+.review-card.selection-rail>div:first-of-type{border-top:1px solid var(--line);padding-top:.75rem}
+.review-card.selection-rail h2{font-size:1.25rem}
+.review-selections{display:grid;grid-template-columns:1fr;gap:.55rem;margin:.7rem 0}
+.review-selections>div{padding:.72rem}
+.review-selections p{margin:.35rem 0 0;color:#69798d;font-size:.7rem;line-height:1.45}
+.review-selection span,.review-selection strong,.review-selection small,.review-selection p{display:block}
+.review-selection span{color:var(--red);font-size:.61rem;font-weight:850;text-transform:uppercase;letter-spacing:.12em}
+.review-selection strong{color:var(--navy);font-size:.8rem;margin-top:.2rem}
+.review-selection small{color:#6f7e91;font-size:.68rem;margin-top:.15rem}
+.choice-count{margin:-.2rem 0 .25rem;color:#6f7d90;font-size:.7rem;font-weight:740}
+@media(max-width:1050px){.booking-layout{grid-template-columns:minmax(0,1fr) 330px}}
+@media(max-width:900px){
+  .hero-grid{grid-template-columns:1fr}
+  .framework-official{justify-self:start;max-width:310px}
+  .booking-layout{grid-template-columns:1fr}
+  .review-card.selection-rail{position:static}
+}
+@media(max-width:650px){
+  .brand-copy{display:none}
+  .aisg-logo{width:165px}
+  .block-tabs{gap:.35rem}
+  .block-tab{padding:.5rem;min-height:50px}
+  .session-grid{grid-template-columns:1fr}
+  #blocks{padding:1rem}
+}
