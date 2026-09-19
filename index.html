@@ -3,29 +3,38 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <meta name="description" content="Choose your sessions for From Framework to Practice — Teachers Teach Teachers at AISG." />
+  <meta name="description" content="Build your learning pathway for From Framework to Practice at AISG." />
   <meta name="theme-color" content="#0b294b" />
   <meta property="og:title" content="From Framework to Practice" />
-  <meta property="og:description" content="Choose one session in each of three Teachers Teach Teachers blocks." />
+  <meta property="og:description" content="Explore the programme, choose one session in each block, and keep your pathway on this browser." />
   <meta property="og:type" content="website" />
-  <title>From Framework to Practice | Session Sign-up</title>
+  <title>From Framework to Practice | AISG</title>
   <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
-  <a class="skip-link" href="#registration">Skip to session selection</a>
+  <a class="skip-link" href="#experience">Skip to the programme</a>
 
   <header class="site-header">
     <div class="header-inner">
       <a class="brand" href="#top" aria-label="From Framework to Practice home">
-        <img class="aisg-logo" src="https://raw.githubusercontent.com/edtechevans/AISG/main/public/aisg-logo.png" alt="American International School of Guangzhou" />
+        <img
+          class="aisg-logo"
+          src="https://raw.githubusercontent.com/edtechevans/AISG/main/public/aisg-logo.png"
+          alt="American International School of Guangzhou"
+        />
         <span class="brand-copy">
           <strong>From Framework to Practice</strong>
           <small>Teachers Teach Teachers · November 2, 2026</small>
         </span>
       </a>
-      <div class="header-meta" aria-label="Event theme">
-        <span>People</span><i>/</i><span>Practice</span><i>/</i><span>Possibility</span>
-      </div>
+
+      <nav class="experience-nav" aria-label="Event experience">
+        <button id="navExplore" class="nav-button is-active" type="button">Explore</button>
+        <button id="navPathway" class="nav-button" type="button">
+          My Pathway
+          <span id="navPathwayCount" class="nav-count">0</span>
+        </button>
+      </nav>
     </div>
   </header>
 
@@ -35,24 +44,42 @@
         <div class="hero-copy">
           <p class="eyebrow">TEACHERS TEACH TEACHERS</p>
           <h1>From Framework <em>to</em> <span>Practice</span></h1>
-          <p class="hero-lede">Choose one practical learning session in each of the three blocks. Places are limited to <strong>15 participants per session</strong>.</p>
+          <p class="hero-lede">
+            Build a learning pathway that fits your context. Choose one session in each of three blocks, with live capacity capped at
+            <strong>15 participants per session</strong>.
+          </p>
+
+          <div class="hero-meta" aria-label="Event details">
+            <span>November 2</span>
+            <i>•</i>
+            <span>3 session blocks</span>
+            <i>•</i>
+            <span>30 sessions</span>
+            <i>•</i>
+            <span>No account required</span>
+          </div>
+
           <div class="hero-actions">
-            <a class="primary-button" href="#registration">Choose my sessions</a>
-            <span class="quiet-note">No account needed · name and email only</span>
+            <a class="primary-button" href="#experience">Build my pathway</a>
+            <button id="heroPathwayButton" class="secondary-button" type="button">View my saved pathway</button>
           </div>
         </div>
-        <div class="framework-card framework-official" aria-label="AISG Transformative Learning Framework">
-          <div class="framework-title">AISG TRANSFORMATIVE LEARNING FRAMEWORK</div>
-          <div class="framework-image-shell">
+
+        <div class="hero-framework" aria-label="AISG Transformative Learning Framework">
+          <div class="framework-orbit">
             <img
               src="https://resource.aisgz.org/aisg-website/prod/Public/Used%20in%20the%20visual%20editor/About%20Us/Featured%20News/imgi_6_640.12.13.png"
               alt="AISG Transformative Learning Framework"
               onerror="this.hidden=true"
             />
           </div>
-          <div class="cycle"><span>ENGAGEMENT FOR ALL</span><i>•</i><span>BEING</span><i>•</i><span>CONNECTING</span><i>•</i><span>DOING</span></div>
+          <div class="framework-caption">
+            <span>ENGAGEMENT FOR ALL</span>
+            <strong>Personalized learning. Meaningful choices. Practical next steps.</strong>
+          </div>
         </div>
       </div>
+
       <div class="hero-landscape" aria-hidden="true">
         <span class="ridge ridge-one"></span>
         <span class="ridge ridge-two"></span>
@@ -61,73 +88,167 @@
       </div>
     </section>
 
-    <section class="intro-strip">
-      <div>
-        <span class="step-number">01</span>
-        <div><strong>Add your details</strong><small>Name and email address.</small></div>
-      </div>
-      <div>
-        <span class="step-number">02</span>
-        <div><strong>Choose three sessions</strong><small>One in each block.</small></div>
-      </div>
-      <div>
-        <span class="step-number">03</span>
-        <div><strong>Confirm your place</strong><small>Live capacity prevents overbooking.</small></div>
-      </div>
-    </section>
-
-    <section id="registration" class="registration-shell">
-      <div class="section-heading">
-        <p class="eyebrow">SESSION SIGN-UP</p>
-        <h2>Build your learning pathway.</h2>
-        <p>Move between the three blocks, choose one session in each, and review full presenter and session details alongside the programme.</p>
+    <section id="experience" class="experience-shell">
+      <div id="returningBanner" class="returning-banner" hidden>
+        <div>
+          <span class="returning-kicker">WELCOME BACK</span>
+          <strong id="returningMessage">Your pathway is saved on this browser.</strong>
+        </div>
+        <button id="returningViewButton" type="button" class="text-button">View my pathway →</button>
       </div>
 
       <div id="statusBanner" class="status-banner" hidden role="status"></div>
 
-      <form id="registrationForm" novalidate>
-        <fieldset class="name-card">
-          <legend>Your details</legend>
-          <p>We only ask for the information needed to hold your three places.</p>
-          <div class="name-grid">
-            <label>
-              <span>Name</span>
-              <input id="name" name="name" autocomplete="name" maxlength="120" required />
+      <section id="builderView" class="view-panel">
+        <div class="section-heading">
+          <p class="eyebrow">YOUR LEARNING PATHWAY</p>
+          <h2>Explore. Compare. Choose.</h2>
+          <p>
+            Personalise the programme if you want, then inspect each session before choosing. Recommendations are based only on the tags you select and never hide the full programme.
+          </p>
+        </div>
+
+        <div id="progressStrip" class="progress-strip" aria-label="Registration progress">
+          <div class="progress-step" data-progress="details"><span>1</span><strong>Details</strong></div>
+          <div class="progress-line"></div>
+          <div class="progress-step" data-progress="1"><span>2</span><strong>Block 1</strong></div>
+          <div class="progress-line"></div>
+          <div class="progress-step" data-progress="2"><span>3</span><strong>Block 2</strong></div>
+          <div class="progress-line"></div>
+          <div class="progress-step" data-progress="3"><span>4</span><strong>Block 3</strong></div>
+          <div class="progress-line"></div>
+          <div class="progress-step" data-progress="confirm"><span>5</span><strong>Confirm</strong></div>
+        </div>
+
+        <form id="registrationForm" novalidate>
+          <fieldset class="details-card">
+            <legend>Your details</legend>
+            <div class="details-copy">
+              <p>No account. No password. Your draft and confirmed pathway can be kept on this browser so you can return on the day.</p>
+            </div>
+            <div class="details-grid">
+              <label>
+                <span>Name</span>
+                <input id="name" name="name" autocomplete="name" maxlength="120" required />
+              </label>
+              <label>
+                <span>Email Address</span>
+                <input id="email" name="email" type="email" autocomplete="email" maxlength="254" required />
+              </label>
+            </div>
+            <label class="honeypot" aria-hidden="true">
+              Website
+              <input id="website" name="website" tabindex="-1" autocomplete="off" />
             </label>
-            <label>
-              <span>Email Address</span>
-              <input id="email" name="email" type="email" autocomplete="email" maxlength="254" required />
-            </label>
+          </fieldset>
+
+          <section class="personalise-card" aria-labelledby="personaliseTitle">
+            <div class="personalise-heading">
+              <div>
+                <p class="eyebrow">OPTIONAL</p>
+                <h3 id="personaliseTitle">Help me find the right sessions</h3>
+                <p>Choose any audience or focus tags. Matching sessions will rise to the top of each block, but you can still see every option.</p>
+              </div>
+              <button id="clearFilters" class="text-button" type="button">Clear preferences</button>
+            </div>
+
+            <div class="preference-group">
+              <span class="preference-label">I work with</span>
+              <div id="audienceFilters" class="chip-list" aria-label="Audience preferences"></div>
+            </div>
+
+            <div class="preference-group">
+              <span class="preference-label">I want to explore</span>
+              <div id="focusFilters" class="chip-list" aria-label="Learning focus preferences"></div>
+            </div>
+          </section>
+
+          <div class="booking-layout">
+            <section class="programme-card" aria-labelledby="programmeTitle">
+              <div class="programme-heading">
+                <div>
+                  <p class="eyebrow">PROGRAMME</p>
+                  <h3 id="programmeTitle">Choose one session per block</h3>
+                </div>
+                <span id="matchSummary" class="match-summary">Showing all sessions</span>
+              </div>
+
+              <div id="blockTabs" class="block-tabs" role="tablist" aria-label="Session blocks"></div>
+              <div id="blocks"></div>
+            </section>
+
+            <aside class="selection-rail" aria-label="Session details and pathway">
+              <section class="detail-card">
+                <div class="detail-card-heading">
+                  <div>
+                    <p class="rail-kicker">SESSION DETAILS</p>
+                    <span id="detailBlockLabel" class="detail-block-label">Choose a session to explore</span>
+                  </div>
+                  <span id="detailCapacity" class="capacity-pill neutral">—</span>
+                </div>
+
+                <div id="sessionDetail" class="session-detail" aria-live="polite">
+                  <h3>Explore before you choose.</h3>
+                  <p>Select or hover over any session to see its presenter, description, audience, TLF connections, and focus tags here.</p>
+                </div>
+
+                <button id="detailChooseButton" class="choose-button" type="button" disabled>Choose this session</button>
+              </section>
+
+              <section class="pathway-card" aria-labelledby="pathwayTitle">
+                <div class="pathway-heading">
+                  <div>
+                    <p class="rail-kicker">MY PATHWAY</p>
+                    <h3 id="pathwayTitle">Your three sessions</h3>
+                  </div>
+                  <span id="choiceCount">0 / 3</span>
+                </div>
+
+                <div id="reviewSelections" class="review-selections" aria-live="polite"></div>
+
+                <button id="submitButton" class="primary-button submit-button" type="submit" disabled>
+                  Confirm my pathway
+                </button>
+                <p id="submitHelp" class="privacy-note">
+                  Your details and choices are used only to manage this event.
+                </p>
+              </section>
+            </aside>
           </div>
-          <label class="honeypot" aria-hidden="true">Website<input id="website" name="website" tabindex="-1" autocomplete="off" /></label>
-        </fieldset>
 
-        <div id="blocks"></div>
+          <div id="formMessage" class="form-message" aria-live="assertive"></div>
+        </form>
+      </section>
 
-        <section class="review-card" aria-labelledby="reviewTitle">
+      <section id="pathwayView" class="view-panel" hidden>
+        <div class="pathway-hero">
           <div>
-            <p class="eyebrow">REVIEW</p>
-            <h2 id="reviewTitle">Your three sessions</h2>
+            <p class="eyebrow">MY PATHWAY</p>
+            <h2 id="pathwayGreeting">Your learning day, at a glance.</h2>
+            <p id="pathwaySavedMessage">
+              This pathway is saved on this browser. Come back here on the day to see your sessions and quickly browse what else is happening.
+            </p>
           </div>
-          <div id="reviewSelections" class="review-selections" aria-live="polite">
-            <p class="review-empty">Choose one session in each block to continue.</p>
+          <div class="pathway-actions">
+            <button id="browseProgrammeButton" class="secondary-button" type="button">Explore the programme</button>
+            <button id="resetPreviewButton" class="text-button danger" type="button">Reset test experience</button>
           </div>
-          <button id="submitButton" class="primary-button submit-button" type="submit" disabled>
-            Confirm my sessions
-          </button>
-          <p class="privacy-note">Your name, email address and session choices are used only to manage event registration.</p>
+        </div>
+
+        <div id="savedPathwayCards" class="saved-pathway-cards"></div>
+
+        <section class="day-browser" aria-labelledby="dayBrowserTitle">
+          <div class="day-browser-heading">
+            <div>
+              <p class="eyebrow">WHAT ELSE IS ON?</p>
+              <h3 id="dayBrowserTitle">Browse the full programme by block</h3>
+            </div>
+            <p>Your chosen sessions are highlighted. Everything else remains one tap away.</p>
+          </div>
+
+          <div id="dayBlockTabs" class="block-tabs day-tabs" role="tablist" aria-label="Programme blocks"></div>
+          <div id="dayProgramme"></div>
         </section>
-
-        <div id="formMessage" class="form-message" aria-live="assertive"></div>
-      </form>
-
-      <section id="confirmation" class="confirmation-card" hidden tabindex="-1">
-        <div class="confirmation-icon" aria-hidden="true">✓</div>
-        <p class="eyebrow">YOU'RE REGISTERED</p>
-        <h2>Your learning pathway is set.</h2>
-        <p id="confirmationName" class="confirmation-lede"></p>
-        <div id="confirmationSelections" class="confirmation-selections"></div>
-        <p class="confirmation-note">Please take a screenshot of this page for your records. If plans change, speak with the event team so the place can be released for someone else.</p>
       </section>
     </section>
   </main>
