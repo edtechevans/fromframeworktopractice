@@ -18,7 +18,8 @@ window.FFTP_SESSIONS = [
       "TLF",
       "UDL"
     ],
-    "format": "Practice Lab"
+    "format": "Practice Lab",
+    "room": "B320"
   },
   {
     "id": "b1-s02",
@@ -39,7 +40,8 @@ window.FFTP_SESSIONS = [
       "MTSS",
       "UDL"
     ],
-    "format": "Workshop"
+    "format": "Workshop",
+    "room": "B321"
   },
   {
     "id": "b1-s03",
@@ -61,7 +63,8 @@ window.FFTP_SESSIONS = [
     "themes": [
       "UDL"
     ],
-    "format": "Design Sprint"
+    "format": "Design Sprint",
+    "room": "B322"
   },
   {
     "id": "b1-s04",
@@ -82,7 +85,8 @@ window.FFTP_SESSIONS = [
     "themes": [
       "TLF"
     ],
-    "format": "Workshop"
+    "format": "Workshop",
+    "room": "B323"
   },
   {
     "id": "b1-s05",
@@ -103,7 +107,8 @@ window.FFTP_SESSIONS = [
     "themes": [
       "MTSS"
     ],
-    "format": "Practice Lab"
+    "format": "Practice Lab",
+    "room": "B324"
   },
   {
     "id": "b1-s06",
@@ -125,7 +130,8 @@ window.FFTP_SESSIONS = [
       "UDL",
       "TLF"
     ],
-    "format": "Practice Lab"
+    "format": "Practice Lab",
+    "room": "B325"
   },
   {
     "id": "b1-s07",
@@ -147,7 +153,8 @@ window.FFTP_SESSIONS = [
       "UDL",
       "TLF"
     ],
-    "format": "Strategy Lab"
+    "format": "Strategy Lab",
+    "room": "B326"
   },
   {
     "id": "b1-s08",
@@ -169,7 +176,8 @@ window.FFTP_SESSIONS = [
       "MTSS",
       "UDL"
     ],
-    "format": "Workshop"
+    "format": "Workshop",
+    "room": "B327"
   },
   {
     "id": "b1-s09",
@@ -190,7 +198,8 @@ window.FFTP_SESSIONS = [
     "themes": [
       "TLF"
     ],
-    "format": "Practice Lab"
+    "format": "Practice Lab",
+    "room": "B328"
   },
   {
     "id": "b1-s10",
@@ -212,7 +221,8 @@ window.FFTP_SESSIONS = [
     "themes": [
       "UDL"
     ],
-    "format": "Design Sprint"
+    "format": "Design Sprint",
+    "room": "B329"
   },
   {
     "id": "b2-s01",
@@ -233,7 +243,8 @@ window.FFTP_SESSIONS = [
     "themes": [
       "UDL"
     ],
-    "format": "Workshop"
+    "format": "Workshop",
+    "room": "B326"
   },
   {
     "id": "b2-s02",
@@ -255,7 +266,8 @@ window.FFTP_SESSIONS = [
     "themes": [
       "MTSS"
     ],
-    "format": "Strategy Lab"
+    "format": "Strategy Lab",
+    "room": "B327"
   },
   {
     "id": "b2-s03",
@@ -276,7 +288,8 @@ window.FFTP_SESSIONS = [
     "themes": [
       "TLF"
     ],
-    "format": "Workshop"
+    "format": "Workshop",
+    "room": "B328"
   },
   {
     "id": "b2-s04",
@@ -299,7 +312,8 @@ window.FFTP_SESSIONS = [
       "TLF",
       "UDL"
     ],
-    "format": "Practice Lab"
+    "format": "Practice Lab",
+    "room": "B329"
   },
   {
     "id": "b2-s05",
@@ -320,7 +334,8 @@ window.FFTP_SESSIONS = [
     "themes": [
       "UDL"
     ],
-    "format": "Design Sprint"
+    "format": "Design Sprint",
+    "room": "B330"
   },
   {
     "id": "b2-s06",
@@ -341,7 +356,8 @@ window.FFTP_SESSIONS = [
     "themes": [
       "MTSS"
     ],
-    "format": "Case Clinic"
+    "format": "Case Clinic",
+    "room": "B331"
   },
   {
     "id": "b2-s07",
@@ -362,7 +378,8 @@ window.FFTP_SESSIONS = [
     "themes": [
       "UDL"
     ],
-    "format": "Practice Lab"
+    "format": "Practice Lab",
+    "room": "B332"
   },
   {
     "id": "b2-s08",
@@ -383,7 +400,8 @@ window.FFTP_SESSIONS = [
     "themes": [
       "TLF"
     ],
-    "format": "Design Sprint"
+    "format": "Design Sprint",
+    "room": "B333"
   },
   {
     "id": "b2-s09",
@@ -405,7 +423,8 @@ window.FFTP_SESSIONS = [
       "MTSS",
       "TLF"
     ],
-    "format": "Strategy Lab"
+    "format": "Strategy Lab",
+    "room": "B334"
   },
   {
     "id": "b2-s10",
@@ -426,7 +445,8 @@ window.FFTP_SESSIONS = [
     "themes": [
       "UDL"
     ],
-    "format": "Workshop"
+    "format": "Workshop",
+    "room": "B335"
   },
   {
     "id": "b3-s01",
@@ -448,7 +468,8 @@ window.FFTP_SESSIONS = [
     "themes": [
       "MTSS"
     ],
-    "format": "Practice Lab"
+    "format": "Practice Lab",
+    "room": "B323"
   },
   {
     "id": "b3-s02",
@@ -469,7 +490,8 @@ window.FFTP_SESSIONS = [
     "themes": [
       "TLF"
     ],
-    "format": "Workshop"
+    "format": "Workshop",
+    "room": "B324"
   },
   {
     "id": "b3-s03",
@@ -491,7 +513,8 @@ window.FFTP_SESSIONS = [
     "themes": [
       "UDL"
     ],
-    "format": "Design Sprint"
+    "format": "Design Sprint",
+    "room": "B325"
   },
   {
     "id": "b3-s04",
@@ -512,7 +535,8 @@ window.FFTP_SESSIONS = [
     "themes": [
       "TLF"
     ],
-    "format": "Practice Lab"
+    "format": "Practice Lab",
+    "room": "B326"
   },
   {
     "id": "b3-s05",
@@ -533,7 +557,8 @@ window.FFTP_SESSIONS = [
     "themes": [
       "TLF"
     ],
-    "format": "Workshop"
+    "format": "Workshop",
+    "room": "B327"
   },
   {
     "id": "b3-s06",
@@ -555,7 +580,8 @@ window.FFTP_SESSIONS = [
     "themes": [
       "MTSS"
     ],
-    "format": "Case Clinic"
+    "format": "Case Clinic",
+    "room": "B328"
   },
   {
     "id": "b3-s07",
@@ -577,7 +603,8 @@ window.FFTP_SESSIONS = [
     "themes": [
       "UDL"
     ],
-    "format": "Strategy Lab"
+    "format": "Strategy Lab",
+    "room": "B329"
   },
   {
     "id": "b3-s08",
@@ -598,7 +625,8 @@ window.FFTP_SESSIONS = [
     "themes": [
       "TLF"
     ],
-    "format": "Design Sprint"
+    "format": "Design Sprint",
+    "room": "B330"
   },
   {
     "id": "b3-s09",
@@ -619,7 +647,8 @@ window.FFTP_SESSIONS = [
     "themes": [
       "TLF"
     ],
-    "format": "Workshop"
+    "format": "Workshop",
+    "room": "B331"
   },
   {
     "id": "b3-s10",
@@ -641,27 +670,28 @@ window.FFTP_SESSIONS = [
       "UDL",
       "TLF"
     ],
-    "format": "Practice Lab"
+    "format": "Practice Lab",
+    "room": "B332"
   }
 ];
 
 window.FFTP_BLOCKS = [
   {
     "block": 1,
-    "label": "Block 1",
-    "subtitle": "Choose one session",
+    "label": "Session 1",
+    "subtitle": "Choose one workshop",
     "time": "Time TBC"
   },
   {
     "block": 2,
-    "label": "Block 2",
-    "subtitle": "Choose one session",
+    "label": "Session 2",
+    "subtitle": "Choose one workshop",
     "time": "Time TBC"
   },
   {
     "block": 3,
-    "label": "Block 3",
-    "subtitle": "Choose one session",
+    "label": "Session 3",
+    "subtitle": "Choose one workshop",
     "time": "Time TBC"
   }
 ];
