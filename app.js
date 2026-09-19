@@ -382,13 +382,14 @@
     const capacity = capacityInfo(session.id);
     const chosen = state.selections[session.block] === session.id;
     const match = sessionMatches(session);
+    const expanded = inspectedSessionId === session.id;
     const audienceMini = session.audiences.map(abbreviateAudience).join(" · ");
     const facetsMini = session.facets.slice(0, 2).join(" · ");
 
     return `
       <article class="session-entry ${chosen ? "is-chosen" : ""} ${match ? "is-match" : ""} ${capacity.full ? "is-full" : ""}"
         data-session-entry="${session.id}">
-        <button type="button" class="session-inspect" data-inspect="${session.id}">
+        <button type="button" class="session-inspect" data-inspect="${session.id}" aria-expanded="${expanded ? "true" : "false"}">
           <span class="session-main">
             <span class="session-title-row">
               <span class="session-title">${escapeHtml(session.title)}</span>
@@ -401,7 +402,10 @@
               <span class="mini-tag">${escapeHtml(session.format)}</span>
             </span>
           </span>
-          <span class="capacity-pill ${capacity.className}">${escapeHtml(capacity.label)}</span>
+          <span class="session-end">
+            <span class="capacity-pill ${capacity.className}">${escapeHtml(capacity.label)}</span>
+            <span class="session-chevron" aria-hidden="true">⌄</span>
+          </span>
         </button>
 
         <div class="mobile-session-detail">
@@ -409,9 +413,10 @@
           <p>${escapeHtml(session.blurb)}</p>
           <div class="tag-row">${tagRow(session.audiences)}</div>
           <div class="tag-row">${tagRow(session.facets, "facet")}</div>
-          <button type="button" class="mobile-choose" data-mobile-choose="${session.id}"
-            ${state.confirmed || capacity.full ? "disabled" : ""}>
-            ${chosen ? "Chosen for my pathway" : capacity.full ? "Session full" : "Choose this session"}
+          <div class="tag-row">${tagRow(session.themes, "theme")}</div>
+          <button type="button" class="mobile-choose ${chosen ? "is-selected" : ""}" data-mobile-choose="${session.id}"
+            ${state.confirmed || capacity.full || chosen ? "disabled" : ""}>
+            ${chosen ? "Selected ✓" : capacity.full ? "Session full" : "Choose this session"}
           </button>
         </div>
       </article>`;
@@ -441,19 +446,23 @@
   }
 
   function inspectSession(id, scrollOnMobile = true) {
-    inspectedSessionId = id;
+    const entry = blocksRoot.querySelector(`[data-session-entry="${CSS.escape(id)}"]`);
+    const shouldCollapse = isMobile() && inspectedSessionId === id && entry?.classList.contains("is-inspected");
+
+    inspectedSessionId = shouldCollapse ? "" : id;
     updateInspectedClasses();
     renderSessionDetail();
 
-    if (scrollOnMobile && window.matchMedia("(max-width: 900px)").matches) {
-      const entry = blocksRoot.querySelector(`[data-session-entry="${CSS.escape(id)}"]`);
+    if (scrollOnMobile && isMobile() && !shouldCollapse) {
       entry?.scrollIntoView({ behavior: "smooth", block: "nearest" });
     }
   }
 
   function updateInspectedClasses() {
     blocksRoot.querySelectorAll("[data-session-entry]").forEach((entry) => {
-      entry.classList.toggle("is-inspected", entry.dataset.sessionEntry === inspectedSessionId);
+      const expanded = entry.dataset.sessionEntry === inspectedSessionId;
+      entry.classList.toggle("is-inspected", expanded);
+      entry.querySelector("[data-inspect]")?.setAttribute("aria-expanded", String(expanded));
     });
   }
 
@@ -466,7 +475,7 @@
       detailCapacity.className = "capacity-pill neutral";
       sessionDetail.innerHTML = `
         <h3>Explore before you choose.</h3>
-        <p class="blurb-line">Select or hover over any session to see its presenter, description, audience, TLF connections, and focus tags here.</p>`;
+        <p class="blurb-line">Select any session to see its presenter, description, audience, TLF connections, and focus tags here.</p>`;
       detailChooseButton.disabled = true;
       detailChooseButton.textContent = "Choose this session";
       detailChooseButton.classList.remove("is-selected");
@@ -501,13 +510,13 @@
       </div>`;
 
     detailChooseButton.classList.toggle("is-selected", chosen);
-    detailChooseButton.disabled = state.confirmed || capacity.full;
+    detailChooseButton.disabled = state.confirmed || capacity.full || chosen;
     detailChooseButton.textContent = state.confirmed
       ? chosen ? "Saved in my pathway" : "Pathway already confirmed"
       : capacity.full
         ? "Session full"
         : chosen
-          ? "Chosen for my pathway"
+          ? "Selected ✓"
           : "Choose this session";
   }
 
