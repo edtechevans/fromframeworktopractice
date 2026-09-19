@@ -17,7 +17,7 @@
   <header class="site-header">
     <div class="header-inner">
       <a class="brand" href="#top" aria-label="From Framework to Practice home">
-        <span class="brand-mark" aria-hidden="true">AISG</span>
+        <img class="aisg-logo" src="https://raw.githubusercontent.com/edtechevans/AISG/main/public/aisg-logo.png" alt="American International School of Guangzhou" />
         <span class="brand-copy">
           <strong>From Framework to Practice</strong>
           <small>Teachers Teach Teachers · November 2, 2026</small>
@@ -38,22 +38,19 @@
           <p class="hero-lede">Choose one practical learning session in each of the three blocks. Places are limited to <strong>15 participants per session</strong>.</p>
           <div class="hero-actions">
             <a class="primary-button" href="#registration">Choose my sessions</a>
-            <span class="quiet-note">No account needed · first and last name only</span>
+            <span class="quiet-note">No account needed · name and email only</span>
           </div>
         </div>
-        <div class="framework-card" aria-label="Transformative Learning Framework">
-          <div class="framework-title">TRANSFORMATIVE LEARNING FRAMEWORK</div>
-          <div class="facet-grid">
-            <div><span>◎</span><b>Personalization</b></div>
-            <div><span>↗</span><b>Agency</b></div>
-            <div><span>◉</span><b>Authenticity</b></div>
-            <div><span>✦</span><b>Creativity</b></div>
-            <div><span>⋯</span><b>Collaboration</b></div>
-            <div><span>⚑</span><b>Taking Action</b></div>
+        <div class="framework-card framework-official" aria-label="AISG Transformative Learning Framework">
+          <div class="framework-title">AISG TRANSFORMATIVE LEARNING FRAMEWORK</div>
+          <div class="framework-image-shell">
+            <img
+              src="https://resource.aisgz.org/aisg-website/prod/Public/Used%20in%20the%20visual%20editor/About%20Us/Featured%20News/imgi_6_640.12.13.png"
+              alt="AISG Transformative Learning Framework"
+              onerror="this.hidden=true"
+            />
           </div>
-          <div class="cycle">
-            <span>LEARN</span><i>→</i><span>SHARE</span><i>→</i><span>GROW</span>
-          </div>
+          <div class="cycle"><span>ENGAGEMENT FOR ALL</span><i>•</i><span>BEING</span><i>•</i><span>CONNECTING</span><i>•</i><span>DOING</span></div>
         </div>
       </div>
       <div class="hero-landscape" aria-hidden="true">
@@ -67,7 +64,7 @@
     <section class="intro-strip">
       <div>
         <span class="step-number">01</span>
-        <div><strong>Enter your name</strong><small>No sign-in or account.</small></div>
+        <div><strong>Add your details</strong><small>Name and email address.</small></div>
       </div>
       <div>
         <span class="step-number">02</span>
@@ -83,7 +80,7 @@
       <div class="section-heading">
         <p class="eyebrow">SESSION SIGN-UP</p>
         <h2>Build your learning pathway.</h2>
-        <p>Explore the sessions below, select one option in each block, then confirm your registration.</p>
+        <p>Move between the three blocks, choose one session in each, and review full presenter and session details alongside the programme.</p>
       </div>
 
       <div id="statusBanner" class="status-banner" hidden role="status"></div>
@@ -94,12 +91,12 @@
           <p>We only ask for the information needed to hold your three places.</p>
           <div class="name-grid">
             <label>
-              <span>First name</span>
-              <input id="firstName" name="firstName" autocomplete="given-name" maxlength="60" required />
+              <span>Name</span>
+              <input id="name" name="name" autocomplete="name" maxlength="120" required />
             </label>
             <label>
-              <span>Last name</span>
-              <input id="lastName" name="lastName" autocomplete="family-name" maxlength="60" required />
+              <span>Email Address</span>
+              <input id="email" name="email" type="email" autocomplete="email" maxlength="254" required />
             </label>
           </div>
           <label class="honeypot" aria-hidden="true">Website<input id="website" name="website" tabindex="-1" autocomplete="off" /></label>
@@ -118,7 +115,7 @@
           <button id="submitButton" class="primary-button submit-button" type="submit" disabled>
             Confirm my sessions
           </button>
-          <p class="privacy-note">Your name and session choices are used only to manage event capacity.</p>
+          <p class="privacy-note">Your name, email address and session choices are used only to manage event registration.</p>
         </section>
 
         <div id="formMessage" class="form-message" aria-live="assertive"></div>
