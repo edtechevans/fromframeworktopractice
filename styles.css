@@ -1729,3 +1729,34 @@ footer i{
     font-size:.67rem;
   }
 }
+
+.room-mini{
+  color:var(--red);
+  font-weight:850;
+}
+.room-line,.mobile-room,.saved-room{
+  color:var(--navy);
+  font-weight:850;
+}
+.room-line{
+  margin:.1rem 0 .35rem;
+  font-size:.72rem;
+}
+.mobile-room{
+  margin:0 0 .2rem!important;
+  font-size:.7rem!important;
+  letter-spacing:.02em;
+}
+.saved-room{
+  display:block;
+  margin-top:.14rem;
+  font-size:.68rem;
+}
+@media(max-width:720px){
+  .session-mini-tags .room-mini{
+    display:inline!important;
+  }
+  .session-mini-tags .mini-tag:nth-child(4){
+    display:none;
+  }
+}
