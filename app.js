@@ -122,7 +122,6 @@
           <span class="selection-dot" aria-hidden="true"></span>
           <span class="session-copy">
             <strong>${escapeHtml(session.title)}</strong>
-            <small>Presenter + blurb on preview</small>
           </span>
           <span class="capacity ${isFull ? "capacity-full" : ""}">${seatText}</span>
         </span>
