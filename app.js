@@ -284,6 +284,7 @@
   function updateMobileDock() {
     const show = isMobile() && !state.confirmed && !builderView.hidden;
     mobileDock.hidden = !show;
+    document.body.classList.toggle("has-mobile-dock", show);
     if (!show) return;
 
     const count = selectedCount();
