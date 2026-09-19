@@ -1,214 +1,660 @@
 (function siteApp() {
   const API_URL = "https://ncrwtmhjrgsritsluipz.supabase.co/functions/v1/from-framework-to-practice-register";
-  const sessionDetails = new Map(window.FFTP_SESSIONS.map((session) => [session.id, session]));
+  const STORAGE_KEY = "fftp_pathway_v3";
+
+  const sessions = window.FFTP_SESSIONS || [];
+  const blocks = window.FFTP_BLOCKS || [];
+  const audiences = window.FFTP_AUDIENCES || [];
+  const facets = window.FFTP_FACETS || [];
+  const themes = window.FFTP_THEMES || [];
+  const sessionById = new Map(sessions.map((session) => [session.id, session]));
   const availability = new Map();
-  const selected = { 1: "", 2: "", 3: "" };
+
+  const defaultState = {
+    name: "",
+    email: "",
+    selections: { 1: "", 2: "", 3: "" },
+    audiences: [],
+    focus: [],
+    confirmed: false,
+    confirmedAt: null,
+    mode: null
+  };
+
+  let state = loadState();
   let activeBlock = 1;
+  let activeDayBlock = 1;
+  let inspectedSessionId = "";
   let registrationOpen = false;
+  let availabilityLoaded = false;
 
-  const form = document.getElementById("registrationForm");
-  const blocksRoot = document.getElementById("blocks");
-  const reviewCard = document.querySelector(".review-card");
-  const submitButton = document.getElementById("submitButton");
-  const reviewSelections = document.getElementById("reviewSelections");
-  const formMessage = document.getElementById("formMessage");
+  const builderView = document.getElementById("builderView");
+  const pathwayView = document.getElementById("pathwayView");
+  const navExplore = document.getElementById("navExplore");
+  const navPathway = document.getElementById("navPathway");
+  const navPathwayCount = document.getElementById("navPathwayCount");
+  const heroPathwayButton = document.getElementById("heroPathwayButton");
+  const returningBanner = document.getElementById("returningBanner");
+  const returningMessage = document.getElementById("returningMessage");
+  const returningViewButton = document.getElementById("returningViewButton");
   const statusBanner = document.getElementById("statusBanner");
-  const confirmation = document.getElementById("confirmation");
+  const form = document.getElementById("registrationForm");
+  const nameInput = document.getElementById("name");
+  const emailInput = document.getElementById("email");
+  const audienceFilters = document.getElementById("audienceFilters");
+  const focusFilters = document.getElementById("focusFilters");
+  const clearFilters = document.getElementById("clearFilters");
+  const blockTabs = document.getElementById("blockTabs");
+  const blocksRoot = document.getElementById("blocks");
+  const matchSummary = document.getElementById("matchSummary");
+  const detailBlockLabel = document.getElementById("detailBlockLabel");
+  const detailCapacity = document.getElementById("detailCapacity");
+  const sessionDetail = document.getElementById("sessionDetail");
+  const detailChooseButton = document.getElementById("detailChooseButton");
+  const reviewSelections = document.getElementById("reviewSelections");
+  const choiceCount = document.getElementById("choiceCount");
+  const submitButton = document.getElementById("submitButton");
+  const submitHelp = document.getElementById("submitHelp");
+  const formMessage = document.getElementById("formMessage");
+  const progressStrip = document.getElementById("progressStrip");
+  const pathwayGreeting = document.getElementById("pathwayGreeting");
+  const pathwaySavedMessage = document.getElementById("pathwaySavedMessage");
+  const browseProgrammeButton = document.getElementById("browseProgrammeButton");
+  const resetPreviewButton = document.getElementById("resetPreviewButton");
+  const savedPathwayCards = document.getElementById("savedPathwayCards");
+  const dayBlockTabs = document.getElementById("dayBlockTabs");
+  const dayProgramme = document.getElementById("dayProgramme");
 
-  const bookingLayout = document.createElement("div");
-  bookingLayout.className = "booking-layout";
-  blocksRoot.parentNode.insertBefore(bookingLayout, blocksRoot);
-  bookingLayout.appendChild(blocksRoot);
-  reviewCard.classList.add("selection-rail");
-  bookingLayout.appendChild(reviewCard);
+  function loadState() {
+    try {
+      const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
+      if (!parsed || typeof parsed !== "object") return structuredClone(defaultState);
 
-  const previewCard = document.createElement("section");
-  previewCard.className = "preview-card";
-  previewCard.innerHTML =
-    '<p class="rail-kicker">SESSION PREVIEW</p>' +
-    '<div id="sessionPreview" aria-live="polite">' +
-    '<h3>Explore the programme</h3>' +
-    '<p>Hover, focus, or select a session to see its presenter and blurb here.</p>' +
-    '</div>';
-  reviewCard.insertBefore(previewCard, reviewCard.firstChild);
+      return {
+        ...structuredClone(defaultState),
+        ...parsed,
+        selections: {
+          ...defaultState.selections,
+          ...(parsed.selections || {})
+        },
+        audiences: Array.isArray(parsed.audiences) ? parsed.audiences.filter((v) => audiences.includes(v)) : [],
+        focus: Array.isArray(parsed.focus)
+          ? parsed.focus.filter((v) => facets.includes(v) || themes.includes(v))
+          : []
+      };
+    } catch {
+      return structuredClone(defaultState);
+    }
+  }
 
-  const count = document.createElement("p");
-  count.id = "choiceCount";
-  count.className = "choice-count";
-  count.textContent = "0 / 3 selected";
-  const reviewTitle = document.getElementById("reviewTitle");
-  reviewTitle.parentNode.insertBefore(count, reviewTitle.nextSibling);
+  function persistState() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    } catch {
+      // The experience still works if browser storage is unavailable.
+    }
+  }
 
   function escapeHtml(value) {
-    return String(value).replace(/[&<>"']/g, (char) => (
+    return String(value ?? "").replace(/[&<>"']/g, (char) => (
       { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" }[char]
     ));
   }
 
-  function renderBlocks() {
-    const tabs = window.FFTP_BLOCKS.map((block) => `
-      <button type="button" class="block-tab" role="tab"
-        id="tab-block-${block.block}" aria-controls="panel-block-${block.block}"
-        aria-selected="${block.block === activeBlock ? "true" : "false"}"
-        data-tab-block="${block.block}">
-        <span>${escapeHtml(block.label)}</span>
-        <small>Choose one session</small>
-      </button>
-    `).join("");
+  function validEmail(value) {
+    return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(String(value || "").trim());
+  }
 
-    const panels = window.FFTP_BLOCKS.map((block) => {
-      const sessions = window.FFTP_SESSIONS.filter((session) => session.block === block.block);
+  function selectedCount() {
+    return [1, 2, 3].filter((block) => Boolean(state.selections[block])).length;
+  }
+
+  function detailsComplete() {
+    return Boolean(state.name.trim()) && validEmail(state.email);
+  }
+
+  function allChoicesComplete() {
+    return selectedCount() === 3;
+  }
+
+  function abbreviateAudience(label) {
+    const map = {
+      "Lower Elementary": "LE",
+      "Upper Elementary": "UE",
+      "Lower Secondary": "LS",
+      "Upper Secondary": "US"
+    };
+    return map[label] || label;
+  }
+
+  function capacityInfo(sessionId) {
+    const data = availability.get(sessionId);
+    if (!availabilityLoaded || !data) {
+      return { label: "Checking", className: "neutral", full: false, remaining: null };
+    }
+    if (data.full) {
+      return { label: "Full", className: "full", full: true, remaining: 0 };
+    }
+    if (data.remaining <= 4) {
+      return {
+        label: `${data.remaining} ${data.remaining === 1 ? "place" : "places"} left`,
+        className: "limited",
+        full: false,
+        remaining: data.remaining
+      };
+    }
+    return { label: "Available", className: "available", full: false, remaining: data.remaining };
+  }
+
+  function filtersActive() {
+    return state.audiences.length > 0 || state.focus.length > 0;
+  }
+
+  function sessionMatches(session) {
+    const audienceMatch =
+      state.audiences.length === 0 ||
+      state.audiences.some((audience) => session.audiences.includes(audience));
+
+    const sessionFocus = [...session.facets, ...session.themes];
+    const focusMatch =
+      state.focus.length === 0 ||
+      state.focus.some((focus) => sessionFocus.includes(focus));
+
+    return filtersActive() && audienceMatch && focusMatch;
+  }
+
+  function matchScore(session) {
+    let score = 0;
+    for (const audience of state.audiences) {
+      if (session.audiences.includes(audience)) score += 3;
+    }
+    const sessionFocus = [...session.facets, ...session.themes];
+    for (const focus of state.focus) {
+      if (sessionFocus.includes(focus)) score += 2;
+    }
+    return score;
+  }
+
+  function sessionsForBlock(block) {
+    const list = sessions.filter((session) => session.block === block);
+    if (!filtersActive()) return list.slice().sort((a, b) => a.slot - b.slot);
+
+    return list.slice().sort((a, b) => {
+      const aMatch = sessionMatches(a) ? 1 : 0;
+      const bMatch = sessionMatches(b) ? 1 : 0;
+      if (bMatch !== aMatch) return bMatch - aMatch;
+
+      const scoreDiff = matchScore(b) - matchScore(a);
+      if (scoreDiff !== 0) return scoreDiff;
+
+      return a.slot - b.slot;
+    });
+  }
+
+  function tagRow(tags, className = "") {
+    return tags.map((tag) => `<span class="info-tag ${className}">${escapeHtml(tag)}</span>`).join("");
+  }
+
+  function renderFilters() {
+    audienceFilters.innerHTML = audiences.map((audience) => {
+      const pressed = state.audiences.includes(audience);
       return `
-        <section class="block-panel" id="panel-block-${block.block}" role="tabpanel"
-          aria-labelledby="tab-block-${block.block}" data-panel-block="${block.block}"
-          ${block.block === activeBlock ? "" : "hidden"}>
-          <div class="block-panel-heading">
-            <strong>${escapeHtml(block.label)}</strong>
-            <span>10 sessions · 15 places each</span>
-          </div>
-          <div class="session-grid">${sessions.map(renderSessionCard).join("")}</div>
-          ${block.block < 3 ? `
-            <div class="panel-footer">
-              <button type="button" class="next-block" data-next-block="${block.block + 1}"
-                ${selected[block.block] ? "" : "disabled"}>
-                Continue to Block ${block.block + 1} →
-              </button>
-            </div>` : ""}
-        </section>`;
+        <button type="button" class="chip-button" data-audience="${escapeHtml(audience)}"
+          aria-pressed="${pressed ? "true" : "false"}">
+          ${escapeHtml(audience)}
+        </button>`;
     }).join("");
 
-    blocksRoot.innerHTML =
-      `<div class="block-tabs" role="tablist" aria-label="Session blocks">${tabs}</div>` +
-      `<div class="block-panels">${panels}</div>`;
+    const focusOptions = [
+      ...themes.map((value) => ({ value, label: value })),
+      ...facets.map((value) => ({ value, label: value }))
+    ];
 
-    blocksRoot.querySelectorAll("[data-tab-block]").forEach((button) => {
-      button.addEventListener("click", () => activateBlock(Number(button.dataset.tabBlock)));
-    });
-    blocksRoot.querySelectorAll("[data-next-block]").forEach((button) => {
-      button.addEventListener("click", () => activateBlock(Number(button.dataset.nextBlock)));
-    });
-    blocksRoot.querySelectorAll('input[type="radio"]').forEach((input) => {
-      input.addEventListener("change", () => {
-        selected[input.dataset.block] = input.value;
-        updatePreview(sessionDetails.get(input.value));
-        updateReview();
-        updateTabStates();
-        updateNextButtons();
+    focusFilters.innerHTML = focusOptions.map(({ value, label }) => {
+      const pressed = state.focus.includes(value);
+      return `
+        <button type="button" class="chip-button" data-focus="${escapeHtml(value)}"
+          aria-pressed="${pressed ? "true" : "false"}">
+          ${escapeHtml(label)}
+        </button>`;
+    }).join("");
+
+    audienceFilters.querySelectorAll("[data-audience]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const value = button.dataset.audience;
+        state.audiences = toggleInArray(state.audiences, value);
+        persistState();
+        renderFilters();
+        renderProgramme();
       });
     });
-    blocksRoot.querySelectorAll(".session-card").forEach((card) => {
-      const session = sessionDetails.get(card.dataset.sessionId);
-      card.addEventListener("mouseenter", () => updatePreview(session));
-      card.addEventListener("focusin", () => updatePreview(session));
-    });
 
-    updateAvailabilityUI();
-    updateTabStates();
-    updateNextButtons();
+    focusFilters.querySelectorAll("[data-focus]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const value = button.dataset.focus;
+        state.focus = toggleInArray(state.focus, value);
+        persistState();
+        renderFilters();
+        renderProgramme();
+      });
+    });
   }
 
-  function renderSessionCard(session) {
-    const current = availability.get(session.id);
-    const isFull = current?.full ?? false;
-    const remaining = current?.remaining;
-    const seatText = remaining === undefined ? "Checking…" : isFull ? "Full" : `${remaining} left`;
-    const checked = selected[session.block] === session.id;
+  function toggleInArray(items, value) {
+    return items.includes(value) ? items.filter((item) => item !== value) : [...items, value];
+  }
+
+  function renderBlockTabs() {
+    blockTabs.innerHTML = blocks.map((block) => {
+      const chosen = sessionById.get(state.selections[block.block]);
+      const active = activeBlock === block.block;
+      return `
+        <button type="button" class="block-tab ${chosen ? "is-complete" : ""}"
+          role="tab"
+          data-block-tab="${block.block}"
+          aria-selected="${active ? "true" : "false"}">
+          <span>${escapeHtml(block.label)}</span>
+          <small>${chosen ? escapeHtml(chosen.title) : "Choose one session"}</small>
+        </button>`;
+    }).join("");
+
+    blockTabs.querySelectorAll("[data-block-tab]").forEach((button) => {
+      button.addEventListener("click", () => {
+        activeBlock = Number(button.dataset.blockTab);
+        inspectedSessionId = state.selections[activeBlock] || "";
+        renderProgramme();
+        updateProgress();
+      });
+    });
+  }
+
+  function renderProgramme() {
+    renderBlockTabs();
+
+    const blockSessions = sessionsForBlock(activeBlock);
+    const matching = blockSessions.filter((session) => sessionMatches(session)).length;
+
+    if (filtersActive()) {
+      matchSummary.textContent = `${matching} tagged ${matching === 1 ? "match" : "matches"} in Block ${activeBlock} · all sessions still shown`;
+    } else {
+      matchSummary.textContent = "Showing all sessions";
+    }
+
+    blocksRoot.innerHTML = `
+      <section class="block-panel" role="tabpanel">
+        <div class="block-panel-heading">
+          <strong>Block ${activeBlock}</strong>
+          <span>10 sessions · up to 15 participants each</span>
+        </div>
+
+        <div class="session-list">
+          ${blockSessions.map(renderSessionEntry).join("")}
+        </div>
+
+        ${activeBlock < 3 ? `
+          <div class="panel-footer">
+            <button type="button" class="next-block" data-next-block="${activeBlock + 1}"
+              ${state.selections[activeBlock] ? "" : "disabled"}>
+              Continue to Block ${activeBlock + 1} →
+            </button>
+          </div>` : ""}
+      </section>`;
+
+    wireProgrammeEvents();
+
+    if (!inspectedSessionId || !sessionById.has(inspectedSessionId) || sessionById.get(inspectedSessionId).block !== activeBlock) {
+      inspectedSessionId = state.selections[activeBlock] || blockSessions[0]?.id || "";
+    }
+
+    updateInspectedClasses();
+    renderSessionDetail();
+    renderReview();
+    updateProgress();
+  }
+
+  function renderSessionEntry(session) {
+    const capacity = capacityInfo(session.id);
+    const chosen = state.selections[session.block] === session.id;
+    const match = sessionMatches(session);
+    const audienceMini = session.audiences.map(abbreviateAudience).join(" · ");
+    const facetsMini = session.facets.slice(0, 2).join(" · ");
 
     return `
-      <label class="session-card ${isFull ? "is-full" : ""}" data-session-id="${session.id}">
-        <input type="radio" name="block-${session.block}" value="${session.id}"
-          data-block="${session.block}" ${isFull ? "disabled" : ""} ${checked ? "checked" : ""} />
-        <span class="session-row">
-          <span class="selection-dot" aria-hidden="true"></span>
-          <span class="session-copy">
-            <strong>${escapeHtml(session.title)}</strong>
+      <article class="session-entry ${chosen ? "is-chosen" : ""} ${match ? "is-match" : ""} ${capacity.full ? "is-full" : ""}"
+        data-session-entry="${session.id}">
+        <button type="button" class="session-inspect" data-inspect="${session.id}">
+          <span class="session-main">
+            <span class="session-title-row">
+              <span class="session-title">${escapeHtml(session.title)}</span>
+              ${chosen ? '<span class="chosen-badge">MY SESSION</span>' : ""}
+              ${match && !chosen ? '<span class="match-badge">MATCH</span>' : ""}
+            </span>
+            <span class="session-mini-tags">
+              <span class="mini-tag">${escapeHtml(audienceMini)}</span>
+              <span class="mini-tag">${escapeHtml(facetsMini)}</span>
+              <span class="mini-tag">${escapeHtml(session.format)}</span>
+            </span>
           </span>
-          <span class="capacity ${isFull ? "capacity-full" : ""}">${seatText}</span>
-        </span>
-      </label>`;
+          <span class="capacity-pill ${capacity.className}">${escapeHtml(capacity.label)}</span>
+        </button>
+
+        <div class="mobile-session-detail">
+          <p class="mobile-presenter">${escapeHtml(session.presenters)}</p>
+          <p>${escapeHtml(session.blurb)}</p>
+          <div class="tag-row">${tagRow(session.audiences)}</div>
+          <div class="tag-row">${tagRow(session.facets, "facet")}</div>
+          <button type="button" class="mobile-choose" data-mobile-choose="${session.id}"
+            ${state.confirmed || capacity.full ? "disabled" : ""}>
+            ${chosen ? "Chosen for my pathway" : capacity.full ? "Session full" : "Choose this session"}
+          </button>
+        </div>
+      </article>`;
   }
 
-  function activateBlock(block) {
-    activeBlock = block;
-    blocksRoot.querySelectorAll("[data-tab-block]").forEach((button) => {
-      const isActive = Number(button.dataset.tabBlock) === block;
-      button.setAttribute("aria-selected", String(isActive));
-      button.tabIndex = isActive ? 0 : -1;
+  function wireProgrammeEvents() {
+    blocksRoot.querySelectorAll("[data-inspect]").forEach((button) => {
+      const id = button.dataset.inspect;
+      button.addEventListener("click", () => inspectSession(id));
+      button.addEventListener("mouseenter", () => inspectSession(id, false));
+      button.addEventListener("focus", () => inspectSession(id, false));
     });
-    blocksRoot.querySelectorAll("[data-panel-block]").forEach((panel) => {
-      panel.hidden = Number(panel.dataset.panelBlock) !== block;
+
+    blocksRoot.querySelectorAll("[data-mobile-choose]").forEach((button) => {
+      button.addEventListener("click", () => selectSession(button.dataset.mobileChoose));
     });
-    const chosen = sessionDetails.get(selected[block]);
-    if (chosen) updatePreview(chosen);
-  }
 
-  function updateTabStates() {
-    blocksRoot.querySelectorAll("[data-tab-block]").forEach((button) => {
-      const block = Number(button.dataset.tabBlock);
-      button.classList.toggle("is-complete", Boolean(selected[block]));
-      const chosen = sessionDetails.get(selected[block]);
-      button.querySelector("small").textContent = chosen ? chosen.title : "Choose one session";
-    });
-  }
-
-  function updateNextButtons() {
-    blocksRoot.querySelectorAll("[data-next-block]").forEach((button) => {
-      const currentBlock = Number(button.dataset.nextBlock) - 1;
-      button.disabled = !selected[currentBlock];
-    });
-  }
-
-  function updatePreview(session) {
-    if (!session) return;
-    const current = availability.get(session.id);
-    const places = current
-      ? current.full ? "Session full" : `${current.remaining} ${current.remaining === 1 ? "place" : "places"} left`
-      : "Checking availability…";
-    document.getElementById("sessionPreview").innerHTML = `
-      <h3>${escapeHtml(session.title)}</h3>
-      <p class="preview-presenter">${escapeHtml(session.presenters)}</p>
-      <p>${escapeHtml(session.blurb)}</p>
-      <p class="preview-meta"><span>Block ${session.block}</span><strong>${escapeHtml(places)}</strong></p>`;
-  }
-
-  function updateAvailabilityUI() {
-    for (const [id, data] of availability.entries()) {
-      const card = document.querySelector(`[data-session-id="${id}"]`);
-      if (!card) continue;
-      const radio = card.querySelector('input[type="radio"]');
-      const capacity = card.querySelector(".capacity");
-      card.classList.toggle("is-full", data.full);
-      radio.disabled = data.full;
-      capacity.classList.toggle("capacity-full", data.full);
-      capacity.textContent = data.full ? "Full" : `${data.remaining} left`;
-      if (data.full && radio.checked) {
-        radio.checked = false;
-        selected[radio.dataset.block] = "";
-      }
+    const nextButton = blocksRoot.querySelector("[data-next-block]");
+    if (nextButton) {
+      nextButton.addEventListener("click", () => {
+        activeBlock = Number(nextButton.dataset.nextBlock);
+        inspectedSessionId = state.selections[activeBlock] || "";
+        renderProgramme();
+        document.querySelector(".programme-card")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
     }
-    updateReview();
-    updateTabStates();
-    updateNextButtons();
   }
 
-  function updateReview() {
-    const chosenSessions = [1, 2, 3].map((block) => sessionDetails.get(selected[block])).filter(Boolean);
-    document.getElementById("choiceCount").textContent = `${chosenSessions.length} / 3 selected`;
-    submitButton.disabled = !registrationOpen || chosenSessions.length !== 3;
+  function inspectSession(id, scrollOnMobile = true) {
+    inspectedSessionId = id;
+    updateInspectedClasses();
+    renderSessionDetail();
+
+    if (scrollOnMobile && window.matchMedia("(max-width: 900px)").matches) {
+      const entry = blocksRoot.querySelector(`[data-session-entry="${CSS.escape(id)}"]`);
+      entry?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+  }
+
+  function updateInspectedClasses() {
+    blocksRoot.querySelectorAll("[data-session-entry]").forEach((entry) => {
+      entry.classList.toggle("is-inspected", entry.dataset.sessionEntry === inspectedSessionId);
+    });
+  }
+
+  function renderSessionDetail() {
+    const session = sessionById.get(inspectedSessionId);
+
+    if (!session) {
+      detailBlockLabel.textContent = "Choose a session to explore";
+      detailCapacity.textContent = "—";
+      detailCapacity.className = "capacity-pill neutral";
+      sessionDetail.innerHTML = `
+        <h3>Explore before you choose.</h3>
+        <p class="blurb-line">Select or hover over any session to see its presenter, description, audience, TLF connections, and focus tags here.</p>`;
+      detailChooseButton.disabled = true;
+      detailChooseButton.textContent = "Choose this session";
+      detailChooseButton.classList.remove("is-selected");
+      return;
+    }
+
+    const capacity = capacityInfo(session.id);
+    const chosen = state.selections[session.block] === session.id;
+
+    detailBlockLabel.textContent = `Block ${session.block} · ${session.format}`;
+    detailCapacity.textContent = capacity.label;
+    detailCapacity.className = `capacity-pill ${capacity.className}`;
+
+    sessionDetail.innerHTML = `
+      <h3>${escapeHtml(session.title)}</h3>
+      <p class="presenter-line">${escapeHtml(session.presenters)}</p>
+      <p class="blurb-line">${escapeHtml(session.blurb)}</p>
+
+      <div class="tag-groups">
+        <div>
+          <span class="tag-group-label">For</span>
+          <div class="tag-row">${tagRow(session.audiences)}</div>
+        </div>
+        <div>
+          <span class="tag-group-label">TLF facets</span>
+          <div class="tag-row">${tagRow(session.facets, "facet")}</div>
+        </div>
+        <div>
+          <span class="tag-group-label">Focus</span>
+          <div class="tag-row">${tagRow(session.themes, "theme")}</div>
+        </div>
+      </div>`;
+
+    detailChooseButton.classList.toggle("is-selected", chosen);
+    detailChooseButton.disabled = state.confirmed || capacity.full;
+    detailChooseButton.textContent = state.confirmed
+      ? chosen ? "Saved in my pathway" : "Pathway already confirmed"
+      : capacity.full
+        ? "Session full"
+        : chosen
+          ? "Chosen for my pathway"
+          : "Choose this session";
+  }
+
+  function selectSession(id) {
+    if (state.confirmed) return;
+
+    const session = sessionById.get(id);
+    if (!session) return;
+
+    const capacity = capacityInfo(id);
+    if (capacity.full) return;
+
+    state.selections[session.block] = id;
+    persistState();
+
+    inspectedSessionId = id;
+    renderProgramme();
+    updateChrome();
+  }
+
+  function removeSelection(block) {
+    if (state.confirmed) return;
+    state.selections[block] = "";
+    persistState();
+    renderProgramme();
+    updateChrome();
+  }
+
+  function renderReview() {
+    const count = selectedCount();
+    choiceCount.textContent = `${count} / 3`;
 
     reviewSelections.innerHTML = [1, 2, 3].map((block) => {
-      const session = sessionDetails.get(selected[block]);
-      return session
-        ? `<div class="review-selection">
+      const session = sessionById.get(state.selections[block]);
+      if (!session) {
+        return `
+          <div class="review-item empty">
             <span>Block ${block}</span>
-            <strong>${escapeHtml(session.title)}</strong>
-            <small>${escapeHtml(session.presenters)}</small>
-            <p>${escapeHtml(session.blurb)}</p>
-          </div>`
-        : `<div class="review-selection review-missing">
-            <span>Block ${block}</span><strong>Choose a session</strong>
+            <strong>Choose a session</strong>
           </div>`;
+      }
+
+      return `
+        <div class="review-item">
+          <span>Block ${block}</span>
+          <strong>${escapeHtml(session.title)}</strong>
+          <small>${escapeHtml(session.presenters)}</small>
+          ${state.confirmed ? "" : `<button class="review-remove" type="button" data-remove-block="${block}" aria-label="Remove Block ${block} selection">Remove</button>`}
+        </div>`;
     }).join("");
+
+    reviewSelections.querySelectorAll("[data-remove-block]").forEach((button) => {
+      button.addEventListener("click", () => removeSelection(Number(button.dataset.removeBlock)));
+    });
+
+    if (state.confirmed) {
+      submitButton.disabled = true;
+      submitButton.textContent = "Pathway confirmed";
+      submitHelp.textContent = "Your confirmed pathway is saved on this browser.";
+    } else {
+      submitButton.disabled = !(detailsComplete() && allChoicesComplete());
+      submitButton.textContent = registrationOpen ? "Confirm my pathway" : "Save test pathway";
+      submitHelp.textContent = registrationOpen
+        ? "Your name, email address and choices are used only to manage this event."
+        : "Preview mode: this test pathway is saved only on this browser and is not submitted.";
+    }
+  }
+
+  function updateProgress() {
+    const complete = {
+      details: detailsComplete(),
+      1: Boolean(state.selections[1]),
+      2: Boolean(state.selections[2]),
+      3: Boolean(state.selections[3]),
+      confirm: state.confirmed
+    };
+
+    let active = "details";
+    if (complete.details) active = String(activeBlock);
+    if (complete.details && complete[1] && complete[2] && complete[3]) active = "confirm";
+    if (state.confirmed) active = "confirm";
+
+    progressStrip.querySelectorAll("[data-progress]").forEach((step) => {
+      const key = step.dataset.progress;
+      step.classList.toggle("is-complete", Boolean(complete[key]));
+      step.classList.toggle("is-active", key === active);
+    });
+  }
+
+  function updateChrome() {
+    const count = selectedCount();
+    navPathwayCount.textContent = String(count);
+
+    navPathway.hidden = !state.confirmed;
+    heroPathwayButton.hidden = !state.confirmed;
+
+    if (state.confirmed) {
+      returningBanner.hidden = false;
+      returningMessage.textContent = `${state.name || "Your"} pathway is saved on this browser.`;
+    } else {
+      returningBanner.hidden = true;
+    }
+
+    updateProgress();
+    renderReview();
+  }
+
+  function showBuilder() {
+    builderView.hidden = false;
+    pathwayView.hidden = true;
+    navExplore.classList.add("is-active");
+    navPathway.classList.remove("is-active");
+    document.getElementById("experience")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function showPathway() {
+    if (!state.confirmed) {
+      showBuilder();
+      return;
+    }
+
+    renderPathwayView();
+    builderView.hidden = true;
+    pathwayView.hidden = false;
+    navExplore.classList.remove("is-active");
+    navPathway.classList.add("is-active");
+    document.getElementById("experience")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function renderPathwayView() {
+    pathwayGreeting.textContent = state.name
+      ? `${state.name.split(/\s+/)[0]}'s learning pathway`
+      : "Your learning pathway";
+
+    pathwaySavedMessage.textContent = state.mode === "preview"
+      ? "This is a test pathway saved only on this browser. Use it to review the attendee experience, then reset when you want to test again."
+      : "Your pathway is saved on this browser. Come back here on the day to see your sessions and quickly browse what else is happening.";
+
+    resetPreviewButton.hidden = state.mode !== "preview";
+
+    savedPathwayCards.innerHTML = [1, 2, 3].map((block) => {
+      const session = sessionById.get(state.selections[block]);
+      if (!session) return "";
+
+      return `
+        <article class="saved-card">
+          <span class="saved-block">Block ${block}</span>
+          <h3>${escapeHtml(session.title)}</h3>
+          <span class="saved-presenter">${escapeHtml(session.presenters)}</span>
+          <p>${escapeHtml(session.blurb)}</p>
+          <div class="tag-row">${tagRow(session.facets, "facet")}</div>
+          <div class="tag-row">${tagRow(session.audiences)}</div>
+        </article>`;
+    }).join("");
+
+    renderDayTabs();
+    renderDayProgramme();
+  }
+
+  function renderDayTabs() {
+    dayBlockTabs.innerHTML = blocks.map((block) => {
+      const active = activeDayBlock === block.block;
+      return `
+        <button type="button" class="block-tab ${state.selections[block.block] ? "is-complete" : ""}"
+          data-day-block="${block.block}" role="tab" aria-selected="${active ? "true" : "false"}">
+          <span>${escapeHtml(block.label)}</span>
+          <small>${state.selections[block.block] ? "Your choice highlighted" : "Browse sessions"}</small>
+        </button>`;
+    }).join("");
+
+    dayBlockTabs.querySelectorAll("[data-day-block]").forEach((button) => {
+      button.addEventListener("click", () => {
+        activeDayBlock = Number(button.dataset.dayBlock);
+        renderDayTabs();
+        renderDayProgramme();
+      });
+    });
+  }
+
+  function renderDayProgramme() {
+    const list = sessions.filter((session) => session.block === activeDayBlock).sort((a, b) => a.slot - b.slot);
+
+    dayProgramme.innerHTML = `
+      <div class="day-session-list">
+        ${list.map((session) => {
+          const mine = state.selections[activeDayBlock] === session.id;
+          const capacity = capacityInfo(session.id);
+          const audienceMini = session.audiences.map(abbreviateAudience).join(" · ");
+
+          return `
+            <button type="button" class="day-session ${mine ? "is-mine" : ""}" data-day-session="${session.id}">
+              <span>
+                <strong>${escapeHtml(session.title)}</strong>
+                <small>${escapeHtml(audienceMini)} · ${escapeHtml(session.facets.join(" · "))}</small>
+              </span>
+              ${mine
+                ? '<span class="mine-badge">MY SESSION</span>'
+                : `<span class="capacity-pill ${capacity.className}">${escapeHtml(capacity.label)}</span>`}
+            </button>`;
+        }).join("")}
+      </div>`;
+
+    dayProgramme.querySelectorAll("[data-day-session]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const session = sessionById.get(button.dataset.daySession);
+        if (!session) return;
+        activeBlock = session.block;
+        inspectedSessionId = session.id;
+        showBuilder();
+        renderProgramme();
+        document.querySelector(".programme-card")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    });
   }
 
   async function loadAvailability() {
@@ -218,111 +664,194 @@
         headers: { "Accept": "application/json" },
         cache: "no-store"
       });
+
       if (!response.ok) throw new Error("Availability request failed");
+
       const data = await response.json();
       registrationOpen = Boolean(data.registrationOpen);
-      for (const item of data.sessions || []) availability.set(item.id, item);
-      updateAvailabilityUI();
+      availabilityLoaded = true;
+
+      for (const item of data.sessions || []) {
+        availability.set(item.id, item);
+
+        if (item.full) {
+          const session = sessionById.get(item.id);
+          if (session && !state.confirmed && state.selections[session.block] === item.id) {
+            state.selections[session.block] = "";
+          }
+        }
+      }
+      persistState();
 
       statusBanner.hidden = false;
-      if (!registrationOpen) {
-        statusBanner.className = "status-banner status-waiting";
-        statusBanner.innerHTML =
-          "<strong>Session selection is not open yet.</strong><span>You can explore and test the programme now. Registration will be enabled once the final session list is confirmed.</span>";
-      } else {
+      if (registrationOpen) {
         statusBanner.className = "status-banner status-open";
         statusBanner.innerHTML =
-          "<strong>Registration is open.</strong><span>Availability is live and places are held only when you confirm.</span>";
+          "<strong>Registration is open.</strong><span>Availability is live. Your place is held when you confirm your pathway.</span>";
+      } else {
+        statusBanner.className = "status-banner status-waiting";
+        statusBanner.innerHTML =
+          "<strong>Preview mode is on.</strong><span>You can complete the full attendee journey with these test sessions. Nothing will be submitted while registration is closed.</span>";
       }
-      updateReview();
-    } catch (error) {
+
+      renderProgramme();
+      if (state.confirmed) renderPathwayView();
+      updateChrome();
+    } catch {
       registrationOpen = false;
+      availabilityLoaded = false;
       statusBanner.hidden = false;
       statusBanner.className = "status-banner status-error";
       statusBanner.innerHTML =
-        "<strong>Live availability is temporarily unavailable.</strong><span>Please refresh the page in a moment.</span>";
-      updateReview();
+        "<strong>Live availability is temporarily unavailable.</strong><span>You can still explore the programme, but confirmation is paused.</span>";
+      renderProgramme();
+      updateChrome();
     }
   }
 
-  function validateField(input, message) {
-    if (!input.value.trim()) {
-      input.setAttribute("aria-invalid", "true");
-      throw new Error(message);
-    }
-    input.removeAttribute("aria-invalid");
+  function saveDraftFromInputs() {
+    state.name = nameInput.value.trimStart();
+    state.email = emailInput.value.trimStart();
+    persistState();
+    updateChrome();
   }
 
-  function validateEmail(input) {
-    const value = input.value.trim();
-    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(value)) {
-      input.setAttribute("aria-invalid", "true");
+  function validateForm() {
+    formMessage.textContent = "";
+    nameInput.removeAttribute("aria-invalid");
+    emailInput.removeAttribute("aria-invalid");
+
+    if (!state.name.trim()) {
+      nameInput.setAttribute("aria-invalid", "true");
+      throw new Error("Please enter your name.");
+    }
+
+    if (!validEmail(state.email)) {
+      emailInput.setAttribute("aria-invalid", "true");
       throw new Error("Please enter a valid email address.");
     }
-    input.removeAttribute("aria-invalid");
+
+    if (!allChoicesComplete()) {
+      throw new Error("Please choose one session in each block.");
+    }
   }
 
-  form.addEventListener("submit", async (event) => {
+  async function confirmPathway(event) {
     event.preventDefault();
-    formMessage.textContent = "";
-    const nameInput = document.getElementById("name");
-    const emailInput = document.getElementById("email");
 
     try {
-      validateField(nameInput, "Please enter your name.");
-      validateField(emailInput, "Please enter your email address.");
-      validateEmail(emailInput);
-      if (![1, 2, 3].every((block) => selected[block])) {
-        throw new Error("Please choose one session in each block.");
+      state.name = nameInput.value.trim();
+      state.email = emailInput.value.trim();
+      validateForm();
+
+      if (state.confirmed) {
+        showPathway();
+        return;
       }
-      if (!registrationOpen) throw new Error("Registration is not open yet.");
 
       submitButton.disabled = true;
-      submitButton.textContent = "Confirming…";
-      const response = await fetch(API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "Accept": "application/json" },
-        body: JSON.stringify({
-          name: nameInput.value.trim(),
-          email: emailInput.value.trim(),
-          website: document.getElementById("website").value,
-          selections: { 1: selected[1], 2: selected[2], 3: selected[3] }
-        })
-      });
-      const data = await response.json().catch(() => ({}));
-      if (!response.ok) {
-        if (response.status === 409) await loadAvailability();
-        throw new Error(data.error || "We could not save your registration. Please try again.");
+      submitButton.textContent = registrationOpen ? "Confirming…" : "Saving test pathway…";
+
+      if (registrationOpen) {
+        const response = await fetch(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Accept": "application/json" },
+          body: JSON.stringify({
+            name: state.name,
+            email: state.email,
+            website: document.getElementById("website").value,
+            selections: {
+              1: state.selections[1],
+              2: state.selections[2],
+              3: state.selections[3]
+            }
+          })
+        });
+
+        const data = await response.json().catch(() => ({}));
+
+        if (!response.ok) {
+          if (response.status === 409) await loadAvailability();
+          throw new Error(data.error || "We could not save your registration. Please try again.");
+        }
+
+        state.mode = "live";
+      } else {
+        state.mode = "preview";
       }
-      showConfirmation(nameInput.value.trim(), emailInput.value.trim());
+
+      state.confirmed = true;
+      state.confirmedAt = new Date().toISOString();
+      persistState();
+      updateChrome();
+      renderProgramme();
+      renderPathwayView();
+      showPathway();
     } catch (error) {
       formMessage.textContent = error.message || "Please check your details and try again.";
       formMessage.scrollIntoView({ behavior: "smooth", block: "center" });
     } finally {
-      submitButton.textContent = "Confirm my sessions";
-      updateReview();
+      renderReview();
     }
-  });
-
-  function showConfirmation(name, email) {
-    document.getElementById("confirmationName").textContent =
-      `${name} (${email}), you have a place in each of the sessions below.`;
-    document.getElementById("confirmationSelections").innerHTML = [1, 2, 3].map((block) => {
-      const session = sessionDetails.get(selected[block]);
-      return `<article>
-          <span>Block ${block}</span>
-          <strong>${escapeHtml(session.title)}</strong>
-          <small>${escapeHtml(session.presenters)}</small>
-          <p>${escapeHtml(session.blurb)}</p>
-        </article>`;
-    }).join("");
-    form.hidden = true;
-    confirmation.hidden = false;
-    confirmation.focus();
-    confirmation.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
-  renderBlocks();
-  updateReview();
-  loadAvailability();
+  function resetPreview() {
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch {
+      // Ignore storage errors.
+    }
+    window.location.reload();
+  }
+
+  function initialise() {
+    nameInput.value = state.name || "";
+    emailInput.value = state.email || "";
+
+    renderFilters();
+
+    if (state.selections[1]) {
+      activeBlock = 1;
+      inspectedSessionId = state.selections[1];
+    } else {
+      inspectedSessionId = sessions.find((session) => session.block === activeBlock)?.id || "";
+    }
+
+    renderProgramme();
+    updateChrome();
+
+    nameInput.addEventListener("input", saveDraftFromInputs);
+    emailInput.addEventListener("input", saveDraftFromInputs);
+
+    clearFilters.addEventListener("click", () => {
+      state.audiences = [];
+      state.focus = [];
+      persistState();
+      renderFilters();
+      renderProgramme();
+    });
+
+    detailChooseButton.addEventListener("click", () => {
+      if (inspectedSessionId) selectSession(inspectedSessionId);
+    });
+
+    form.addEventListener("submit", confirmPathway);
+
+    navExplore.addEventListener("click", showBuilder);
+    navPathway.addEventListener("click", showPathway);
+    heroPathwayButton.addEventListener("click", showPathway);
+    returningViewButton.addEventListener("click", showPathway);
+    browseProgrammeButton.addEventListener("click", showBuilder);
+    resetPreviewButton.addEventListener("click", resetPreview);
+
+    if (state.confirmed) {
+      showPathway();
+    } else {
+      showBuilder();
+    }
+
+    loadAvailability();
+  }
+
+  initialise();
 })();
