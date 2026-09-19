@@ -64,6 +64,17 @@
   const savedPathwayCards = document.getElementById("savedPathwayCards");
   const dayBlockTabs = document.getElementById("dayBlockTabs");
   const dayProgramme = document.getElementById("dayProgramme");
+  const detailsCard = document.querySelector(".details-card");
+  const personaliseCard = document.querySelector(".personalise-card");
+  const pathwayCard = document.querySelector(".pathway-card");
+  const mobileFilterToggle = document.getElementById("mobileFilterToggle");
+  const filterCount = document.getElementById("filterCount");
+  const mobileDock = document.getElementById("mobileDock");
+  const mobileDockStatus = document.getElementById("mobileDockStatus");
+  const mobileDockAction = document.getElementById("mobileDockAction");
+  const mobileMedia = window.matchMedia("(max-width: 720px)");
+  const detailsAnchor = document.createComment("details-home");
+  detailsCard.parentNode.insertBefore(detailsAnchor, detailsCard);
 
   function loadState() {
     try {
@@ -238,10 +249,65 @@
         renderProgramme();
       });
     });
+
+    const activeFilterCount = state.audiences.length + state.focus.length;
+    filterCount.textContent = activeFilterCount ? String(activeFilterCount) : "";
+    personaliseCard.classList.toggle("has-filters", activeFilterCount > 0);
   }
 
   function toggleInArray(items, value) {
     return items.includes(value) ? items.filter((item) => item !== value) : [...items, value];
+  }
+
+  function isMobile() {
+    return mobileMedia.matches;
+  }
+
+  function syncResponsiveLayout() {
+    if (isMobile()) {
+      if (detailsCard.parentElement !== pathwayCard) {
+        pathwayCard.insertBefore(detailsCard, submitButton);
+      }
+      detailsCard.classList.add("mobile-final-details");
+      detailsCard.hidden = !allChoicesComplete() && !state.confirmed;
+    } else {
+      detailsCard.classList.remove("mobile-final-details");
+      detailsCard.hidden = false;
+      if (detailsCard.parentElement !== detailsAnchor.parentElement || detailsCard.previousSibling !== detailsAnchor) {
+        detailsAnchor.parentNode.insertBefore(detailsCard, detailsAnchor.nextSibling);
+      }
+      personaliseCard.classList.remove("is-open");
+      mobileFilterToggle.setAttribute("aria-expanded", "false");
+    }
+  }
+
+  function updateMobileDock() {
+    const show = isMobile() && !state.confirmed && !builderView.hidden;
+    mobileDock.hidden = !show;
+    if (!show) return;
+
+    const count = selectedCount();
+    if (count < 3) {
+      const nextBlock = [1, 2, 3].find((block) => !state.selections[block]) || activeBlock;
+      mobileDockStatus.textContent = `${count} of 3 sessions chosen`;
+      mobileDockAction.textContent = count === 0 ? "Choose Block 1" : `Choose Block ${nextBlock}`;
+      mobileDockAction.dataset.action = "block";
+      mobileDockAction.dataset.block = String(nextBlock);
+      return;
+    }
+
+    if (!detailsComplete()) {
+      mobileDockStatus.textContent = "3 of 3 sessions chosen";
+      mobileDockAction.textContent = "Add my details";
+      mobileDockAction.dataset.action = "details";
+      delete mobileDockAction.dataset.block;
+      return;
+    }
+
+    mobileDockStatus.textContent = "Ready to confirm";
+    mobileDockAction.textContent = registrationOpen ? "Review & confirm" : "Review test pathway";
+    mobileDockAction.dataset.action = "review";
+    delete mobileDockAction.dataset.block;
   }
 
   function renderBlockTabs() {
