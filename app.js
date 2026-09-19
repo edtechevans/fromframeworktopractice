@@ -369,7 +369,7 @@
     wireProgrammeEvents();
 
     if (!inspectedSessionId || !sessionById.has(inspectedSessionId) || sessionById.get(inspectedSessionId).block !== activeBlock) {
-      inspectedSessionId = state.selections[activeBlock] || blockSessions[0]?.id || "";
+      inspectedSessionId = state.selections[activeBlock] || (isMobile() ? "" : blockSessions[0]?.id || "");
     }
 
     updateInspectedClasses();
@@ -629,6 +629,8 @@
 
     updateProgress();
     renderReview();
+    syncResponsiveLayout();
+    updateMobileDock();
   }
 
   function showBuilder(shouldScroll = true) {
@@ -636,6 +638,8 @@
     pathwayView.hidden = true;
     navExplore.classList.add("is-active");
     navPathway.classList.remove("is-active");
+    syncResponsiveLayout();
+    updateMobileDock();
     if (shouldScroll) {
       document.getElementById("experience")?.scrollIntoView({ behavior: "smooth", block: "start" });
     }
@@ -652,6 +656,7 @@
     pathwayView.hidden = false;
     navExplore.classList.remove("is-active");
     navPathway.classList.add("is-active");
+    mobileDock.hidden = true;
     if (shouldScroll) {
       document.getElementById("experience")?.scrollIntoView({ behavior: "smooth", block: "start" });
     }
@@ -789,7 +794,7 @@
       statusBanner.hidden = false;
       statusBanner.className = "status-banner status-error";
       statusBanner.innerHTML =
-        "<strong>Live availability is temporarily unavailable.</strong><span>You can still explore the programme, but confirmation is paused.</span>";
+        "<strong>Live capacity is reconnecting.</strong><span>You can keep exploring the programme. Confirmation will resume once the connection is restored.</span>";
       renderProgramme();
       updateChrome();
     }
@@ -904,7 +909,7 @@
       activeBlock = 1;
       inspectedSessionId = state.selections[1];
     } else {
-      inspectedSessionId = sessions.find((session) => session.block === activeBlock)?.id || "";
+      inspectedSessionId = isMobile() ? "" : sessions.find((session) => session.block === activeBlock)?.id || "";
     }
 
     renderProgramme();
@@ -920,6 +925,47 @@
       renderFilters();
       renderProgramme();
     });
+
+    mobileFilterToggle.addEventListener("click", () => {
+      const isOpen = personaliseCard.classList.toggle("is-open");
+      mobileFilterToggle.setAttribute("aria-expanded", String(isOpen));
+    });
+
+    mobileDockAction.addEventListener("click", () => {
+      const action = mobileDockAction.dataset.action;
+
+      if (action === "block") {
+        activeBlock = Number(mobileDockAction.dataset.block || 1);
+        inspectedSessionId = state.selections[activeBlock] || "";
+        renderProgramme();
+        document.querySelector(".programme-card")?.scrollIntoView({ behavior: "smooth", block: "start" });
+        return;
+      }
+
+      if (action === "details") {
+        detailsCard.hidden = false;
+        detailsCard.scrollIntoView({ behavior: "smooth", block: "center" });
+        return;
+      }
+
+      if (action === "review") {
+        pathwayCard.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    });
+
+    const onMobileChange = () => {
+      if (!isMobile() && !inspectedSessionId) {
+        inspectedSessionId = state.selections[activeBlock] || sessions.find((session) => session.block === activeBlock)?.id || "";
+        renderProgramme();
+      }
+      syncResponsiveLayout();
+      updateMobileDock();
+    };
+    if (typeof mobileMedia.addEventListener === "function") {
+      mobileMedia.addEventListener("change", onMobileChange);
+    } else if (typeof mobileMedia.addListener === "function") {
+      mobileMedia.addListener(onMobileChange);
+    }
 
     detailChooseButton.addEventListener("click", () => {
       if (inspectedSessionId) selectSession(inspectedSessionId);
