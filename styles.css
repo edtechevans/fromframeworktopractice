@@ -194,7 +194,7 @@ footer i{color:#ef334d;font-style:normal;padding:0 .2rem}
 .session-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.55rem;margin-top:0}
 .session-card{display:block;position:relative;cursor:pointer}
 .session-card input{position:absolute;opacity:0;pointer-events:none}
-.session-row{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:.7rem;min-height:64px;border:1px solid #dce4ec;border-radius:.78rem;padding:.68rem .72rem;background:#fff;transition:.15s ease}
+.session-row{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:.7rem;min-height:54px;border:1px solid #dce4ec;border-radius:.78rem;padding:.68rem .72rem;background:#fff;transition:.15s ease}
 .session-card:hover .session-row{border-color:#9caaba;box-shadow:0 7px 22px rgba(8,30,60,.06);transform:translateY(-1px)}
 .session-card input:focus-visible+.session-row{outline:3px solid var(--navy);outline-offset:2px}
 .session-card input:checked+.session-row{border:2px solid var(--navy);background:#f5f8fb}
@@ -203,7 +203,6 @@ footer i{color:#ef334d;font-style:normal;padding:0 .2rem}
 .session-copy{min-width:0}
 .session-copy strong,.session-copy small{display:block}
 .session-copy strong{color:var(--navy);font-size:.84rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.session-copy small{margin-top:.08rem;color:#8995a4;font-size:.64rem}
 .session-row .capacity{font-size:.64rem;white-space:nowrap}
 .session-card.is-full{cursor:not-allowed}
 .session-card.is-full .session-row{background:#f5f6f8;opacity:.65}
