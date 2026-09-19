@@ -68,10 +68,10 @@
   function loadState() {
     try {
       const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
-      if (!parsed || typeof parsed !== "object") return structuredClone(defaultState);
+      if (!parsed || typeof parsed !== "object") return JSON.parse(JSON.stringify(defaultState));
 
       return {
-        ...structuredClone(defaultState),
+        ...JSON.parse(JSON.stringify(defaultState)),
         ...parsed,
         selections: {
           ...defaultState.selections,
@@ -83,7 +83,7 @@
           : []
       };
     } catch {
-      return structuredClone(defaultState);
+      return JSON.parse(JSON.stringify(defaultState));
     }
   }
 
@@ -502,11 +502,18 @@
       submitButton.textContent = "Pathway confirmed";
       submitHelp.textContent = "Your confirmed pathway is saved on this browser.";
     } else {
-      submitButton.disabled = !(detailsComplete() && allChoicesComplete());
-      submitButton.textContent = registrationOpen ? "Confirm my pathway" : "Save test pathway";
+      const confirmationAvailable = registrationOpen || availabilityLoaded;
+      submitButton.disabled = !(detailsComplete() && allChoicesComplete() && confirmationAvailable);
+      submitButton.textContent = registrationOpen
+        ? "Confirm my pathway"
+        : availabilityLoaded
+          ? "Save test pathway"
+          : "Confirmation unavailable";
       submitHelp.textContent = registrationOpen
         ? "Your name, email address and choices are used only to manage this event."
-        : "Preview mode: this test pathway is saved only on this browser and is not submitted.";
+        : availabilityLoaded
+          ? "Preview mode: this test pathway is saved only on this browser and is not submitted."
+          : "Live capacity could not be checked, so confirmation is temporarily paused.";
     }
   }
 
@@ -549,17 +556,19 @@
     renderReview();
   }
 
-  function showBuilder() {
+  function showBuilder(shouldScroll = true) {
     builderView.hidden = false;
     pathwayView.hidden = true;
     navExplore.classList.add("is-active");
     navPathway.classList.remove("is-active");
-    document.getElementById("experience")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    if (shouldScroll) {
+      document.getElementById("experience")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
   }
 
-  function showPathway() {
+  function showPathway(shouldScroll = true) {
     if (!state.confirmed) {
-      showBuilder();
+      showBuilder(shouldScroll);
       return;
     }
 
@@ -568,7 +577,9 @@
     pathwayView.hidden = false;
     navExplore.classList.remove("is-active");
     navPathway.classList.add("is-active");
-    document.getElementById("experience")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    if (shouldScroll) {
+      document.getElementById("experience")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
   }
 
   function renderPathwayView() {
@@ -749,6 +760,10 @@
         return;
       }
 
+      if (!registrationOpen && !availabilityLoaded) {
+        throw new Error("Live capacity could not be checked. Please refresh and try again.");
+      }
+
       submitButton.disabled = true;
       submitButton.textContent = registrationOpen ? "Confirming…" : "Saving test pathway…";
 
@@ -845,9 +860,9 @@
     resetPreviewButton.addEventListener("click", resetPreview);
 
     if (state.confirmed) {
-      showPathway();
+      showPathway(false);
     } else {
-      showBuilder();
+      showBuilder(false);
     }
 
     loadAvailability();
