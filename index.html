@@ -123,7 +123,7 @@
           <fieldset class="details-card">
             <legend>Your details</legend>
             <div class="details-copy">
-              <p>No account. No password. Your draft and confirmed pathway can be kept on this browser so you can return on the day.</p>
+              <p>We only use this to hold your three places. No account or password is created, and your pathway stays available on this browser.</p>
             </div>
             <div class="details-grid">
               <label>
@@ -148,7 +148,12 @@
                 <h3 id="personaliseTitle">Help me find the right sessions</h3>
                 <p>Choose any audience or focus tags. Matching sessions will rise to the top of each block, but you can still see every option.</p>
               </div>
-              <button id="clearFilters" class="text-button" type="button">Clear preferences</button>
+              <div class="personalise-actions">
+                <button id="mobileFilterToggle" class="filter-toggle" type="button" aria-expanded="false">
+                  Personalise <span id="filterCount"></span>
+                </button>
+                <button id="clearFilters" class="text-button" type="button">Clear preferences</button>
+              </div>
             </div>
 
             <div class="preference-group">
@@ -188,7 +193,7 @@
 
                 <div id="sessionDetail" class="session-detail" aria-live="polite">
                   <h3>Explore before you choose.</h3>
-                  <p>Select or hover over any session to see its presenter, description, audience, TLF connections, and focus tags here.</p>
+                  <p>Select a session to see its presenter, description, audience, TLF connections, and focus tags here.</p>
                 </div>
 
                 <button id="detailChooseButton" class="choose-button" type="button" disabled>Choose this session</button>
@@ -251,6 +256,14 @@
       </section>
     </section>
   </main>
+
+  <div id="mobileDock" class="mobile-dock" hidden aria-live="polite">
+    <div class="mobile-dock-copy">
+      <span>MY PATHWAY</span>
+      <strong id="mobileDockStatus">0 of 3 sessions chosen</strong>
+    </div>
+    <button id="mobileDockAction" class="mobile-dock-action" type="button">Choose Block 1</button>
+  </div>
 
   <footer>
     <div>
