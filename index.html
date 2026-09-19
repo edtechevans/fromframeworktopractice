@@ -6,7 +6,7 @@
   <meta name="description" content="Build your learning pathway for From Framework to Practice at AISG." />
   <meta name="theme-color" content="#0b294b" />
   <meta property="og:title" content="From Framework to Practice" />
-  <meta property="og:description" content="Explore the programme, choose one session in each block, and keep your pathway on this browser." />
+  <meta property="og:description" content="Explore the programme, choose one workshop in each of three programme sessions, and keep your pathway on this browser." />
   <meta property="og:type" content="website" />
   <title>From Framework to Practice | AISG</title>
   <link rel="stylesheet" href="./styles.css" />
@@ -45,16 +45,16 @@
           <p class="eyebrow">TEACHERS TEACH TEACHERS</p>
           <h1>From Framework <em>to</em> <span>Practice</span></h1>
           <p class="hero-lede">
-            Build a learning pathway that fits your context. Choose one session in each of three blocks, with live capacity capped at
+            Build a learning pathway that fits your context. Choose one workshop in each of Session 1, Session 2 and Session 3, with live capacity capped at
             <strong>15 participants per session</strong>.
           </p>
 
           <div class="hero-meta" aria-label="Event details">
             <span>November 2</span>
             <i>•</i>
-            <span>3 session blocks</span>
+            <span>3 programme sessions</span>
             <i>•</i>
-            <span>30 sessions</span>
+            <span>30 workshop choices</span>
             <i>•</i>
             <span>No account required</span>
           </div>
@@ -110,11 +110,11 @@
         <div id="progressStrip" class="progress-strip" aria-label="Registration progress">
           <div class="progress-step" data-progress="details"><span>1</span><strong>Details</strong></div>
           <div class="progress-line"></div>
-          <div class="progress-step" data-progress="1"><span>2</span><strong>Block 1</strong></div>
+          <div class="progress-step" data-progress="1"><span>2</span><strong>Session 1</strong></div>
           <div class="progress-line"></div>
-          <div class="progress-step" data-progress="2"><span>3</span><strong>Block 2</strong></div>
+          <div class="progress-step" data-progress="2"><span>3</span><strong>Session 2</strong></div>
           <div class="progress-line"></div>
-          <div class="progress-step" data-progress="3"><span>4</span><strong>Block 3</strong></div>
+          <div class="progress-step" data-progress="3"><span>4</span><strong>Session 3</strong></div>
           <div class="progress-line"></div>
           <div class="progress-step" data-progress="confirm"><span>5</span><strong>Confirm</strong></div>
         </div>
@@ -146,7 +146,7 @@
               <div>
                 <p class="eyebrow">OPTIONAL</p>
                 <h3 id="personaliseTitle">Help me find the right sessions</h3>
-                <p>Choose any audience or focus tags. Matching sessions will rise to the top of each block, but you can still see every option.</p>
+                <p>Choose any audience or focus tags. Matching workshops will rise to the top of each session, but you can still see every option.</p>
               </div>
               <div class="personalise-actions">
                 <button id="mobileFilterToggle" class="filter-toggle" type="button" aria-expanded="false">
@@ -172,12 +172,12 @@
               <div class="programme-heading">
                 <div>
                   <p class="eyebrow">PROGRAMME</p>
-                  <h3 id="programmeTitle">Choose one session per block</h3>
+                  <h3 id="programmeTitle">Choose one workshop in each session</h3>
                 </div>
                 <span id="matchSummary" class="match-summary">Showing all sessions</span>
               </div>
 
-              <div id="blockTabs" class="block-tabs" role="tablist" aria-label="Session blocks"></div>
+              <div id="blockTabs" class="block-tabs" role="tablist" aria-label="Programme sessions"></div>
               <div id="blocks"></div>
             </section>
 
@@ -245,12 +245,12 @@
           <div class="day-browser-heading">
             <div>
               <p class="eyebrow">WHAT ELSE IS ON?</p>
-              <h3 id="dayBrowserTitle">Browse the full programme by block</h3>
+              <h3 id="dayBrowserTitle">Browse the full programme by session</h3>
             </div>
             <p>Your chosen sessions are highlighted. Everything else remains one tap away.</p>
           </div>
 
-          <div id="dayBlockTabs" class="block-tabs day-tabs" role="tablist" aria-label="Programme blocks"></div>
+          <div id="dayBlockTabs" class="block-tabs day-tabs" role="tablist" aria-label="Programme sessions"></div>
           <div id="dayProgramme"></div>
         </section>
       </section>
@@ -260,9 +260,9 @@
   <div id="mobileDock" class="mobile-dock" hidden aria-live="polite">
     <div class="mobile-dock-copy">
       <span>MY PATHWAY</span>
-      <strong id="mobileDockStatus">0 of 3 sessions chosen</strong>
+      <strong id="mobileDockStatus">0 of 3 workshops chosen</strong>
     </div>
-    <button id="mobileDockAction" class="mobile-dock-action" type="button">Choose Block 1</button>
+    <button id="mobileDockAction" class="mobile-dock-action" type="button">Choose Session 1</button>
   </div>
 
   <footer>
