@@ -1888,3 +1888,83 @@ footer i{
     padding:1.1rem;
   }
 }
+
+
+/* Compact desktop landing area */
+@media(min-width:721px){
+  .hero-grid{
+    min-height:235px;
+    padding:1.25rem clamp(1rem,4vw,3rem) 3.8rem;
+    grid-template-columns:minmax(0,1.65fr) minmax(155px,.35fr);
+    gap:clamp(1.25rem,3vw,2.5rem);
+  }
+  .hero .eyebrow{
+    margin-bottom:.35rem;
+    font-size:.62rem;
+  }
+  .hero h1{
+    max-width:980px;
+    font-size:clamp(2.45rem,4.15vw,4rem);
+    line-height:.94;
+  }
+  .hero-lede{
+    max-width:900px;
+    margin-top:.62rem;
+    font-size:.91rem;
+    line-height:1.5;
+  }
+  .hero-meta{
+    margin-top:.55rem;
+    gap:.42rem;
+    font-size:.68rem;
+  }
+  .hero-actions{
+    margin-top:.72rem;
+  }
+  .hero-actions .primary-button,
+  .hero-actions .secondary-button{
+    min-height:42px;
+    padding:.58rem 1rem;
+    font-size:.82rem;
+  }
+  .hero-framework{
+    width:min(165px,100%);
+  }
+  .framework-orbit{
+    padding:3px;
+    box-shadow:0 10px 30px rgba(9,31,61,.09);
+  }
+  .framework-caption{
+    margin-top:.35rem;
+  }
+  .framework-caption span{
+    font-size:.48rem;
+    letter-spacing:.1em;
+  }
+  .framework-caption strong{
+    margin-top:.08rem;
+    font-size:.62rem;
+    line-height:1.25;
+  }
+  .hero-landscape{
+    height:60px;
+  }
+  .ridge{
+    height:50px;
+  }
+  .ridge-two{
+    transform:translateY(13px) scaleX(1.05);
+  }
+  .red-sweep,.navy-sweep{
+    height:38px;
+  }
+  .red-sweep{
+    bottom:-31px;
+  }
+  .navy-sweep{
+    bottom:-12px;
+  }
+  .experience-shell{
+    padding-top:1.35rem;
+  }
+}
