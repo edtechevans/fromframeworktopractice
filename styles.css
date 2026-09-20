@@ -1760,3 +1760,131 @@ footer i{
     display:none;
   }
 }
+
+
+/* Simple registration flow refinement */
+.filter-toggle{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+}
+.personalise-card:not(.is-open) .preference-group{
+  display:none;
+}
+.personalise-card:not(.is-open) #clearFilters{
+  display:none;
+}
+.personalise-card:not(.is-open) .personalise-heading .eyebrow,
+.personalise-card:not(.is-open) .personalise-heading p:last-child{
+  display:none;
+}
+.personalise-card:not(.is-open){
+  padding:.85rem 1rem;
+}
+.personalise-card:not(.is-open) .personalise-heading{
+  align-items:center;
+}
+.personalise-card:not(.is-open) .personalise-heading h3{
+  margin:0;
+  font-size:1rem;
+}
+.pathway-card .details-card.final-details{
+  margin:.85rem 0;
+  padding:.85rem 0 0;
+  border:0;
+  border-top:1px solid var(--line);
+  border-radius:0;
+  box-shadow:none;
+}
+.pathway-card .details-card.final-details legend{
+  padding:0;
+  margin:0 0 .2rem;
+}
+.pathway-card .details-card.final-details .details-copy p{
+  margin:.05rem 0 .7rem;
+}
+.match-badge{
+  background:#e5edf6;
+  color:var(--navy);
+}
+.capacity-pill:empty{
+  display:none;
+}
+.returning-attendee .hero{
+  display:none;
+}
+.returning-attendee .experience-shell{
+  padding-top:clamp(1.4rem,3vw,2.5rem);
+}
+.returning-attendee #statusBanner{
+  display:none!important;
+}
+.day-session{
+  cursor:pointer;
+}
+.day-detail-dialog{
+  width:min(560px,calc(100% - 2rem));
+  max-height:min(760px,calc(100vh - 2rem));
+  border:0;
+  border-radius:1.2rem;
+  padding:0;
+  color:var(--ink);
+  background:#fff;
+  box-shadow:0 30px 90px rgba(9,31,61,.28);
+}
+.day-detail-dialog::backdrop{
+  background:rgba(8,25,46,.54);
+  backdrop-filter:blur(4px);
+}
+.day-detail-dialog-inner{
+  position:relative;
+  padding:1.35rem;
+}
+.dialog-close{
+  position:absolute;
+  top:.85rem;
+  right:.85rem;
+  border:1px solid var(--line);
+  border-radius:999px;
+  background:#fff;
+  color:var(--navy);
+  padding:.42rem .65rem;
+  font-size:.68rem;
+  font-weight:850;
+  cursor:pointer;
+}
+.day-detail-dialog h2{
+  margin:.35rem 4rem .35rem 0;
+  color:var(--navy);
+  font-size:1.35rem;
+  line-height:1.2;
+}
+.day-detail-dialog .presenter-line{
+  color:var(--red);
+  font-size:.78rem;
+  font-weight:800;
+}
+.day-detail-dialog .blurb-line{
+  color:#5d6d81;
+  font-size:.82rem;
+  line-height:1.58;
+}
+.dialog-capacity{
+  margin:.85rem 0 0;
+}
+@media(max-width:720px){
+  .personalise-card:not(.is-open) .personalise-heading{
+    flex-direction:row;
+  }
+  .pathway-card .details-card.final-details{
+    margin:.8rem 0 .9rem;
+  }
+  .day-detail-dialog{
+    width:calc(100% - 1rem);
+    max-height:calc(100vh - 1rem);
+    border-radius:1rem;
+  }
+  .day-detail-dialog-inner{
+    padding:1.1rem;
+  }
+}
