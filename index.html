@@ -12,7 +12,7 @@
   <meta property="og:description" content="Explore the programme, choose one workshop in each of three programme sessions, and keep your pathway on this browser." />
   <meta property="og:type" content="website" />
   <title>From Framework to Practice | AISG</title>
-  <link rel="stylesheet" href="./styles.css?v=20260920-0812" />
+  <link rel="stylesheet" href="./styles.css?v=20260920-simple2" />
 </head>
 <body>
   <a class="skip-link" href="#experience">Skip to the programme</a>
@@ -22,7 +22,7 @@
       <a class="brand" href="#top" aria-label="From Framework to Practice home">
         <img
           class="aisg-logo"
-          src="https://raw.githubusercontent.com/edtechevans/AISG/main/public/aisg-logo.png"
+          src="./assets/aisg-logo.png"
           alt="American International School of Guangzhou"
         />
         <span class="brand-copy">
@@ -111,49 +111,29 @@
         </div>
 
         <div id="progressStrip" class="progress-strip" aria-label="Registration progress">
-          <div class="progress-step" data-progress="details"><span>1</span><strong>Details</strong></div>
+          <div class="progress-step" data-progress="1"><span>1</span><strong>Session 1</strong></div>
           <div class="progress-line"></div>
-          <div class="progress-step" data-progress="1"><span>2</span><strong>Session 1</strong></div>
+          <div class="progress-step" data-progress="2"><span>2</span><strong>Session 2</strong></div>
           <div class="progress-line"></div>
-          <div class="progress-step" data-progress="2"><span>3</span><strong>Session 2</strong></div>
+          <div class="progress-step" data-progress="3"><span>3</span><strong>Session 3</strong></div>
           <div class="progress-line"></div>
-          <div class="progress-step" data-progress="3"><span>4</span><strong>Session 3</strong></div>
+          <div class="progress-step" data-progress="details"><span>4</span><strong>Details</strong></div>
           <div class="progress-line"></div>
           <div class="progress-step" data-progress="confirm"><span>5</span><strong>Confirm</strong></div>
         </div>
 
         <form id="registrationForm" novalidate>
-          <fieldset class="details-card">
-            <legend>Your details</legend>
-            <div class="details-copy">
-              <p>We only use this to hold your three places. No account or password is created, and your pathway stays available on this browser.</p>
-            </div>
-            <div class="details-grid">
-              <label>
-                <span>Name</span>
-                <input id="name" name="name" autocomplete="name" maxlength="120" required />
-              </label>
-              <label>
-                <span>Email Address</span>
-                <input id="email" name="email" type="email" autocomplete="email" maxlength="254" required />
-              </label>
-            </div>
-            <label class="honeypot" aria-hidden="true">
-              Website
-              <input id="website" name="website" tabindex="-1" autocomplete="off" />
-            </label>
-          </fieldset>
 
           <section class="personalise-card" aria-labelledby="personaliseTitle">
             <div class="personalise-heading">
               <div>
                 <p class="eyebrow">OPTIONAL</p>
-                <h3 id="personaliseTitle">Help me find the right sessions</h3>
-                <p>Choose any audience or focus tags. Matching workshops will rise to the top of each session, but you can still see every option.</p>
+                <h3 id="personaliseTitle">Personalise recommendations</h3>
+                <p>Choose your audience or interests to bring the strongest matches to the top. Every workshop remains visible.</p>
               </div>
               <div class="personalise-actions">
                 <button id="mobileFilterToggle" class="filter-toggle" type="button" aria-expanded="false">
-                  Personalise <span id="filterCount"></span>
+                  <span id="filterToggleLabel">Show filters</span><span id="filterCount"></span>
                 </button>
                 <button id="clearFilters" class="text-button" type="button">Clear preferences</button>
               </div>
@@ -177,7 +157,7 @@
                   <p class="eyebrow">PROGRAMME</p>
                   <h3 id="programmeTitle">Choose one workshop in each session</h3>
                 </div>
-                <span id="matchSummary" class="match-summary">Showing all sessions</span>
+                <span id="matchSummary" class="match-summary">All workshops shown</span>
               </div>
 
               <div id="blockTabs" class="block-tabs" role="tablist" aria-label="Programme sessions"></div>
@@ -206,12 +186,33 @@
                 <div class="pathway-heading">
                   <div>
                     <p class="rail-kicker">MY PATHWAY</p>
-                    <h3 id="pathwayTitle">Your three sessions</h3>
+                    <h3 id="pathwayTitle">Your three workshops</h3>
                   </div>
                   <span id="choiceCount">0 / 3</span>
                 </div>
 
                 <div id="reviewSelections" class="review-selections" aria-live="polite"></div>
+
+          <fieldset class="details-card" hidden>
+            <legend>Your details</legend>
+            <div class="details-copy">
+              <p>We only use this to hold your three places. No account or password is created, and your pathway stays available on this browser.</p>
+            </div>
+            <div class="details-grid">
+              <label>
+                <span>Name</span>
+                <input id="name" name="name" autocomplete="name" maxlength="120" required />
+              </label>
+              <label>
+                <span>Email Address</span>
+                <input id="email" name="email" type="email" autocomplete="email" maxlength="254" required />
+              </label>
+            </div>
+            <label class="honeypot" aria-hidden="true">
+              Website
+              <input id="website" name="website" tabindex="-1" autocomplete="off" />
+            </label>
+          </fieldset>
 
                 <button id="submitButton" class="primary-button submit-button" type="submit" disabled>
                   Confirm my pathway
@@ -250,7 +251,7 @@
               <p class="eyebrow">WHAT ELSE IS ON?</p>
               <h3 id="dayBrowserTitle">Browse the full programme by session</h3>
             </div>
-            <p>Your chosen sessions are highlighted. Everything else remains one tap away.</p>
+            <p>Your workshops are highlighted. Tap any workshop to view its details.</p>
           </div>
 
           <div id="dayBlockTabs" class="block-tabs day-tabs" role="tablist" aria-label="Programme sessions"></div>
@@ -259,6 +260,14 @@
       </section>
     </section>
   </main>
+
+
+  <dialog id="dayDetailDialog" class="day-detail-dialog" aria-labelledby="dayDetailTitle">
+    <div class="day-detail-dialog-inner">
+      <button id="dayDetailClose" class="dialog-close" type="button" aria-label="Close workshop details">Close</button>
+      <div id="dayDetailContent"></div>
+    </div>
+  </dialog>
 
   <div id="mobileDock" class="mobile-dock" hidden aria-live="polite">
     <div class="mobile-dock-copy">
@@ -276,7 +285,7 @@
     <div>Learn <i>•</i> Connect <i>•</i> Apply <i>•</i> Make a Difference</div>
   </footer>
 
-  <script src="./sessions.js?v=20260920-0812"></script>
-  <script src="./app.js?v=20260920-0812"></script>
+  <script src="./sessions.js?v=20260920-simple2"></script>
+  <script src="./app.js?v=20260920-simple2"></script>
 </body>
 </html>
