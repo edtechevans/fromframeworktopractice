@@ -69,12 +69,14 @@
   const pathwayCard = document.querySelector(".pathway-card");
   const mobileFilterToggle = document.getElementById("mobileFilterToggle");
   const filterCount = document.getElementById("filterCount");
+  const filterToggleLabel = document.getElementById("filterToggleLabel");
   const mobileDock = document.getElementById("mobileDock");
   const mobileDockStatus = document.getElementById("mobileDockStatus");
   const mobileDockAction = document.getElementById("mobileDockAction");
   const mobileMedia = window.matchMedia("(max-width: 720px)");
-  const detailsAnchor = document.createComment("details-home");
-  detailsCard.parentNode.insertBefore(detailsAnchor, detailsCard);
+  const dayDetailDialog = document.getElementById("dayDetailDialog");
+  const dayDetailContent = document.getElementById("dayDetailContent");
+  const dayDetailClose = document.getElementById("dayDetailClose");
 
   function loadState() {
     try {
@@ -141,7 +143,7 @@
   function capacityInfo(sessionId) {
     const data = availability.get(sessionId);
     if (!availabilityLoaded || !data) {
-      return { label: "Checking", className: "neutral", full: false, remaining: null };
+      return { label: "", className: "neutral", full: false, remaining: null };
     }
     if (data.full) {
       return { label: "Full", className: "full", full: true, remaining: 0 };
@@ -154,7 +156,7 @@
         remaining: data.remaining
       };
     }
-    return { label: "Available", className: "available", full: false, remaining: data.remaining };
+    return { label: "", className: "available", full: false, remaining: data.remaining };
   }
 
   function filtersActive() {
@@ -162,16 +164,7 @@
   }
 
   function sessionMatches(session) {
-    const audienceMatch =
-      state.audiences.length === 0 ||
-      state.audiences.some((audience) => session.audiences.includes(audience));
-
-    const sessionFocus = [...session.facets, ...session.themes];
-    const focusMatch =
-      state.focus.length === 0 ||
-      state.focus.some((focus) => sessionFocus.includes(focus));
-
-    return filtersActive() && audienceMatch && focusMatch;
+    return filtersActive() && matchScore(session) > 0;
   }
 
   function matchScore(session) {
@@ -186,18 +179,24 @@
     return score;
   }
 
+  function recommendedIdsForBlock(block) {
+    if (!filtersActive()) return [];
+    return sessions
+      .filter((session) => session.block === block)
+      .map((session) => ({ id: session.id, score: matchScore(session), slot: session.slot }))
+      .filter((item) => item.score > 0)
+      .sort((a, b) => b.score - a.score || a.slot - b.slot)
+      .slice(0, 3)
+      .map((item) => item.id);
+  }
+
   function sessionsForBlock(block) {
     const list = sessions.filter((session) => session.block === block);
     if (!filtersActive()) return list.slice().sort((a, b) => a.slot - b.slot);
 
     return list.slice().sort((a, b) => {
-      const aMatch = sessionMatches(a) ? 1 : 0;
-      const bMatch = sessionMatches(b) ? 1 : 0;
-      if (bMatch !== aMatch) return bMatch - aMatch;
-
       const scoreDiff = matchScore(b) - matchScore(a);
       if (scoreDiff !== 0) return scoreDiff;
-
       return a.slot - b.slot;
     });
   }
@@ -264,21 +263,8 @@
   }
 
   function syncResponsiveLayout() {
-    if (isMobile()) {
-      if (detailsCard.parentElement !== pathwayCard) {
-        pathwayCard.insertBefore(detailsCard, submitButton);
-      }
-      detailsCard.classList.add("mobile-final-details");
-      detailsCard.hidden = !allChoicesComplete() && !state.confirmed;
-    } else {
-      detailsCard.classList.remove("mobile-final-details");
-      detailsCard.hidden = false;
-      if (detailsCard.parentElement !== detailsAnchor.parentElement || detailsCard.previousSibling !== detailsAnchor) {
-        detailsAnchor.parentNode.insertBefore(detailsCard, detailsAnchor.nextSibling);
-      }
-      personaliseCard.classList.remove("is-open");
-      mobileFilterToggle.setAttribute("aria-expanded", "false");
-    }
+    detailsCard.classList.add("final-details");
+    detailsCard.hidden = !allChoicesComplete() && !state.confirmed;
   }
 
   function updateMobileDock() {
@@ -339,12 +325,12 @@
     renderBlockTabs();
 
     const blockSessions = sessionsForBlock(activeBlock);
-    const matching = blockSessions.filter((session) => sessionMatches(session)).length;
+    const recommendedIds = recommendedIdsForBlock(activeBlock);
 
     if (filtersActive()) {
-      matchSummary.textContent = `${matching} tagged ${matching === 1 ? "match" : "matches"} in Session ${activeBlock} · all sessions still shown`;
+      matchSummary.textContent = `${recommendedIds.length} best ${recommendedIds.length === 1 ? "match" : "matches"} highlighted · all workshops shown`;
     } else {
-      matchSummary.textContent = "Showing all sessions";
+      matchSummary.textContent = "All workshops shown";
     }
 
     blocksRoot.innerHTML = `
@@ -355,7 +341,7 @@
         </div>
 
         <div class="session-list">
-          ${blockSessions.map(renderSessionEntry).join("")}
+          ${blockSessions.map((session) => renderSessionEntry(session, recommendedIds.includes(session.id))).join("")}
         </div>
 
         ${activeBlock < 3 ? `
@@ -379,23 +365,22 @@
     updateProgress();
   }
 
-  function renderSessionEntry(session) {
+  function renderSessionEntry(session, recommended = false) {
     const capacity = capacityInfo(session.id);
     const chosen = state.selections[session.block] === session.id;
-    const match = sessionMatches(session);
     const expanded = inspectedSessionId === session.id;
     const audienceMini = session.audiences.map(abbreviateAudience).join(" · ");
     const facetsMini = session.facets.slice(0, 2).join(" · ");
 
     return `
-      <article class="session-entry ${chosen ? "is-chosen" : ""} ${match ? "is-match" : ""} ${capacity.full ? "is-full" : ""}"
+      <article class="session-entry ${chosen ? "is-chosen" : ""} ${recommended ? "is-match" : ""} ${capacity.full ? "is-full" : ""}"
         data-session-entry="${session.id}">
         <button type="button" class="session-inspect" data-inspect="${session.id}" aria-expanded="${expanded ? "true" : "false"}">
           <span class="session-main">
             <span class="session-title-row">
               <span class="session-title">${escapeHtml(session.title)}</span>
               ${chosen ? '<span class="chosen-badge">MY SESSION</span>' : ""}
-              ${match && !chosen ? '<span class="match-badge">MATCH</span>' : ""}
+              ${recommended && !chosen ? '<span class="match-badge">BEST MATCH</span>' : ""}
             </span>
             <span class="session-mini-tags">
               <span class="mini-tag room-mini">Room ${escapeHtml(session.room)}</span>
@@ -405,7 +390,7 @@
             </span>
           </span>
           <span class="session-end">
-            <span class="capacity-pill ${capacity.className}">${escapeHtml(capacity.label)}</span>
+            ${capacity.label ? `<span class="capacity-pill ${capacity.className}">${escapeHtml(capacity.label)}</span>` : ""}
             <span class="session-chevron" aria-hidden="true">⌄</span>
           </span>
         </button>
@@ -474,8 +459,9 @@
 
     if (!session) {
       detailBlockLabel.textContent = "Choose a session to explore";
-      detailCapacity.textContent = "—";
+      detailCapacity.textContent = "";
       detailCapacity.className = "capacity-pill neutral";
+      detailCapacity.hidden = true;
       sessionDetail.innerHTML = `
         <h3>Explore before you choose.</h3>
         <p class="blurb-line">Select any session to see its presenter, description, audience, TLF connections, and focus tags here.</p>`;
@@ -491,6 +477,7 @@
     detailBlockLabel.textContent = `Session ${session.block} · Room ${session.room} · ${session.format}`;
     detailCapacity.textContent = capacity.label;
     detailCapacity.className = `capacity-pill ${capacity.className}`;
+    detailCapacity.hidden = !capacity.label;
 
     sessionDetail.innerHTML = `
       <h3>${escapeHtml(session.title)}</h3>
@@ -598,16 +585,18 @@
 
   function updateProgress() {
     const complete = {
-      details: detailsComplete(),
       1: Boolean(state.selections[1]),
       2: Boolean(state.selections[2]),
       3: Boolean(state.selections[3]),
+      details: detailsComplete(),
       confirm: state.confirmed
     };
 
-    let active = "details";
-    if (complete.details) active = String(activeBlock);
-    if (complete.details && complete[1] && complete[2] && complete[3]) active = "confirm";
+    let active = "1";
+    if (complete[1]) active = "2";
+    if (complete[1] && complete[2]) active = "3";
+    if (complete[1] && complete[2] && complete[3]) active = "details";
+    if (complete[1] && complete[2] && complete[3] && complete.details) active = "confirm";
     if (state.confirmed) active = "confirm";
 
     progressStrip.querySelectorAll("[data-progress]").forEach((step) => {
@@ -624,9 +613,10 @@
     navPathway.hidden = !state.confirmed;
     heroPathwayButton.hidden = !state.confirmed;
 
+    document.body.classList.toggle("returning-attendee", state.confirmed);
+
     if (state.confirmed) {
-      returningBanner.hidden = false;
-      returningMessage.textContent = `${state.name || "Your"} pathway is saved on this browser.`;
+      returningBanner.hidden = true;
     } else {
       returningBanner.hidden = true;
     }
@@ -735,22 +725,34 @@
               </span>
               ${mine
                 ? '<span class="mine-badge">MY SESSION</span>'
-                : `<span class="capacity-pill ${capacity.className}">${escapeHtml(capacity.label)}</span>`}
+                : capacity.label ? `<span class="capacity-pill ${capacity.className}">${escapeHtml(capacity.label)}</span>` : ""}
             </button>`;
         }).join("")}
       </div>`;
 
     dayProgramme.querySelectorAll("[data-day-session]").forEach((button) => {
-      button.addEventListener("click", () => {
-        const session = sessionById.get(button.dataset.daySession);
-        if (!session) return;
-        activeBlock = session.block;
-        inspectedSessionId = session.id;
-        showBuilder();
-        renderProgramme();
-        document.querySelector(".programme-card")?.scrollIntoView({ behavior: "smooth", block: "start" });
-      });
+      button.addEventListener("click", () => openDayDetail(button.dataset.daySession));
     });
+  }
+
+  function openDayDetail(id) {
+    const session = sessionById.get(id);
+    if (!session) return;
+    const capacity = capacityInfo(session.id);
+    dayDetailContent.innerHTML = `
+      <p class="rail-kicker">SESSION ${session.block} · ROOM ${escapeHtml(session.room)}</p>
+      <h2 id="dayDetailTitle">${escapeHtml(session.title)}</h2>
+      <p class="presenter-line">${escapeHtml(session.presenters)}</p>
+      <p class="blurb-line">${escapeHtml(session.blurb)}</p>
+      <div class="tag-groups">
+        <div><span class="tag-group-label">For</span><div class="tag-row">${tagRow(session.audiences)}</div></div>
+        <div><span class="tag-group-label">TLF facets</span><div class="tag-row">${tagRow(session.facets, "facet")}</div></div>
+        <div><span class="tag-group-label">Focus</span><div class="tag-row">${tagRow(session.themes, "theme")}</div></div>
+      </div>
+      ${capacity.label ? `<p class="dialog-capacity"><span class="capacity-pill ${capacity.className}">${escapeHtml(capacity.label)}</span></p>` : ""}
+    `;
+    if (typeof dayDetailDialog.showModal === "function") dayDetailDialog.showModal();
+    else dayDetailDialog.setAttribute("open", "");
   }
 
   async function loadAvailability() {
@@ -934,6 +936,7 @@
     mobileFilterToggle.addEventListener("click", () => {
       const isOpen = personaliseCard.classList.toggle("is-open");
       mobileFilterToggle.setAttribute("aria-expanded", String(isOpen));
+      filterToggleLabel.textContent = isOpen ? "Hide filters" : "Show filters";
     });
 
     mobileDockAction.addEventListener("click", () => {
@@ -971,6 +974,11 @@
     } else if (typeof mobileMedia.addListener === "function") {
       mobileMedia.addListener(onMobileChange);
     }
+
+    dayDetailClose.addEventListener("click", () => dayDetailDialog.close());
+    dayDetailDialog.addEventListener("click", (event) => {
+      if (event.target === dayDetailDialog) dayDetailDialog.close();
+    });
 
     detailChooseButton.addEventListener("click", () => {
       if (inspectedSessionId) selectSession(inspectedSessionId);
