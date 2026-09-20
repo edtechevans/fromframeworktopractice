@@ -181,13 +181,16 @@
 
   function recommendedIdsForBlock(block) {
     if (!filtersActive()) return [];
-    return sessions
+    const scored = sessions
       .filter((session) => session.block === block)
       .map((session) => ({ id: session.id, score: matchScore(session), slot: session.slot }))
       .filter((item) => item.score > 0)
-      .sort((a, b) => b.score - a.score || a.slot - b.slot)
-      .slice(0, 3)
-      .map((item) => item.id);
+      .sort((a, b) => b.score - a.score || a.slot - b.slot);
+
+    if (scored.length < 2) return scored.map((item) => item.id);
+    if (scored[0].score === scored[scored.length - 1].score) return [];
+
+    return scored.slice(0, 3).map((item) => item.id);
   }
 
   function sessionsForBlock(block) {
@@ -326,9 +329,12 @@
 
     const blockSessions = sessionsForBlock(activeBlock);
     const recommendedIds = recommendedIdsForBlock(activeBlock);
+    const matchingCount = blockSessions.filter((session) => matchScore(session) > 0).length;
 
-    if (filtersActive()) {
-      matchSummary.textContent = `${recommendedIds.length} best ${recommendedIds.length === 1 ? "match" : "matches"} highlighted · all workshops shown`;
+    if (filtersActive() && recommendedIds.length) {
+      matchSummary.textContent = `${recommendedIds.length} strongest ${recommendedIds.length === 1 ? "match" : "matches"} highlighted · all workshops shown`;
+    } else if (filtersActive() && matchingCount) {
+      matchSummary.textContent = `${matchingCount} workshops match · add another preference to narrow`;
     } else {
       matchSummary.textContent = "All workshops shown";
     }
@@ -337,7 +343,7 @@
       <section class="block-panel" role="tabpanel">
         <div class="block-panel-heading">
           <strong>Session ${activeBlock}</strong>
-          <span>10 sessions · up to 15 participants each</span>
+          <span>10 workshops · up to 15 participants each</span>
         </div>
 
         <div class="session-list">
@@ -404,7 +410,7 @@
           <div class="tag-row">${tagRow(session.themes, "theme")}</div>
           <button type="button" class="mobile-choose ${chosen ? "is-selected" : ""}" data-mobile-choose="${session.id}"
             ${state.confirmed || capacity.full || chosen ? "disabled" : ""}>
-            ${chosen ? "Selected ✓" : capacity.full ? "Session full" : "Choose this session"}
+            ${chosen ? "Selected ✓" : capacity.full ? "Workshop full" : "Choose this workshop"}
           </button>
         </div>
       </article>`;
