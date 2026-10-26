@@ -12,7 +12,7 @@
   <meta property="og:description" content="Explore 27 sessions across three blocks, with connections to AISG’s six Transformative Learning Framework facets." />
   <meta property="og:type" content="website" />
   <title>From Framework to Practice | AISG</title>
-  <link rel="stylesheet" href="./styles.css?v=20261026-programme27" />
+  <link rel="stylesheet" href="./styles.css?v=20261026-faculty-simple" />
 </head>
 <body>
   <a class="skip-link" href="#experience">Skip to the programme</a>
@@ -48,21 +48,21 @@
           <p class="eyebrow">TEACHERS TEACH TEACHERS</p>
           <h1>From Framework <em>to</em> <span>Practice</span></h1>
           <p class="hero-lede">
-            Build a learning pathway that fits your context. Explore nine sessions in each of Block 1, Block 2 and Block 3, with space for <strong>up to 15 participants per workshop</strong>.
+            Three blocks. Nine sessions in each. Explore the programme, choose one in every block and review your learning day. Practical ideas for Engagement for All.
           </p>
 
           <div class="hero-meta" aria-label="Event details">
-            <span>November 2</span>
+            <span>Monday, November 2</span>
             <i>•</i>
-            <span>3 session blocks</span>
+            <span>3 blocks · 9 sessions each</span>
             <i>•</i>
-            <span>27 session listings</span>
+            <span>27 sessions</span>
             <i>•</i>
             <span>No account required</span>
           </div>
 
           <div class="hero-actions">
-            <a class="primary-button" href="#experience">Build my pathway</a>
+            <a class="primary-button" href="#experience">Explore sessions</a>
             <button id="heroPathwayButton" class="secondary-button" type="button" hidden>View my saved pathway</button>
           </div>
         </div>
@@ -103,13 +103,11 @@
       <section id="builderView" class="view-panel">
         <div class="section-heading">
           <p class="eyebrow">YOUR LEARNING PATHWAY</p>
-          <h2>Explore. Compare. Choose.</h2>
-          <p>
-            Browse the 27 session listings, arranged in three blocks. Use audience and TLF-facet preferences to bring relevant sessions to the top. Every session stays visible. Titles, times, and rooms that are still to be confirmed are identified clearly.
-          </p>
+          <h2>Choose your three sessions</h2>
+          <p>Pick one session in each block. Tap <strong>Details</strong> for the description, or <strong>Choose</strong> to add it straight to your day. You can change your choices before confirming.</p>
         </div>
 
-        <div id="progressStrip" class="progress-strip" aria-label="Registration progress">
+        <div id="progressStrip" class="progress-strip" aria-label="Registration progress" hidden>
           <div class="progress-step" data-progress="1"><span>1</span><strong>Block 1</strong></div>
           <div class="progress-line"></div>
           <div class="progress-step" data-progress="2"><span>2</span><strong>Block 2</strong></div>
@@ -127,8 +125,8 @@
             <div class="personalise-heading">
               <div>
                 <p class="eyebrow">OPTIONAL</p>
-                <h3 id="personaliseTitle">Personalise recommendations</h3>
-                <p>Choose your audience or interests to bring the strongest matches to the top. Every workshop remains visible.</p>
+                <h3 id="personaliseTitle">Refine the list</h3>
+                <p>Optional: highlight sessions for your age group and TLF interests. Nothing is hidden.</p>
               </div>
               <div class="personalise-actions">
                 <button id="mobileFilterToggle" class="filter-toggle" type="button" aria-expanded="false">
@@ -144,7 +142,7 @@
             </div>
 
             <div class="preference-group">
-              <span class="preference-label">I want to explore</span>
+              <span class="preference-label">TLF connections</span>
               <div id="focusFilters" class="chip-list" aria-label="Learning focus preferences"></div>
             </div>
           </section>
@@ -154,17 +152,20 @@
               <div class="programme-heading">
                 <div>
                   <p class="eyebrow">PROGRAMME</p>
-                  <h3 id="programmeTitle">Choose one workshop in each session</h3>
+                  <h3 id="programmeTitle">Browse the programme</h3>
                 </div>
-                <span id="matchSummary" class="match-summary">All workshops shown</span>
+                <span id="matchSummary" class="match-summary">Nine sessions per block</span>
               </div>
 
-              <div id="blockTabs" class="block-tabs" role="tablist" aria-label="Programme sessions"></div>
+              <p class="programme-context">Block times and room details will be added when confirmed.</p>
+              <div class="programme-tools"><label for="sessionSearch">Find a session or presenter</label><div class="search-field"><span aria-hidden="true">⌕</span><input id="sessionSearch" type="search" placeholder="Search title, presenter or keyword" autocomplete="off" aria-controls="blocks" /><button id="clearSearch" type="button" hidden>Clear</button></div></div>
+              <div id="blockTabs" class="block-tabs" role="tablist" aria-label="Programme blocks"></div>
+              <p id="selectionFeedback" class="sr-only" role="status" aria-live="polite"></p>
               <div id="blocks"></div>
             </section>
 
             <aside class="selection-rail" aria-label="Session details and pathway">
-              <section class="detail-card">
+              <section class="detail-card" hidden>
                 <div class="detail-card-heading">
                   <div>
                     <p class="rail-kicker">WORKSHOP DETAILS</p>
@@ -185,11 +186,12 @@
                 <div class="pathway-heading">
                   <div>
                     <p class="rail-kicker">MY PATHWAY</p>
-                    <h3 id="pathwayTitle">Your three workshops</h3>
+                    <h3 id="pathwayTitle">One choice per block</h3>
                   </div>
                   <span id="choiceCount">0 / 3</span>
                 </div>
 
+                <p class="choices-instruction">Your selections are saved on this browser. Places are reserved only after confirmation.</p>
                 <div id="reviewSelections" class="review-selections" aria-live="polite"></div>
 
           <fieldset class="details-card" hidden>
@@ -248,7 +250,7 @@
           <div class="day-browser-heading">
             <div>
               <p class="eyebrow">WHAT ELSE IS ON?</p>
-              <h3 id="dayBrowserTitle">Browse the full programme by session</h3>
+              <h3 id="dayBrowserTitle">Browse the programme by block</h3>
             </div>
             <p>Your workshops are highlighted. Tap any workshop to view its details.</p>
           </div>
@@ -284,7 +286,7 @@
     <div>Learn <i>•</i> Connect <i>•</i> Apply <i>•</i> Make a Difference</div>
   </footer>
 
-  <script src="./sessions.js?v=20261026-programme27"></script>
-  <script src="./app.js?v=20261026-programme27"></script>
+  <script src="./sessions.js?v=20261026-faculty-simple"></script>
+  <script src="./app.js?v=20261026-faculty-simple"></script>
 </body>
 </html>

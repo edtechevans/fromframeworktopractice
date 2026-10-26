@@ -1,6 +1,6 @@
 // From Framework to Practice — Monday 2 November 2026.
 // Session descriptions condensed for browsing from organiser-provided workbook.
-// TLF facets are inferred editorial connections; TBC and repeat listing are provisional.
+// TLF facets are inferred editorial connections; The repeat Ralph/Samantha listing remains provisional; Tim's two MacBook offerings are confirmed programme entries.
 window.FFTP_SESSIONS = [
   {
     "id": "b1-s01",
@@ -167,14 +167,22 @@ window.FFTP_SESSIONS = [
     "id": "b1-s09",
     "block": 1,
     "slot": 9,
-    "title": "TBC",
+    "title": "MacBook Setup for Success: Less Friction, More Flow",
     "presenters": "Tim Evans",
-    "blurb": "",
-    "audiences": [],
+    "blurb": "Bring your MacBook for a practical tune-up. Organise your Dock, Finder, desktop and browser; use shortcuts, screenshots and window tools more confidently; reduce notification overload; and check the settings that make everyday teaching smoother. Leave with a setup that works for you. No upgrades or downloads required.",
+    "audiences": [
+      "Lower Elementary",
+      "Upper Elementary",
+      "Lower Secondary",
+      "Upper Secondary"
+    ],
     "facets": [],
-    "themes": [],
-    "pending": true,
-    "provisional": false
+    "themes": [
+      "Practical tools"
+    ],
+    "pending": false,
+    "provisional": false,
+    "repeatGroup": "macbook"
   },
   {
     "id": "b2-s01",
@@ -339,13 +347,24 @@ window.FFTP_SESSIONS = [
     "id": "b2-s09",
     "block": 2,
     "slot": 9,
-    "title": "TBC",
+    "title": "MAP Growth in Practice: From Evidence to Engagement for All",
     "presenters": "Tim Evans",
-    "blurb": "",
-    "audiences": [],
-    "facets": [],
-    "themes": [],
-    "pending": true,
+    "blurb": "Move beyond a single RIT score. Use sample MAP Growth patterns alongside classroom evidence to notice progress and learner variability, ask better questions, and make responsive Tier 1 decisions. Explore how the evidence can inform Personalization, strengthen student Agency through meaningful goals and reflection, and guide practical next steps toward Engagement for All. Bring your MacBook.",
+    "audiences": [
+      "Lower Elementary",
+      "Upper Elementary",
+      "Lower Secondary",
+      "Upper Secondary"
+    ],
+    "facets": [
+      "Personalization",
+      "Agency"
+    ],
+    "themes": [
+      "TLF",
+      "MTSS"
+    ],
+    "pending": false,
     "provisional": false
   },
   {
@@ -510,14 +529,22 @@ window.FFTP_SESSIONS = [
     "id": "b3-s09",
     "block": 3,
     "slot": 9,
-    "title": "TBC",
+    "title": "MacBook Setup for Success: Less Friction, More Flow",
     "presenters": "Tim Evans",
-    "blurb": "",
-    "audiences": [],
+    "blurb": "Bring your MacBook for a practical tune-up. Organise your Dock, Finder, desktop and browser; use shortcuts, screenshots and window tools more confidently; reduce notification overload; and check the settings that make everyday teaching smoother. Leave with a setup that works for you. No upgrades or downloads required.",
+    "audiences": [
+      "Lower Elementary",
+      "Upper Elementary",
+      "Lower Secondary",
+      "Upper Secondary"
+    ],
     "facets": [],
-    "themes": [],
-    "pending": true,
-    "provisional": false
+    "themes": [
+      "Practical tools"
+    ],
+    "pending": false,
+    "provisional": false,
+    "repeatGroup": "macbook"
   }
 ];
 window.FFTP_BLOCKS = [

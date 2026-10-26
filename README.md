@@ -7,14 +7,15 @@ Official programme for **Monday, 2 November 2026** at AISG Science Park.
 - **Three blocks, nine listings per block, 27 listings total.**
 - The organisers' 27-row allocation workbook is the source of session titles, presenter names and audiences. Descriptions are edited/condensed from the submitted blurbs for ease of online reading.
 - TLF facets are editorially inferred connections to AISG's six facets: Personalization, Agency, Authenticity, Creativity, Collaboration, Taking Action. They are not presenter-endorsed labels.
-- Three Tim Evans entries remain marked **TBC**, without invented titles or descriptions, and cannot be selected until details are supplied.
+- Tim Evans presents **MacBook Setup for Success: Less Friction, More Flow** in Blocks 1 and 3, and **MAP Growth in Practice: From Evidence to Engagement for All** in Block 2. The MAP session uses the AISG TLF vocabulary of Personalization, Agency and Engagement for All. MacBook sessions have no artificial TLF-facet labels.
 - The repeat of **The Classroom as the Third Teacher** in Blocks 1 and 3 is provisional; confirmation is still required.
 - Rooms and block times have not been supplied, so none are fabricated.
 - Review pool logistics, presenter title cleanup and the shorter guided reading proposal before opening bookings.
+- Faculty-first UI: desktop and mobile use the same expandable, inline session description; every session has a one-click **Choose** action. Search title, presenters, blurbs and facet tags within each block. The optional TLF-facet and audience preferences rank rather than hide sessions. A compact selections summary is maintained, with keyboard-operable block tabs and screen-reader status announcements.
 
 ## Registration
 
-The existing Supabase Edge Function and stable booking IDs `b1-s01` through `b3-s09` are retained. Registration remains controlled by the connected Supabase setting. The website does **not** issue test booking confirmations while registration is closed. Pending/TBC sessions are ineligible for booking.
+The existing Supabase Edge Function and stable booking IDs `b1-s01` through `b3-s09` are retained. Registration remains controlled by the connected Supabase setting. The website does **not** issue test booking confirmations while registration is closed. Pending sessions, if added in the future, are ineligible for booking.
 
 ### Before opening registration
 

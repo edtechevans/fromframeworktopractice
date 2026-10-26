@@ -24,6 +24,7 @@
   let state = loadState();
   let activeBlock = 1;
   let activeDayBlock = 1;
+  let searchTerm = "";
   let inspectedSessionId = "";
   let registrationOpen = false;
   let availabilityLoaded = false;
@@ -45,6 +46,9 @@
   const focusFilters = document.getElementById("focusFilters");
   const clearFilters = document.getElementById("clearFilters");
   const blockTabs = document.getElementById("blockTabs");
+  const searchInput = document.getElementById("sessionSearch");
+  const clearSearchButton = document.getElementById("clearSearch");
+  const selectionFeedback = document.getElementById("selectionFeedback");
   const blocksRoot = document.getElementById("blocks");
   const matchSummary = document.getElementById("matchSummary");
   const detailBlockLabel = document.getElementById("detailBlockLabel");
@@ -92,7 +96,7 @@
         },
         audiences: Array.isArray(parsed.audiences) ? parsed.audiences.filter((v) => audiences.includes(v)) : [],
         focus: Array.isArray(parsed.focus)
-          ? parsed.focus.filter((v) => facets.includes(v) || themes.includes(v))
+          ? parsed.focus.filter((v) => facets.includes(v))
           : []
       };
     } catch {
@@ -193,6 +197,20 @@
     return scored.slice(0, 3).map((item) => item.id);
   }
 
+  function matchesSearch(session){
+  if(!searchTerm)return true;
+  const all=[session.title,session.presenters,session.blurb,...session.facets,...session.themes,...session.audiences].join(" ").toLocaleLowerCase();
+  return all.includes(searchTerm.toLocaleLowerCase());
+}
+
+  function clearSessionSearch(){
+  searchTerm="";
+  searchInput.value="";
+  clearSearchButton.hidden=true;
+  renderProgramme();
+  searchInput.focus();
+}
+
   function sessionsForBlock(block) {
     const list = sessions.filter((session) => session.block === block);
     if (!filtersActive()) return list.slice().sort((a, b) => a.slot - b.slot);
@@ -218,10 +236,7 @@
         </button>`;
     }).join("");
 
-    const focusOptions = [
-      ...themes.map((value) => ({ value, label: value })),
-      ...facets.map((value) => ({ value, label: value }))
-    ];
+    const focusOptions = facets.map((value) => ({ value, label: value }));
 
     focusFilters.innerHTML = focusOptions.map(({ value, label }) => {
       const pressed = state.focus.includes(value);
@@ -314,20 +329,34 @@
       const active = activeBlock === block.block;
       return `
         <button type="button" class="block-tab ${chosen ? "is-complete" : ""}"
-          role="tab"
+          role="tab" aria-controls="blocks" tabindex="${active ? 0 : -1}"
           data-block-tab="${block.block}"
           aria-selected="${active ? "true" : "false"}">
           <span>${escapeHtml(block.label)}</span>
-          <small>${chosen ? escapeHtml(chosen.title) : "Choose one workshop"}</small>
+          <small>${searchTerm ? `${sessions.filter((session) => session.block === block.block && matchesSearch(session)).length} matches` : chosen ? "✓ Selected" : "9 sessions"}</small>
         </button>`;
     }).join("");
 
     blockTabs.querySelectorAll("[data-block-tab]").forEach((button) => {
-      button.addEventListener("click", () => {
-        activeBlock = Number(button.dataset.blockTab);
-        inspectedSessionId = state.selections[activeBlock] || "";
+      function activate(next, restoreFocus = false) {
+        activeBlock = next;
+        inspectedSessionId = "";
         renderProgramme();
         updateProgress();
+        if (restoreFocus) blockTabs.querySelector(`[data-block-tab="${next}"]`)?.focus();
+      }
+      button.addEventListener("click", () => activate(Number(button.dataset.blockTab)));
+      button.addEventListener("keydown", (event) => {
+        const value = Number(button.dataset.blockTab);
+        const index = blocks.findIndex((item) => item.block === value);
+        let next = null;
+        if (event.key === "ArrowRight") next = blocks[(index + 1) % blocks.length].block;
+        if (event.key === "ArrowLeft") next = blocks[(index - 1 + blocks.length) % blocks.length].block;
+        if (event.key === "Home") next = blocks[0].block;
+        if (event.key === "End") next = blocks[blocks.length - 1].block;
+        if (next === null) return;
+        event.preventDefault();
+        activate(next, true);
       });
     });
   }
@@ -335,16 +364,19 @@
   function renderProgramme() {
     renderBlockTabs();
 
-    const blockSessions = sessionsForBlock(activeBlock);
+    const allBlockSessions = sessionsForBlock(activeBlock);
+    const blockSessions = allBlockSessions.filter(matchesSearch);
     const recommendedIds = recommendedIdsForBlock(activeBlock);
     const matchingCount = blockSessions.filter((session) => matchScore(session) > 0).length;
 
-    if (filtersActive() && recommendedIds.length) {
+    if (searchTerm) {
+      matchSummary.textContent = `${blockSessions.length} of ${allBlockSessions.length} sessions match your search`;
+    } else if (filtersActive() && recommendedIds.length) {
       matchSummary.textContent = `${recommendedIds.length} strongest ${recommendedIds.length === 1 ? "match" : "matches"} highlighted · all workshops shown`;
     } else if (filtersActive() && matchingCount) {
       matchSummary.textContent = `${matchingCount} workshops match · add another preference to narrow`;
     } else {
-      matchSummary.textContent = "All workshops shown";
+      matchSummary.textContent = "9 sessions in this block";
     }
 
     blocksRoot.innerHTML = `
@@ -355,14 +387,13 @@
         </div>
 
         <div class="session-list">
-          ${blockSessions.map((session) => renderSessionEntry(session, recommendedIds.includes(session.id))).join("")}
+          ${blockSessions.length ? blockSessions.map((session) => renderSessionEntry(session, recommendedIds.includes(session.id))).join("") : '<div class="no-results"><strong>No matching sessions in this block.</strong><p>Try another block, or clear your search to see all nine sessions.</p><button type="button" data-clear-search class="secondary-button">Clear search</button></div>'}
         </div>
 
         ${activeBlock < 3 ? `
           <div class="panel-footer">
-            <button type="button" class="next-block" data-next-block="${activeBlock + 1}"
-              ${state.selections[activeBlock] ? "" : "disabled"}>
-              Continue to Block ${activeBlock + 1} →
+            <button type="button" class="next-block" data-next-block="${activeBlock + 1}">
+              Browse Block ${activeBlock + 1} →
             </button>
           </div>` : ""}
       </section>`;
@@ -370,7 +401,7 @@
     wireProgrammeEvents();
 
     if (!inspectedSessionId || !sessionById.has(inspectedSessionId) || sessionById.get(inspectedSessionId).block !== activeBlock) {
-      inspectedSessionId = state.selections[activeBlock] || (isMobile() ? "" : blockSessions[0]?.id || "");
+      inspectedSessionId = "";
     }
 
     updateInspectedClasses();
@@ -379,66 +410,57 @@
     updateProgress();
   }
 
-  function renderSessionEntry(session, recommended = false) {
-    const capacity = capacityInfo(session.id);
-    const chosen = state.selections[session.block] === session.id;
-    const expanded = inspectedSessionId === session.id;
-    const audienceMini = session.audiences.map(abbreviateAudience).join(" · ");
-    const facetsMini = session.facets.slice(0, 2).join(" · ");
-
-    return `
-      <article class="session-entry ${chosen ? "is-chosen" : ""} ${recommended ? "is-match" : ""} ${capacity.full ? "is-full" : ""}"
-        data-session-entry="${session.id}">
-        <button type="button" class="session-inspect" data-inspect="${session.id}" aria-expanded="${expanded ? "true" : "false"}">
-          <span class="session-main">
-            <span class="session-title-row">
-              <span class="session-title">${escapeHtml(session.title)}</span>
-              ${chosen ? '<span class="chosen-badge">MY SESSION</span>' : ""}
-              ${recommended && !chosen ? '<span class="match-badge">BEST MATCH</span>' : ""}
-            </span>
-            <span class="session-card-presenter">${escapeHtml(session.presenters)}</span>
-            <span class="session-mini-tags">
-              ${session.room ? `<span class="mini-tag room-mini">Room ${escapeHtml(session.room)}</span>` : ""}
-              ${audienceMini ? `<span class="mini-tag">${escapeHtml(audienceMini)}</span>` : ""}
-              ${facetsMini ? `<span class="mini-tag">${escapeHtml(facetsMini)}</span>` : ""}
-              ${session.format ? `<span class="mini-tag">${escapeHtml(session.format)}</span>` : ""}
-              ${session.pending ? '<span class="mini-tag mini-note">Details to follow</span>' : ""}
-              ${session.provisional ? '<span class="mini-tag mini-note">Repeat to confirm</span>' : ""}
-            </span>
-          </span>
-          <span class="session-end">
-            ${capacity.label ? `<span class="capacity-pill ${capacity.className}">${escapeHtml(capacity.label)}</span>` : ""}
-            <span class="session-chevron" aria-hidden="true">⌄</span>
-          </span>
-        </button>
-
-        <div class="mobile-session-detail">
-          ${session.room ? `<p class="mobile-room">Room ${escapeHtml(session.room)}</p>` : ""}
-          <p class="mobile-presenter">${escapeHtml(session.presenters)}</p>
-          <p>${escapeHtml(session.blurb || "Title and description to follow.")}</p>
-          ${session.audiences.length ? `<div class="tag-row">${tagRow(session.audiences)}</div>` : ""}
-          ${session.facets.length ? `<div class="tag-row">${tagRow(session.facets, "facet")}</div>` : ""}
-          ${session.themes.length ? `<div class="tag-row">${tagRow(session.themes, "theme")}</div>` : ""}
-          ${session.provisional ? '<p class="programme-note">Repeat offering to be confirmed.</p>' : ""}
-          <button type="button" class="mobile-choose ${chosen ? "is-selected" : ""}" data-mobile-choose="${session.id}"
-            ${state.confirmed || capacity.full || chosen || session.pending ? "disabled" : ""}>
-            ${session.pending ? "Details to follow" : chosen ? "Selected ✓" : capacity.full ? "Workshop full" : "Choose this workshop"}
-          </button>
-        </div>
-      </article>`;
-  }
+  function renderSessionEntry(session,recommended=false){
+  const capacity=capacityInfo(session.id),chosen=state.selections[session.block]===session.id;
+  const expanded=inspectedSessionId===session.id;
+  const disabled=chosen||state.confirmed||capacity.full||session.pending;
+  const action=session.pending?"Details soon":chosen?"✓ Selected":capacity.full?"Full":state.confirmed?"Closed":"Choose";
+  const tags=session.facets.length
+     ? session.facets.slice(0,2).map(f=>`<span class="facet-chip">${escapeHtml(f)}</span>`).join("")
+       +(session.facets.length>2?`<span class="facet-overflow">+${session.facets.length-2}</span>`:"")
+     : session.themes.slice(0,1).map(t=>`<span class="topic-chip">${escapeHtml(t)}</span>`).join("");
+  const repeatIn=session.repeatGroup==="macbook"?(session.block===1?3:1):null;
+  return `
+  <article class="session-entry ${chosen?"is-chosen":""} ${recommended?"is-match":""} ${capacity.full?"is-full":""}" data-session-entry="${escapeHtml(session.id)}">
+    <button type="button" class="session-inspect" data-inspect="${escapeHtml(session.id)}" aria-label="View details for ${escapeHtml(session.title)}" aria-controls="session-details-${escapeHtml(session.id)}" aria-expanded="${expanded?"true":"false"}">
+      <span class="session-main">
+        <span class="session-title-row">
+          <span class="session-title">${escapeHtml(session.title)}</span>
+          ${recommended&&!chosen?'<span class="match-badge">MATCH</span>':""}
+        </span>
+        <span class="session-card-presenter">${escapeHtml(session.presenters)}</span>
+        <span class="session-mini-tags">${tags}
+          ${session.provisional?'<span class="mini-note">Repeat to confirm</span>':""}
+          ${capacity.label?`<span class="capacity-pill ${capacity.className}">${escapeHtml(capacity.label)}</span>`:""}
+        </span>
+        <span class="detail-hint">Details <span class="session-chevron" aria-hidden="true">⌄</span></span>
+      </span>
+    </button>
+    <button type="button" class="quick-choose ${chosen?"is-selected":""}" data-quick-choose="${escapeHtml(session.id)}"
+      aria-label="${chosen?"Selected":"Choose"} ${escapeHtml(session.title)} for Block ${session.block}"
+      ${disabled?"disabled":""}>${action}</button>
+    <div class="mobile-session-detail" id="session-details-${escapeHtml(session.id)}">
+      <p class="session-description">${escapeHtml(session.blurb||"Description to follow.")}</p>
+      ${session.audiences.length?`<div class="detail-group"><span class="detail-group-label">Suitable for</span><div class="tag-row">${tagRow(session.audiences)}</div></div>`:""}
+      ${session.facets.length?`<div class="detail-group"><span class="detail-group-label">TLF connections</span><div class="tag-row">${tagRow(session.facets,"facet")}</div></div>`:""}
+      ${session.themes.length?`<div class="detail-group"><span class="detail-group-label">Also connects to</span><div class="tag-row">${tagRow(session.themes,"theme")}</div></div>`:""}
+      ${repeatIn?`<p class="repeat-note">Also offered in Block ${repeatIn}.</p>`:""}
+      ${session.provisional?'<p class="programme-note">Repeat offering awaiting confirmation.</p>':""}
+      ${session.room?`<p class="mobile-room">Room ${escapeHtml(session.room)}</p>`:""}
+    </div>
+  </article>`;
+}
 
   function wireProgrammeEvents() {
     blocksRoot.querySelectorAll("[data-inspect]").forEach((button) => {
       const id = button.dataset.inspect;
       button.addEventListener("click", () => inspectSession(id));
-      button.addEventListener("mouseenter", () => inspectSession(id, false));
-      button.addEventListener("focus", () => inspectSession(id, false));
     });
 
-    blocksRoot.querySelectorAll("[data-mobile-choose]").forEach((button) => {
-      button.addEventListener("click", () => selectSession(button.dataset.mobileChoose));
+    blocksRoot.querySelectorAll("[data-quick-choose]").forEach((button) => {
+      button.addEventListener("click", () => selectSession(button.dataset.quickChoose));
     });
+    blocksRoot.querySelector("[data-clear-search]")?.addEventListener("click", clearSessionSearch);
 
     const nextButton = blocksRoot.querySelector("[data-next-block]");
     if (nextButton) {
@@ -451,24 +473,22 @@
     }
   }
 
-  function inspectSession(id, scrollOnMobile = true) {
-    const entry = blocksRoot.querySelector(`[data-session-entry="${CSS.escape(id)}"]`);
-    const shouldCollapse = isMobile() && inspectedSessionId === id && entry?.classList.contains("is-inspected");
-
-    inspectedSessionId = shouldCollapse ? "" : id;
-    updateInspectedClasses();
-    renderSessionDetail();
-
-    if (scrollOnMobile && isMobile() && !shouldCollapse) {
-      entry?.scrollIntoView({ behavior: "smooth", block: "nearest" });
-    }
-  }
+  function inspectSession(id,scrollOnMobile=true){
+  const entry=blocksRoot.querySelector(`[data-session-entry="${CSS.escape(id)}"]`);
+  const collapse=inspectedSessionId===id&&entry?.classList.contains("is-inspected");
+  inspectedSessionId=collapse?"":id;
+  updateInspectedClasses();
+  renderSessionDetail();
+  if(scrollOnMobile&&isMobile()&&!collapse)entry?.scrollIntoView({behavior:"smooth",block:"nearest"});
+}
 
   function updateInspectedClasses() {
     blocksRoot.querySelectorAll("[data-session-entry]").forEach((entry) => {
       const expanded = entry.dataset.sessionEntry === inspectedSessionId;
       entry.classList.toggle("is-inspected", expanded);
-      entry.querySelector("[data-inspect]")?.setAttribute("aria-expanded", String(expanded));
+      const inspect = entry.querySelector("[data-inspect]");
+      inspect?.setAttribute("aria-expanded", String(expanded));
+      inspect?.setAttribute("aria-label", `${expanded ? "Hide" : "View"} details for ${sessionById.get(entry.dataset.sessionEntry)?.title || "this session"}`);
     });
   }
 
@@ -533,9 +553,11 @@
     state.selections[session.block] = id;
     persistState();
 
-    inspectedSessionId = id;
+    inspectedSessionId = "";
     renderProgramme();
     updateChrome();
+    selectionFeedback.textContent = `Selected ${session.title} for Block ${session.block}. You may change your choice.`;
+    blocksRoot.querySelector(`[data-inspect="${CSS.escape(id)}"]`)?.focus({preventScroll:true});
   }
 
   function removeSelection(block) {
@@ -544,6 +566,7 @@
     persistState();
     renderProgramme();
     updateChrome();
+    selectionFeedback.textContent = `Removed choice for Block ${block}.`;
   }
 
   function renderReview() {
@@ -916,13 +939,17 @@
     emailInput.value = state.email || "";
 
     renderFilters();
+    searchInput.addEventListener("input", () => {
+      searchTerm = searchInput.value.trim();
+      clearSearchButton.hidden = !searchTerm;
+      renderProgramme();
+    });
+    searchInput.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") event.preventDefault();
+    });
+    clearSearchButton.addEventListener("click", clearSessionSearch);
 
-    if (state.selections[1]) {
-      activeBlock = 1;
-      inspectedSessionId = state.selections[1];
-    } else {
-      inspectedSessionId = isMobile() ? "" : sessions.find((session) => session.block === activeBlock)?.id || "";
-    }
+    inspectedSessionId = "";
 
     renderProgramme();
     updateChrome();
@@ -967,10 +994,6 @@
     });
 
     const onMobileChange = () => {
-      if (!isMobile() && !inspectedSessionId) {
-        inspectedSessionId = state.selections[activeBlock] || sessions.find((session) => session.block === activeBlock)?.id || "";
-        renderProgramme();
-      }
       syncResponsiveLayout();
       updateMobileDock();
     };
