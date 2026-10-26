@@ -12,7 +12,7 @@
   <meta property="og:description" content="Explore 27 sessions across three blocks, with connections to AISG’s six Transformative Learning Framework facets." />
   <meta property="og:type" content="website" />
   <title>From Framework to Practice | AISG</title>
-  <link rel="stylesheet" href="./styles.css?v=20261026-personal-goal" />
+  <link rel="stylesheet" href="./styles.css?v=20261026-global-search" />
 </head>
 <body>
   <a class="skip-link" href="#experience">Skip to the programme</a>
@@ -146,11 +146,11 @@
                   <p class="eyebrow">PROGRAMME</p>
                   <h3 id="programmeTitle">Browse the programme</h3>
                 </div>
-                <span id="matchSummary" class="match-summary">Nine sessions per block</span>
+                <span id="matchSummary" class="match-summary" role="status" aria-live="polite">Nine sessions per block</span>
               </div>
 
               <p class="programme-context">Rooms are shown with each session. Block times will be added when confirmed.</p>
-              <div class="programme-tools"><label for="sessionSearch">Find a session or presenter</label><div class="search-field"><span aria-hidden="true">⌕</span><input id="sessionSearch" type="search" placeholder="Search title, presenter or keyword" autocomplete="off" aria-controls="blocks" /><button id="clearSearch" type="button" hidden>Clear</button></div></div>
+              <div class="programme-tools"><label for="sessionSearch">Search all three blocks</label><div class="search-field"><span aria-hidden="true">⌕</span><input id="sessionSearch" type="search" placeholder="Search title, presenter, room or keyword" autocomplete="off" aria-controls="blocks" /><button id="clearSearch" type="button" hidden>Clear</button></div></div>
               <div id="blockTabs" class="block-tabs" role="tablist" aria-label="Programme blocks"></div>
               <p id="selectionFeedback" class="sr-only" role="status" aria-live="polite"></p>
               <div id="blocks"></div>
@@ -280,7 +280,7 @@
 
   <script src="./sessions.js?v=20261026-rooms-hero"></script>
   <script src="./speaker-profiles.js?v=20261026-directory-portraits"></script>
-  <script src="./app.js?v=20261026-facet-colours"></script>
+  <script src="./app.js?v=20261026-global-search"></script>
   <script src="./goal-settings.js?v=20261026-personal-goal"></script>
   <script src="./goal-tile.js?v=20261026-personal-goal"></script>
 </body>

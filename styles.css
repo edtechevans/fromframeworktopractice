@@ -608,6 +608,17 @@ fieldset{min-width:0}
 }
 .block-tab[aria-selected="true"].is-complete:after{color:#fff}
 
+.block-panel + .block-panel{
+  margin-top:1.5rem;
+}
+.search-block-label{
+  padding:.14rem .4rem;
+  border-radius:.3rem;
+  background:var(--navy);
+  color:#fff;
+  font-size:.65rem;
+  font-weight:800;
+}
 .block-panel-heading{
   display:flex;
   align-items:center;

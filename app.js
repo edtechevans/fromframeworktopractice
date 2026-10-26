@@ -357,14 +357,18 @@
 
   function matchesSearch(session){
   if(!searchTerm)return true;
-  const all=[session.title,session.presenters,session.blurb,...session.facets,...session.themes,...session.audiences].join(" ").toLocaleLowerCase();
+  const all=[session.title,session.presenters,session.blurb,session.room,...session.facets,...session.themes,...session.audiences].join(" ").toLocaleLowerCase();
   return all.includes(searchTerm.toLocaleLowerCase());
 }
 
-  function clearSessionSearch(){
+  function resetSearchInput(){
   searchTerm="";
   searchInput.value="";
   clearSearchButton.hidden=true;
+}
+
+  function clearSessionSearch(){
+  resetSearchInput();
   renderProgramme();
   searchInput.focus();
 }
@@ -494,7 +498,7 @@
           data-block-tab="${block.block}"
           aria-selected="${active ? "true" : "false"}">
           <span>${escapeHtml(block.label)}</span>
-          <small>${searchTerm ? `${sessions.filter((session) => session.block === block.block && matchesSearch(session)).length} matches` : chosen ? "✓ Selected" : "9 sessions"}</small>
+          <small>${chosen ? "✓ Selected" : "9 sessions"}</small>
         </button>`;
     }).join("");
 
@@ -525,14 +529,20 @@
   function renderProgramme() {
     closeSpeakerPopover();
     renderBlockTabs();
+    blockTabs.hidden = Boolean(searchTerm);
 
-    const allBlockSessions = sessionsForBlock(activeBlock);
-    const blockSessions = allBlockSessions.filter(matchesSearch);
-    const recommendedIds = recommendedIdsForBlock(activeBlock);
-    const matchingCount = blockSessions.filter((session) => matchScore(session) > 0).length;
+    const visibleBlocks = searchTerm ? blocks.map((block) => block.block) : [activeBlock];
+    const groups = visibleBlocks.map((block) => ({
+      block,
+      blockSessions: sessionsForBlock(block).filter(matchesSearch),
+      recommendedIds: recommendedIdsForBlock(block)
+    })).filter((group) => group.blockSessions.length);
+    const visibleSessions = groups.flatMap((group) => group.blockSessions);
+    const recommendedIds = groups[0]?.recommendedIds || [];
+    const matchingCount = visibleSessions.filter((session) => matchScore(session) > 0).length;
 
     if (searchTerm) {
-      matchSummary.textContent = `${blockSessions.length} of ${allBlockSessions.length} sessions match your search`;
+      matchSummary.textContent = `${visibleSessions.length} ${visibleSessions.length === 1 ? "result" : "results"} across all ${blocks.length} blocks`;
     } else if (filtersActive() && recommendedIds.length) {
       matchSummary.textContent = `${recommendedIds.length} strongest ${recommendedIds.length === 1 ? "match" : "matches"} highlighted · all workshops shown`;
     } else if (filtersActive() && matchingCount) {
@@ -541,28 +551,28 @@
       matchSummary.textContent = "9 sessions in this block";
     }
 
-    blocksRoot.innerHTML = `
-      <section class="block-panel" role="tabpanel">
+    blocksRoot.innerHTML = groups.length ? groups.map(({ block, blockSessions, recommendedIds }) => `
+      <section class="block-panel" role="${searchTerm ? "region" : "tabpanel"}" aria-labelledby="block-heading-${block}">
         <div class="block-panel-heading">
-          <strong>Block ${activeBlock}</strong>
-          <span>${blockSessions.length} sessions · 20 places per session</span>
+          <strong id="block-heading-${block}">Block ${block}</strong>
+          <span>${blockSessions.length} ${blockSessions.length === 1 ? "session" : "sessions"} · 20 places per session</span>
         </div>
 
         <div class="session-list">
-          ${blockSessions.length ? blockSessions.map((session) => renderSessionEntry(session, recommendedIds.includes(session.id))).join("") : '<div class="no-results"><strong>No matching sessions in this block.</strong><p>Try another block, or clear your search to see all nine sessions.</p><button type="button" data-clear-search class="secondary-button">Clear search</button></div>'}
+          ${blockSessions.map((session) => renderSessionEntry(session, recommendedIds.includes(session.id))).join("")}
         </div>
 
-        ${activeBlock < 3 ? `
+        ${!searchTerm && block < 3 ? `
           <div class="panel-footer">
-            <button type="button" class="next-block" data-next-block="${activeBlock + 1}">
-              Browse Block ${activeBlock + 1} →
+            <button type="button" class="next-block" data-next-block="${block + 1}">
+              Browse Block ${block + 1} →
             </button>
           </div>` : ""}
-      </section>`;
+      </section>`).join("") : '<div class="no-results"><strong>No matching sessions across all three blocks.</strong><p>Try another presenter or keyword, or clear your search to browse the programme.</p><button type="button" data-clear-search class="secondary-button">Clear search</button></div>';
 
     wireProgrammeEvents();
 
-    if (!inspectedSessionId || !sessionById.has(inspectedSessionId) || sessionById.get(inspectedSessionId).block !== activeBlock) {
+    if (!visibleSessions.some((session) => session.id === inspectedSessionId)) {
       inspectedSessionId = "";
     }
 
@@ -591,6 +601,7 @@
         </div>
         <div class="session-card-presenter" aria-label="Presenters">${renderPresenterNames(session.presenters)}</div>
         <div class="session-mini-tags">
+          ${searchTerm ? `<span class="search-block-label">Block ${session.block}</span>` : ""}
           ${session.room ? `<span class="room-mini">Room ${escapeHtml(session.room)}</span>` : ""}
           ${tags}
           ${session.provisional?'<span class="mini-note">Repeat to confirm</span>':""}
@@ -1149,6 +1160,7 @@
       const action = mobileDockAction.dataset.action;
 
       if (action === "block") {
+        resetSearchInput();
         activeBlock = Number(mobileDockAction.dataset.block || 1);
         inspectedSessionId = state.selections[activeBlock] || "";
         renderProgramme();
