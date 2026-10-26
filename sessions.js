@@ -580,19 +580,19 @@ window.FFTP_BLOCKS = [
     "block": 1,
     "label": "Block 1",
     "subtitle": "Choose one session",
-    "time": "Time to be confirmed"
+    "time": "1:30–2:00 pm"
   },
   {
     "block": 2,
     "label": "Block 2",
     "subtitle": "Choose one session",
-    "time": "Time to be confirmed"
+    "time": "2:10–2:40 pm"
   },
   {
     "block": 3,
     "label": "Block 3",
     "subtitle": "Choose one session",
-    "time": "Time to be confirmed"
+    "time": "2:50–3:20 pm"
   }
 ];
 window.FFTP_AUDIENCES = ["Lower Elementary","Upper Elementary","Lower Secondary","Upper Secondary"];

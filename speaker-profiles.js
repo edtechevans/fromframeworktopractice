@@ -25,7 +25,7 @@ window.FFTP_SPEAKERS = {
     "sourcePhoto": "https://resource.aisgz.org/aisg-website/prod/Public/Used%20in%20the%20visual%20editor/Portal-Employee/Directory/235429.jpg"
   },
   "Audrey Lawler": {
-    "role": "Upper Elementary School Homeroom Teacher",
+    "role": "Grade 5 Teacher",
     "photo": "./assets/speakers/audrey-lawler.webp",
     "sourcePhoto": "https://resource.aisgz.org/aisg-website/prod/Public/Used%20in%20the%20visual%20editor/Portal-Employee/Directory/238220.jpg"
   },

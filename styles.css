@@ -2279,6 +2279,12 @@ body{font-family:"Noto Sans",Inter,ui-sans-serif,-apple-system,BlinkMacSystemFon
 .personal-goal-statement{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;margin:0;white-space:pre-wrap;overflow-wrap:anywhere;color:var(--ink);font-size:.86rem;line-height:1.65}
 .personal-goal-statement.is-expanded{display:block;overflow:visible}
 .personal-goal-copy .text-button{margin-top:.4rem;font-size:.75rem}
+/* Block times stay visible while browsing, searching and reviewing a pathway. */
+.block-tab .block-tab-time{margin-top:.25rem;color:inherit;font-size:.74rem;font-weight:800;line-height:1.4;white-space:normal;overflow:visible;text-overflow:clip}
+.block-panel-heading{flex-wrap:wrap;row-gap:.3rem}
+.block-panel-heading strong{line-height:1.5}
+.review-item .review-time{margin:.15rem 0 .25rem;color:var(--navy);font-size:.75rem;font-weight:800;line-height:1.4}
+.saved-card .saved-time{display:block;margin-top:.3rem;color:var(--navy);font-size:.95rem;font-weight:850;line-height:1.4}
 @media(max-width:720px){
  .personal-goal-tile{padding:.95rem .9rem;margin-bottom:1rem}
  .personal-goal-heading{display:block}

@@ -355,6 +355,10 @@
     return scored.slice(0, 3).map((item) => item.id);
   }
 
+  function blockTime(block) {
+    return blocks.find((item) => item.block === Number(block))?.time || "";
+  }
+
   function matchesSearch(session){
   if(!searchTerm)return true;
   const all=[session.title,session.presenters,session.blurb,session.room,...session.facets,...session.themes,...session.audiences].join(" ").toLocaleLowerCase();
@@ -498,6 +502,7 @@
           data-block-tab="${block.block}"
           aria-selected="${active ? "true" : "false"}">
           <span>${escapeHtml(block.label)}</span>
+          <small class="block-tab-time">${escapeHtml(block.time)}</small>
           <small>${chosen ? "✓ Selected" : "9 sessions"}</small>
         </button>`;
     }).join("");
@@ -554,7 +559,7 @@
     blocksRoot.innerHTML = groups.length ? groups.map(({ block, blockSessions, recommendedIds }) => `
       <section class="block-panel" role="${searchTerm ? "region" : "tabpanel"}" aria-labelledby="block-heading-${block}">
         <div class="block-panel-heading">
-          <strong id="block-heading-${block}">Block ${block}</strong>
+          <strong id="block-heading-${block}">Block ${block} · ${escapeHtml(blockTime(block))}</strong>
           <span>${blockSessions.length} ${blockSessions.length === 1 ? "session" : "sessions"} · 20 places per session</span>
         </div>
 
@@ -601,7 +606,7 @@
         </div>
         <div class="session-card-presenter" aria-label="Presenters">${renderPresenterNames(session.presenters)}</div>
         <div class="session-mini-tags">
-          ${searchTerm ? `<span class="search-block-label">Block ${session.block}</span>` : ""}
+          ${searchTerm ? `<span class="search-block-label">Block ${session.block} · ${escapeHtml(blockTime(session.block))}</span>` : ""}
           ${session.room ? `<span class="room-mini">Room ${escapeHtml(session.room)}</span>` : ""}
           ${tags}
           ${session.provisional?'<span class="mini-note">Repeat to confirm</span>':""}
@@ -623,7 +628,7 @@
         ${session.themes.length?`<div class="detail-group"><span class="detail-group-label">Also connects to</span><div class="tag-row">${tagRow(session.themes,"theme")}</div></div>`:""}
         ${repeatIn?`<p class="repeat-note">Also offered in Block ${repeatIn}.</p>`:""}
         ${session.provisional?'<p class="programme-note">Repeat offering awaiting confirmation.</p>':""}
-        ${session.room?`<p class="mobile-room">Room ${escapeHtml(session.room)}</p>`:""}
+        <p class="mobile-room">${escapeHtml(blockTime(session.block))}${session.room ? ` · Room ${escapeHtml(session.room)}` : ""}</p>
       </div>
     </article>`;
 }
@@ -689,7 +694,7 @@
     const capacity = capacityInfo(session.id);
     const chosen = state.selections[session.block] === session.id;
 
-    detailBlockLabel.textContent = `Block ${session.block}${session.provisional ? " · Repeat to confirm" : ""}`;
+    detailBlockLabel.textContent = `Block ${session.block} · ${blockTime(session.block)}${session.provisional ? " · Repeat to confirm" : ""}`;
     detailCapacity.textContent = capacity.label;
     detailCapacity.className = `capacity-pill ${capacity.className}`;
     detailCapacity.hidden = !capacity.label;
@@ -757,6 +762,7 @@
         return `
           <div class="review-item empty">
             <span>Block ${block}</span>
+            <small class="review-time">${escapeHtml(blockTime(block))}</small>
             <strong>Choose a workshop</strong>
           </div>`;
       }
@@ -764,6 +770,7 @@
       return `
         <div class="review-item">
           <span>Block ${block}</span>
+          <small class="review-time">${escapeHtml(blockTime(block))}</small>
           <strong>${renderFacetText(session.title)}</strong>
           <small>${renderPresenterNames(session.presenters)}${session.room ? ` · Room ${escapeHtml(session.room)}` : ""}</small>
           ${state.confirmed ? "" : `<button class="review-remove" type="button" data-remove-block="${block}" aria-label="Remove Block ${block} selection">Remove</button>`}
@@ -882,6 +889,7 @@
       return `
         <article class="saved-card">
           <span class="saved-block">Block ${block}</span>
+          <span class="saved-time">${escapeHtml(blockTime(block))}</span>
           <h3>${renderFacetText(session.title)}</h3>
           <span class="saved-presenter">${renderPresenterNames(session.presenters)}</span>
           ${session.room ? `<span class="saved-room">Room ${escapeHtml(session.room)}</span>` : ""}
@@ -902,6 +910,7 @@
         <button type="button" class="block-tab ${state.selections[block.block] ? "is-complete" : ""}"
           data-day-block="${block.block}" role="tab" aria-selected="${active ? "true" : "false"}">
           <span>${escapeHtml(block.label)}</span>
+          <small class="block-tab-time">${escapeHtml(block.time)}</small>
           <small>${state.selections[block.block] ? "Your choice highlighted" : "Browse sessions"}</small>
         </button>`;
     }).join("");
@@ -948,7 +957,7 @@
     if (!session) return;
     const capacity = capacityInfo(session.id);
     dayDetailContent.innerHTML = `
-      <p class="rail-kicker">BLOCK ${session.block}${session.room ? ` · ROOM ${escapeHtml(session.room)}` : ""}</p>
+      <p class="rail-kicker">BLOCK ${session.block} · ${escapeHtml(blockTime(session.block))}${session.room ? ` · ROOM ${escapeHtml(session.room)}` : ""}</p>
       <h2 id="dayDetailTitle">${renderFacetText(session.title)}</h2>
       <p class="presenter-line">${escapeHtml(session.presenters)}</p>
       <p class="blurb-line">${renderFacetText(session.blurb || "Title and description to follow.")}</p>
