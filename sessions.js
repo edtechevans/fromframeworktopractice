@@ -1,460 +1,360 @@
+// From Framework to Practice — Monday 2 November 2026.
+// Session descriptions condensed for browsing from organiser-provided workbook.
+// TLF facets are inferred editorial connections; TBC and repeat listing are provisional.
 window.FFTP_SESSIONS = [
   {
     "id": "b1-s01",
     "block": 1,
     "slot": 1,
-    "title": "Making Choice Meaningful: Agency in Everyday Learning",
-    "presenters": "Presenter(s) TBC",
-    "blurb": "Move beyond token choice and design moments where students make decisions that genuinely shape how they learn, show understanding, and take ownership.",
+    "title": "Closing the Gap: Supporting EAL Learners Without Becoming an EAL Specialist",
+    "presenters": "Emma Ryan",
+    "blurb": "Sharing the PE department’s action-research journey: identifying an EAL achievement gap in written assessments, collaborating with specialists, embedding vocabulary and writing routines, and using student data to refine support.",
     "audiences": [
-      "Lower Elementary",
-      "Upper Elementary"
+      "Upper Elementary",
+      "Lower Secondary",
+      "Upper Secondary"
     ],
     "facets": [
-      "Agency",
-      "Personalization"
+      "Personalization",
+      "Collaboration"
     ],
-    "themes": [
-      "TLF",
-      "UDL"
-    ],
-    "format": "Practice Lab",
-    "room": "B320"
+    "themes": [],
+    "pending": false,
+    "provisional": false
   },
   {
     "id": "b1-s02",
     "block": 1,
     "slot": 2,
-    "title": "Tier 1 Before Tier 2: Strengthening the Universal Classroom",
-    "presenters": "Presenter(s) TBC",
-    "blurb": "Use a simple MTSS lens to notice patterns in access, participation, and learning, then identify Tier 1 adjustments to try before moving toward additional intervention.",
+    "title": "Having Hard Conversations: A How To Story",
+    "presenters": "Elliot Fijman & Adrienne Johnson",
+    "blurb": "Explore why difficult conversations with colleagues can feel emotionally charged, why conflict is often avoided, and practical ways to approach these conversations, drawing on Jennifer Abrams’ work.",
     "audiences": [
+      "Lower Elementary",
       "Upper Elementary",
-      "Lower Secondary"
+      "Lower Secondary",
+      "Upper Secondary"
     ],
     "facets": [
-      "Personalization",
       "Collaboration"
     ],
-    "themes": [
-      "MTSS",
-      "UDL"
-    ],
-    "format": "Workshop",
-    "room": "B321"
+    "themes": [],
+    "pending": false,
+    "provisional": false
   },
   {
     "id": "b1-s03",
     "block": 1,
     "slot": 3,
-    "title": "Plan for Variability: UDL in 20 Minutes",
-    "presenters": "Presenter(s) TBC",
-    "blurb": "Take an existing lesson and rapidly redesign it around learner variability using practical UDL moves for access, engagement, and expression.",
+    "title": "Games for Connection and Co-Regulation",
+    "presenters": "Amelie Sun",
+    "blurb": "Try simple, playful co-regulation and self-regulation games using shared movement, rhythm and connection to help children manage big feelings, strengthen relationships and get ready to learn.",
     "audiences": [
       "Lower Elementary",
-      "Upper Elementary",
-      "Lower Secondary",
-      "Upper Secondary"
+      "Upper Elementary"
     ],
     "facets": [
-      "Personalization",
-      "Creativity"
+      "Collaboration",
+      "Personalization"
     ],
-    "themes": [
-      "UDL"
-    ],
-    "format": "Design Sprint",
-    "room": "B322"
+    "themes": [],
+    "pending": false,
+    "provisional": false
   },
   {
     "id": "b1-s04",
     "block": 1,
     "slot": 4,
-    "title": "From Compliance to Curiosity: Authentic Questions That Matter",
-    "presenters": "Presenter(s) TBC",
-    "blurb": "Explore how a small change in task framing can move students from completing schoolwork to investigating questions, audiences, and problems that feel worth pursuing.",
+    "title": "Elementary Origins, Secondary Possibilities: Using Snorkl for Individualized Feedback",
+    "presenters": "Will Henry & Audrey Lawler",
+    "blurb": "Experience Snorkl firsthand to make student thinking visible, provide individualized feedback, and help students explain reasoning, apply learning and tackle challenging problems.",
     "audiences": [
-      "Upper Elementary",
       "Lower Secondary",
       "Upper Secondary"
     ],
     "facets": [
-      "Authenticity",
+      "Personalization",
       "Agency"
     ],
-    "themes": [
-      "TLF"
-    ],
-    "format": "Workshop",
-    "room": "B323"
+    "themes": [],
+    "pending": false,
+    "provisional": false
   },
   {
     "id": "b1-s05",
     "block": 1,
     "slot": 5,
-    "title": "Small Data, Better Decisions: Fast Evidence for Responsive Teaching",
-    "presenters": "Presenter(s) TBC",
-    "blurb": "Build quick evidence routines that help teachers notice who is accessing the learning, who is not, and what instructional move should come next.",
+    "title": "Designing for Learner Variability: Practical UDL Resources for Responsive Teaching",
+    "presenters": "Ashley Faulkenberry & Silky Vyas",
+    "blurb": "Explore classroom-tested UDL resources, technology tools and teaching practices designed to support learner variability, access, engagement and agency across subjects and grade levels.",
     "audiences": [
+      "Lower Elementary",
       "Upper Elementary",
       "Lower Secondary",
       "Upper Secondary"
     ],
     "facets": [
       "Personalization",
-      "Taking Action"
+      "Agency"
     ],
     "themes": [
-      "MTSS"
+      "UDL"
     ],
-    "format": "Practice Lab",
-    "room": "B324"
+    "pending": false,
+    "provisional": false
   },
   {
     "id": "b1-s06",
     "block": 1,
     "slot": 6,
-    "title": "Talk Moves That Open the Room",
-    "presenters": "Presenter(s) TBC",
-    "blurb": "Try discussion structures that increase participation, make thinking visible, and create more entry points for multilingual learners and quieter voices.",
+    "title": "UFLI Engagement & Data Tracking",
+    "presenters": "Leighanna Stewart",
+    "blurb": "Discover strategies to increase engagement and participation in UFLI phonics lessons and explore a spreadsheet for tracking growth, identifying support needs, and planning small-group instruction.",
     "audiences": [
-      "Lower Elementary",
-      "Upper Elementary",
-      "Lower Secondary"
+      "Lower Elementary"
     ],
     "facets": [
-      "Collaboration",
-      "Agency"
+      "Personalization"
     ],
-    "themes": [
-      "UDL",
-      "TLF"
-    ],
-    "format": "Practice Lab",
-    "room": "B325"
+    "themes": [],
+    "pending": false,
+    "provisional": false
   },
   {
     "id": "b1-s07",
     "block": 1,
     "slot": 7,
-    "title": "Make Thinking Visible Without More Worksheets",
-    "presenters": "Presenter(s) TBC",
-    "blurb": "Use low-prep routines that reveal student thinking during learning rather than after it, giving both students and teachers better information about next steps.",
+    "title": "The Classroom as the Third Teacher",
+    "presenters": "Ralph Emmerink & Samantha Rogers",
+    "blurb": "Explore how classroom environments can provide universal Tier 1 support through clarity, access, belonging and independence. Scan your own space and identify one purposeful improvement to test.",
     "audiences": [
-      "Lower Elementary",
-      "Upper Elementary",
-      "Lower Secondary"
+      "Lower Secondary",
+      "Upper Secondary"
     ],
     "facets": [
-      "Creativity",
-      "Authenticity"
+      "Personalization",
+      "Agency"
     ],
     "themes": [
-      "UDL",
-      "TLF"
+      "MTSS",
+      "UDL"
     ],
-    "format": "Strategy Lab",
-    "room": "B326"
+    "pending": false,
+    "provisional": false
   },
   {
     "id": "b1-s08",
     "block": 1,
     "slot": 8,
-    "title": "Belonging by Design: Proactive Classroom Routines",
-    "presenters": "Presenter(s) TBC",
-    "blurb": "Examine predictable routines, language, and environmental choices that strengthen belonging and reduce barriers before students require additional support.",
+    "title": "From Video to Better Movement: Feedback with Coach’s Eye",
+    "presenters": "Zachary Brooks",
+    "blurb": "Hands-on, in-water exploration of visual feedback for head-first entries using slow-motion iPad video. Review technique, identify adjustments and try again. Bring a swimsuit; pool arrangements must be confirmed.",
     "audiences": [
-      "Lower Elementary",
       "Upper Elementary",
-      "Lower Secondary"
+      "Lower Secondary",
+      "Upper Secondary"
     ],
     "facets": [
       "Personalization",
-      "Collaboration"
+      "Agency",
+      "Taking Action"
     ],
-    "themes": [
-      "MTSS",
-      "UDL"
-    ],
-    "format": "Workshop",
-    "room": "B327"
+    "themes": [],
+    "pending": false,
+    "provisional": false
   },
   {
     "id": "b1-s09",
     "block": 1,
     "slot": 9,
-    "title": "Feedback Students Can Actually Use",
-    "presenters": "Presenter(s) TBC",
-    "blurb": "Redesign feedback so students know what to do next, have time to act on it, and become increasingly able to judge the quality of their own work.",
-    "audiences": [
-      "Upper Elementary",
-      "Lower Secondary",
-      "Upper Secondary"
-    ],
-    "facets": [
-      "Agency",
-      "Taking Action"
-    ],
-    "themes": [
-      "TLF"
-    ],
-    "format": "Practice Lab",
-    "room": "B328"
-  },
-  {
-    "id": "b1-s10",
-    "block": 1,
-    "slot": 10,
-    "title": "One Task, Many Entry Points",
-    "presenters": "Presenter(s) TBC",
-    "blurb": "Keep the intellectual goal high while creating multiple ways for students to enter, engage with, and demonstrate the same meaningful learning.",
-    "audiences": [
-      "Lower Elementary",
-      "Upper Elementary",
-      "Lower Secondary",
-      "Upper Secondary"
-    ],
-    "facets": [
-      "Personalization",
-      "Creativity"
-    ],
-    "themes": [
-      "UDL"
-    ],
-    "format": "Design Sprint",
-    "room": "B329"
+    "title": "TBC",
+    "presenters": "Tim Evans",
+    "blurb": "",
+    "audiences": [],
+    "facets": [],
+    "themes": [],
+    "pending": true,
+    "provisional": false
   },
   {
     "id": "b2-s01",
     "block": 2,
     "slot": 1,
-    "title": "Designing for Productive Struggle",
-    "presenters": "Presenter(s) TBC",
-    "blurb": "Find the line between support and over-scaffolding, then design prompts and checkpoints that keep challenge high without leaving learners stranded.",
+    "title": "Beyond \"Calm Down\": Small SEL Practices That Make a Big Difference",
+    "presenters": "Brittany Zhuang",
+    "blurb": "Experience accessible SEL strategies, including mindfulness, breathing and creative expression, to strengthen emotional awareness, self-regulation and readiness for learning in Tier 1 classrooms.",
     "audiences": [
+      "Lower Elementary",
       "Upper Elementary",
       "Lower Secondary",
       "Upper Secondary"
     ],
     "facets": [
-      "Agency",
-      "Creativity"
+      "Personalization",
+      "Agency"
     ],
     "themes": [
-      "UDL"
+      "TLF",
+      "MTSS"
     ],
-    "format": "Workshop",
-    "room": "B326"
+    "pending": false,
+    "provisional": false
   },
   {
     "id": "b2-s02",
     "block": 2,
     "slot": 2,
-    "title": "When a Student Is Stuck: A Tier 1 Response Menu",
-    "presenters": "Presenter(s) TBC",
-    "blurb": "Develop a practical menu of instructional responses for common moments of struggle so teachers can adjust Tier 1 teaching quickly and intentionally.",
+    "title": "Differentiation in Managebac",
+    "presenters": "Siddhartha Bose",
+    "blurb": "Explore simple ways to use ManageBac to support different language needs.",
     "audiences": [
-      "Lower Elementary",
-      "Upper Elementary",
       "Lower Secondary",
       "Upper Secondary"
     ],
     "facets": [
-      "Personalization",
-      "Taking Action"
+      "Personalization"
     ],
-    "themes": [
-      "MTSS"
-    ],
-    "format": "Strategy Lab",
-    "room": "B327"
+    "themes": [],
+    "pending": false,
+    "provisional": false
   },
   {
     "id": "b2-s03",
     "block": 2,
     "slot": 3,
-    "title": "Authentic Audiences, Better Work",
-    "presenters": "Presenter(s) TBC",
-    "blurb": "Explore simple ways to move student work beyond the teacher by introducing real audiences, purposes, and feedback loops that improve quality and motivation.",
+    "title": "From Coaching to Classroom: The Power of Listening and Questioning",
+    "presenters": "Silky Vyas & Jamie Robb",
+    "blurb": "Experience a short positive peer-coaching conversation and explore how listening, questioning and reflection support colleagues as well as student independence, agency and ownership.",
     "audiences": [
+      "Lower Elementary",
       "Upper Elementary",
       "Lower Secondary",
       "Upper Secondary"
     ],
     "facets": [
-      "Authenticity",
-      "Taking Action"
+      "Agency",
+      "Collaboration"
     ],
-    "themes": [
-      "TLF"
-    ],
-    "format": "Workshop",
-    "room": "B328"
+    "themes": [],
+    "pending": false,
+    "provisional": false
   },
   {
     "id": "b2-s04",
     "block": 2,
     "slot": 4,
-    "title": "Collaboration That Is More Than Group Work",
-    "presenters": "Presenter(s) TBC",
-    "blurb": "Design collaboration where individual thinking remains visible, roles are purposeful, and students genuinely depend on one another to produce stronger learning.",
+    "title": "Using Scarborough's Reading Rope as a Framework for Planning Guided Reading",
+    "presenters": "Meagan Elderkin",
+    "blurb": "See how word recognition and language comprehension can be woven through a three-session guided-reading cycle, with practical small-group routines and planning ideas. Presenter’s original proposal specifies 30 minutes.",
     "audiences": [
       "Lower Elementary",
-      "Upper Elementary",
-      "Lower Secondary",
-      "Upper Secondary"
+      "Upper Elementary"
     ],
     "facets": [
-      "Collaboration",
-      "Agency"
+      "Personalization"
     ],
-    "themes": [
-      "TLF",
-      "UDL"
-    ],
-    "format": "Practice Lab",
-    "room": "B329"
+    "themes": [],
+    "pending": false,
+    "provisional": false
   },
   {
     "id": "b2-s05",
     "block": 2,
     "slot": 5,
-    "title": "Choice Boards Without Busy Work",
-    "presenters": "Presenter(s) TBC",
-    "blurb": "Turn choice boards into meaningful pathways by aligning every option to the same learning intention while varying access, process, and expression.",
+    "title": "Amplifying Voice, Choice and Ownership",
+    "presenters": "Mike Morrison",
+    "blurb": "Explore classroom and curriculum approaches that increase student voice, choice and ownership, at the heart of the PYP.",
     "audiences": [
       "Lower Elementary",
-      "Upper Elementary",
-      "Lower Secondary"
+      "Upper Elementary"
     ],
     "facets": [
-      "Agency",
-      "Personalization"
+      "Agency"
     ],
-    "themes": [
-      "UDL"
-    ],
-    "format": "Design Sprint",
-    "room": "B330"
+    "themes": [],
+    "pending": false,
+    "provisional": false
   },
   {
     "id": "b2-s06",
     "block": 2,
     "slot": 6,
-    "title": "From Behaviour to Information: Reading What Students Need",
-    "presenters": "Presenter(s) TBC",
-    "blurb": "Use an MTSS mindset to treat behaviour as information, identify patterns and triggers, and consider proactive classroom responses before escalating support.",
+    "title": "Cultivating a Culture of Thinking: First Steps with Building Thinking Classrooms",
+    "presenters": "Angela McCloskey & Laurie MacNaughton",
+    "blurb": "Experience high-impact routines from Building Thinking Classrooms that shift the focus from telling to thinking, and support participation, problem-solving, collaboration and student agency.",
     "audiences": [
       "Lower Elementary",
       "Upper Elementary",
-      "Lower Secondary"
+      "Lower Secondary",
+      "Upper Secondary"
     ],
     "facets": [
-      "Personalization",
-      "Collaboration"
+      "Agency",
+      "Collaboration",
+      "Creativity"
     ],
-    "themes": [
-      "MTSS"
-    ],
-    "format": "Case Clinic",
-    "room": "B331"
+    "themes": [],
+    "pending": false,
+    "provisional": false
   },
   {
     "id": "b2-s07",
     "block": 2,
     "slot": 7,
-    "title": "Designing Discussion With Quiet Thinkers in Mind",
-    "presenters": "Presenter(s) TBC",
-    "blurb": "Build discussion sequences that provide wait time, rehearsal, multiple response modes, and purposeful participation without privileging the fastest voices.",
+    "title": "Connecting Learning to Future Careers",
+    "presenters": "Yizhou Liu & Nedra Brown",
+    "blurb": "Explore why career education matters and practical examples for connecting subject knowledge and transferable skills to future careers in everyday lessons.",
     "audiences": [
-      "Upper Elementary",
       "Lower Secondary",
       "Upper Secondary"
     ],
     "facets": [
-      "Collaboration",
-      "Personalization"
+      "Authenticity"
     ],
-    "themes": [
-      "UDL"
-    ],
-    "format": "Practice Lab",
-    "room": "B332"
+    "themes": [],
+    "pending": false,
+    "provisional": false
   },
   {
     "id": "b2-s08",
     "block": 2,
     "slot": 8,
-    "title": "Creativity With Constraints: Better Tasks, Not Bigger Tasks",
-    "presenters": "Presenter(s) TBC",
-    "blurb": "Use clear constraints, authentic purpose, and intentional choice to make tasks more creative without making them more complicated for teachers or students.",
+    "title": "Brain Breaks 2.0: Five SEL Games for Any Classroom",
+    "presenters": "Roneil Omadat & Santisha Sonilal",
+    "blurb": "Play five low-preparation brain breaks that support connection, communication, movement, creativity and reflection. Adapt screen-free and technology-supported activities for different ages and lessons.",
     "audiences": [
       "Upper Elementary",
       "Lower Secondary",
       "Upper Secondary"
     ],
     "facets": [
-      "Creativity",
-      "Authenticity"
+      "Collaboration",
+      "Creativity"
     ],
-    "themes": [
-      "TLF"
-    ],
-    "format": "Design Sprint",
-    "room": "B333"
+    "themes": [],
+    "pending": false,
+    "provisional": false
   },
   {
     "id": "b2-s09",
     "block": 2,
     "slot": 9,
-    "title": "Student Goal-Setting That Changes the Next Lesson",
-    "presenters": "Presenter(s) TBC",
-    "blurb": "Shift goal-setting from a form-filling exercise to a short evidence cycle where student reflection informs the next instructional and learning move.",
-    "audiences": [
-      "Upper Elementary",
-      "Lower Secondary",
-      "Upper Secondary"
-    ],
-    "facets": [
-      "Agency",
-      "Taking Action"
-    ],
-    "themes": [
-      "MTSS",
-      "TLF"
-    ],
-    "format": "Strategy Lab",
-    "room": "B334"
-  },
-  {
-    "id": "b2-s10",
-    "block": 2,
-    "slot": 10,
-    "title": "Designing Assessment for Access, Not Advantage",
-    "presenters": "Presenter(s) TBC",
-    "blurb": "Examine where assessment design may unintentionally measure reading, language, memory, or format instead of the learning you actually intend to assess.",
-    "audiences": [
-      "Upper Elementary",
-      "Lower Secondary",
-      "Upper Secondary"
-    ],
-    "facets": [
-      "Personalization",
-      "Authenticity"
-    ],
-    "themes": [
-      "UDL"
-    ],
-    "format": "Workshop",
-    "room": "B335"
+    "title": "TBC",
+    "presenters": "Tim Evans",
+    "blurb": "",
+    "audiences": [],
+    "facets": [],
+    "themes": [],
+    "pending": true,
+    "provisional": false
   },
   {
     "id": "b3-s01",
     "block": 3,
     "slot": 1,
-    "title": "From Exit Ticket to Next Move",
-    "presenters": "Presenter(s) TBC",
-    "blurb": "Turn quick checks for understanding into responsive decisions by planning what different patterns of student evidence will prompt you to do next.",
+    "title": "Celebrate, Celebrate, Celebrate",
+    "presenters": "Tania Mansfield",
+    "blurb": "Celebrate the Tier 1 teaching and learning strategies observed across AISG classrooms this year, and the opportunities they create for all learners.",
     "audiences": [
       "Lower Elementary",
       "Upper Elementary",
@@ -462,240 +362,184 @@ window.FFTP_SESSIONS = [
       "Upper Secondary"
     ],
     "facets": [
-      "Taking Action",
       "Personalization"
     ],
     "themes": [
       "MTSS"
     ],
-    "format": "Practice Lab",
-    "room": "B323"
+    "pending": false,
+    "provisional": false
   },
   {
     "id": "b3-s02",
     "block": 3,
     "slot": 2,
-    "title": "Voice, Choice, and Real Responsibility",
-    "presenters": "Presenter(s) TBC",
-    "blurb": "Explore the difference between giving students options and giving them meaningful responsibility for decisions, quality, reflection, and next steps.",
+    "title": "The Power of Slow: Cultivating Focus and SEL through Qigong and Calligraphy",
+    "presenters": "Lotus Zhou",
+    "blurb": "Explore Baduanjin and calligraphy as accessible practices for mindful movement, emotional regulation, self-management, reflection and sustained focus in inquiry learning.",
     "audiences": [
-      "Upper Elementary",
-      "Lower Secondary",
-      "Upper Secondary"
+      "Lower Elementary"
     ],
     "facets": [
-      "Agency",
-      "Taking Action"
+      "Personalization",
+      "Agency"
     ],
-    "themes": [
-      "TLF"
-    ],
-    "format": "Workshop",
-    "room": "B324"
+    "themes": [],
+    "pending": false,
+    "provisional": false
   },
   {
     "id": "b3-s03",
     "block": 3,
     "slot": 3,
-    "title": "The 5-Minute UDL Retrofit",
-    "presenters": "Presenter(s) TBC",
-    "blurb": "Bring one lesson and leave with several small changes that reduce predictable barriers without requiring a complete redesign or additional resources.",
+    "title": "Reading Fluency Made Simple: Using Microsoft Teams Reading Progress to Build and Track Student Fluency",
+    "presenters": "Jake Charles",
+    "blurb": "Learn a practical routine for weekly cold and hot reads using Microsoft Teams Reading Progress, monitoring words correct per minute, graphing growth and helping students take ownership.",
     "audiences": [
       "Lower Elementary",
       "Upper Elementary",
-      "Lower Secondary",
-      "Upper Secondary"
+      "Lower Secondary"
     ],
     "facets": [
       "Personalization",
-      "Creativity"
+      "Agency"
     ],
-    "themes": [
-      "UDL"
-    ],
-    "format": "Design Sprint",
-    "room": "B325"
+    "themes": [],
+    "pending": false,
+    "provisional": false
   },
   {
     "id": "b3-s04",
     "block": 3,
     "slot": 4,
-    "title": "Peer Feedback Students Trust",
-    "presenters": "Presenter(s) TBC",
-    "blurb": "Create peer-feedback structures that are specific, psychologically safe, and useful enough that students actually revise their thinking or work.",
+    "title": "ATL - Thinking Skills ? in our classrooms",
+    "presenters": "Siddhartha Bose",
+    "blurb": "Design and adapt one classroom activity to develop students’ thinking skills.",
     "audiences": [
       "Upper Elementary",
       "Lower Secondary",
       "Upper Secondary"
     ],
-    "facets": [
-      "Collaboration",
-      "Agency"
-    ],
-    "themes": [
-      "TLF"
-    ],
-    "format": "Practice Lab",
-    "room": "B326"
+    "facets": [],
+    "themes": [],
+    "pending": false,
+    "provisional": false
   },
   {
     "id": "b3-s05",
     "block": 3,
     "slot": 5,
-    "title": "Making Learning Feel Real",
-    "presenters": "Presenter(s) TBC",
-    "blurb": "Use context, purpose, audience, and consequence to make everyday learning feel more authentic without needing a large project or special event.",
+    "title": "Beyond Behaviour: Understanding the Resilience Window and Supporting Every Learner",
+    "presenters": "Marlee Charlton",
+    "blurb": "Use the Resilience Window to explore how stress and regulation affect readiness to learn. Consider trauma-informed, universal Tier 1 practices that support predictability, connection and emotional safety.",
     "audiences": [
       "Lower Elementary",
       "Upper Elementary",
-      "Lower Secondary"
+      "Lower Secondary",
+      "Upper Secondary"
     ],
     "facets": [
-      "Authenticity",
-      "Creativity"
+      "Personalization",
+      "Collaboration"
     ],
     "themes": [
-      "TLF"
+      "MTSS"
     ],
-    "format": "Workshop",
-    "room": "B327"
+    "pending": false,
+    "provisional": false
   },
   {
     "id": "b3-s06",
     "block": 3,
     "slot": 6,
-    "title": "Intervention Starts in Tier 1",
-    "presenters": "Presenter(s) TBC",
-    "blurb": "Clarify what strong Tier 1 support looks like, how to document instructional adjustments, and when evidence suggests a student may need something additional.",
+    "title": "Agentic AI in Schools: Useful, Overhyped, or Both?",
+    "presenters": "Fuad Hasanagic",
+    "blurb": "Test claims about agentic AI against actual teaching tasks such as planning, differentiation and feedback. Discuss what works, what is hype and where teacher judgment remains essential.",
     "audiences": [
-      "Lower Elementary",
-      "Upper Elementary",
       "Lower Secondary",
       "Upper Secondary"
     ],
     "facets": [
-      "Personalization",
-      "Taking Action"
+      "Personalization"
     ],
-    "themes": [
-      "MTSS"
-    ],
-    "format": "Case Clinic",
-    "room": "B328"
+    "themes": [],
+    "pending": false,
+    "provisional": false
   },
   {
     "id": "b3-s07",
     "block": 3,
     "slot": 7,
-    "title": "Designing for Multilingual Learners Without Lowering the Ceiling",
-    "presenters": "Presenter(s) TBC",
-    "blurb": "Separate language demand from cognitive demand and design supports that expand access while preserving the complexity and ambition of the learning.",
+    "title": "Burnout and Boundaries: Align your days with what matters most.",
+    "presenters": "Brittney Young",
+    "blurb": "Identify the values most important to you, notice choices that support or distract from them, and leave with a one-page plan to make purposeful changes in work and life.",
     "audiences": [
       "Lower Elementary",
       "Upper Elementary",
       "Lower Secondary",
       "Upper Secondary"
     ],
-    "facets": [
-      "Personalization",
-      "Collaboration"
-    ],
-    "themes": [
-      "UDL"
-    ],
-    "format": "Strategy Lab",
-    "room": "B329"
+    "facets": [],
+    "themes": [],
+    "pending": false,
+    "provisional": false
   },
   {
     "id": "b3-s08",
     "block": 3,
     "slot": 8,
-    "title": "Students as Co-Designers",
-    "presenters": "Presenter(s) TBC",
-    "blurb": "Identify practical moments when students can help shape success criteria, learning pathways, classroom routines, and the ways learning is demonstrated.",
+    "title": "The Classroom as the Third Teacher",
+    "presenters": "Ralph Emmerink & Samantha Rogers",
+    "blurb": "Explore how classroom environments can provide universal Tier 1 support through clarity, access, belonging and independence. Scan your own space and identify one purposeful improvement to test. Second offering subject to confirmation.",
     "audiences": [
-      "Upper Elementary",
       "Lower Secondary",
       "Upper Secondary"
     ],
     "facets": [
-      "Agency",
-      "Creativity"
+      "Personalization",
+      "Agency"
     ],
     "themes": [
-      "TLF"
+      "MTSS",
+      "UDL"
     ],
-    "format": "Design Sprint",
-    "room": "B330"
+    "pending": false,
+    "provisional": true
   },
   {
     "id": "b3-s09",
     "block": 3,
     "slot": 9,
-    "title": "From Classroom Collaboration to Community Action",
-    "presenters": "Presenter(s) TBC",
-    "blurb": "Connect collaborative learning to authentic action by helping students identify a community need, contribute something useful, and reflect on impact.",
-    "audiences": [
-      "Lower Secondary",
-      "Upper Secondary"
-    ],
-    "facets": [
-      "Collaboration",
-      "Taking Action",
-      "Authenticity"
-    ],
-    "themes": [
-      "TLF"
-    ],
-    "format": "Workshop",
-    "room": "B331"
-  },
-  {
-    "id": "b3-s10",
-    "block": 3,
-    "slot": 10,
-    "title": "Less Teacher Talk, More Student Thinking",
-    "presenters": "Presenter(s) TBC",
-    "blurb": "Redesign common instructional moments so students do more explaining, noticing, questioning, rehearsing, and sense-making while teachers gather better evidence.",
-    "audiences": [
-      "Lower Elementary",
-      "Upper Elementary",
-      "Lower Secondary"
-    ],
-    "facets": [
-      "Agency",
-      "Collaboration"
-    ],
-    "themes": [
-      "UDL",
-      "TLF"
-    ],
-    "format": "Practice Lab",
-    "room": "B332"
+    "title": "TBC",
+    "presenters": "Tim Evans",
+    "blurb": "",
+    "audiences": [],
+    "facets": [],
+    "themes": [],
+    "pending": true,
+    "provisional": false
   }
 ];
-
 window.FFTP_BLOCKS = [
   {
     "block": 1,
-    "label": "Session 1",
-    "subtitle": "Choose one workshop",
-    "time": "Time TBC"
+    "label": "Block 1",
+    "subtitle": "Choose one session",
+    "time": "Time to be confirmed"
   },
   {
     "block": 2,
-    "label": "Session 2",
-    "subtitle": "Choose one workshop",
-    "time": "Time TBC"
+    "label": "Block 2",
+    "subtitle": "Choose one session",
+    "time": "Time to be confirmed"
   },
   {
     "block": 3,
-    "label": "Session 3",
-    "subtitle": "Choose one workshop",
-    "time": "Time TBC"
+    "label": "Block 3",
+    "subtitle": "Choose one session",
+    "time": "Time to be confirmed"
   }
 ];
-
 window.FFTP_AUDIENCES = ["Lower Elementary","Upper Elementary","Lower Secondary","Upper Secondary"];
 window.FFTP_FACETS = ["Personalization","Agency","Authenticity","Creativity","Collaboration","Taking Action"];
 window.FFTP_THEMES = ["TLF","UDL","MTSS"];

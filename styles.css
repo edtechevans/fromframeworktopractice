@@ -1968,3 +1968,9 @@ footer i{
     padding-top:1.35rem;
   }
 }
+
+/* Updated 27-session programme */
+.session-card-presenter{display:block;margin-top:.32rem;color:var(--red);font-weight:750;font-size:.7rem;line-height:1.35}
+.session-entry .mini-note{color:#945b18;font-weight:800}
+.programme-note{border-left:3px solid #d59b45;padding:.45rem .65rem;background:#fff8e9;color:#865622;font-size:.76rem;line-height:1.5}
+.mobile-choose:disabled{cursor:not-allowed;opacity:.65}

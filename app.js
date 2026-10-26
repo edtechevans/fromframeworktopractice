@@ -1,6 +1,6 @@
 (function siteApp() {
   const API_URL = "https://ncrwtmhjrgsritsluipz.supabase.co/functions/v1/from-framework-to-practice-register";
-  const STORAGE_KEY = "fftp_pathway_v3";
+  const STORAGE_KEY = "fftp_pathway_v4";
 
   const sessions = window.FFTP_SESSIONS || [];
   const blocks = window.FFTP_BLOCKS || [];
@@ -142,7 +142,7 @@
 
   function capacityInfo(sessionId) {
     const data = availability.get(sessionId);
-    if (!availabilityLoaded || !data) {
+    if (!registrationOpen || !availabilityLoaded || !data) {
       return { label: "", className: "neutral", full: false, remaining: null };
     }
     if (data.full) {
@@ -267,7 +267,7 @@
 
   function syncResponsiveLayout() {
     detailsCard.classList.add("final-details");
-    detailsCard.hidden = !allChoicesComplete() && !state.confirmed;
+    detailsCard.hidden = !registrationOpen || (!allChoicesComplete() && !state.confirmed);
   }
 
   function updateMobileDock() {
@@ -280,9 +280,17 @@
     if (count < 3) {
       const nextBlock = [1, 2, 3].find((block) => !state.selections[block]) || activeBlock;
       mobileDockStatus.textContent = `${count} of 3 workshops chosen`;
-      mobileDockAction.textContent = count === 0 ? "Choose Session 1" : `Choose Session ${nextBlock}`;
+      mobileDockAction.textContent = count === 0 ? "Choose Block 1" : `Choose Block ${nextBlock}`;
       mobileDockAction.dataset.action = "block";
       mobileDockAction.dataset.block = String(nextBlock);
+      return;
+    }
+
+    if (!registrationOpen) {
+      mobileDockStatus.textContent = "Selections saved in this browser";
+      mobileDockAction.textContent = "Review my choices";
+      mobileDockAction.dataset.action = "review";
+      delete mobileDockAction.dataset.block;
       return;
     }
 
@@ -295,7 +303,7 @@
     }
 
     mobileDockStatus.textContent = "Ready to confirm";
-    mobileDockAction.textContent = registrationOpen ? "Review & confirm" : "Review test pathway";
+    mobileDockAction.textContent = "Review & confirm";
     mobileDockAction.dataset.action = "review";
     delete mobileDockAction.dataset.block;
   }
@@ -342,8 +350,8 @@
     blocksRoot.innerHTML = `
       <section class="block-panel" role="tabpanel">
         <div class="block-panel-heading">
-          <strong>Session ${activeBlock}</strong>
-          <span>10 workshops · up to 15 participants each</span>
+          <strong>Block ${activeBlock}</strong>
+          <span>${blockSessions.length} sessions · up to 15 participants each</span>
         </div>
 
         <div class="session-list">
@@ -354,7 +362,7 @@
           <div class="panel-footer">
             <button type="button" class="next-block" data-next-block="${activeBlock + 1}"
               ${state.selections[activeBlock] ? "" : "disabled"}>
-              Continue to Session ${activeBlock + 1} →
+              Continue to Block ${activeBlock + 1} →
             </button>
           </div>` : ""}
       </section>`;
@@ -388,11 +396,14 @@
               ${chosen ? '<span class="chosen-badge">MY SESSION</span>' : ""}
               ${recommended && !chosen ? '<span class="match-badge">BEST MATCH</span>' : ""}
             </span>
+            <span class="session-card-presenter">${escapeHtml(session.presenters)}</span>
             <span class="session-mini-tags">
-              <span class="mini-tag room-mini">Room ${escapeHtml(session.room)}</span>
-              <span class="mini-tag">${escapeHtml(audienceMini)}</span>
-              <span class="mini-tag">${escapeHtml(facetsMini)}</span>
-              <span class="mini-tag">${escapeHtml(session.format)}</span>
+              ${session.room ? `<span class="mini-tag room-mini">Room ${escapeHtml(session.room)}</span>` : ""}
+              ${audienceMini ? `<span class="mini-tag">${escapeHtml(audienceMini)}</span>` : ""}
+              ${facetsMini ? `<span class="mini-tag">${escapeHtml(facetsMini)}</span>` : ""}
+              ${session.format ? `<span class="mini-tag">${escapeHtml(session.format)}</span>` : ""}
+              ${session.pending ? '<span class="mini-tag mini-note">Details to follow</span>' : ""}
+              ${session.provisional ? '<span class="mini-tag mini-note">Repeat to confirm</span>' : ""}
             </span>
           </span>
           <span class="session-end">
@@ -402,15 +413,16 @@
         </button>
 
         <div class="mobile-session-detail">
-          <p class="mobile-room">Room ${escapeHtml(session.room)}</p>
+          ${session.room ? `<p class="mobile-room">Room ${escapeHtml(session.room)}</p>` : ""}
           <p class="mobile-presenter">${escapeHtml(session.presenters)}</p>
-          <p>${escapeHtml(session.blurb)}</p>
-          <div class="tag-row">${tagRow(session.audiences)}</div>
-          <div class="tag-row">${tagRow(session.facets, "facet")}</div>
-          <div class="tag-row">${tagRow(session.themes, "theme")}</div>
+          <p>${escapeHtml(session.blurb || "Title and description to follow.")}</p>
+          ${session.audiences.length ? `<div class="tag-row">${tagRow(session.audiences)}</div>` : ""}
+          ${session.facets.length ? `<div class="tag-row">${tagRow(session.facets, "facet")}</div>` : ""}
+          ${session.themes.length ? `<div class="tag-row">${tagRow(session.themes, "theme")}</div>` : ""}
+          ${session.provisional ? '<p class="programme-note">Repeat offering to be confirmed.</p>' : ""}
           <button type="button" class="mobile-choose ${chosen ? "is-selected" : ""}" data-mobile-choose="${session.id}"
-            ${state.confirmed || capacity.full || chosen ? "disabled" : ""}>
-            ${chosen ? "Selected ✓" : capacity.full ? "Workshop full" : "Choose this workshop"}
+            ${state.confirmed || capacity.full || chosen || session.pending ? "disabled" : ""}>
+            ${session.pending ? "Details to follow" : chosen ? "Selected ✓" : capacity.full ? "Workshop full" : "Choose this workshop"}
           </button>
         </div>
       </article>`;
@@ -480,35 +492,27 @@
     const capacity = capacityInfo(session.id);
     const chosen = state.selections[session.block] === session.id;
 
-    detailBlockLabel.textContent = `Session ${session.block} · Room ${session.room} · ${session.format}`;
+    detailBlockLabel.textContent = `Block ${session.block}${session.provisional ? " · Repeat to confirm" : ""}`;
     detailCapacity.textContent = capacity.label;
     detailCapacity.className = `capacity-pill ${capacity.className}`;
     detailCapacity.hidden = !capacity.label;
 
     sessionDetail.innerHTML = `
       <h3>${escapeHtml(session.title)}</h3>
-      <p class="room-line">Room ${escapeHtml(session.room)}</p>
+      ${session.room ? `<p class="room-line">Room ${escapeHtml(session.room)}</p>` : ""}
       <p class="presenter-line">${escapeHtml(session.presenters)}</p>
-      <p class="blurb-line">${escapeHtml(session.blurb)}</p>
+      <p class="blurb-line">${escapeHtml(session.blurb || "Title and description to follow.")}</p>
+      ${session.provisional ? '<p class="programme-note">A second offering is proposed and awaiting confirmation.</p>' : ""}
 
       <div class="tag-groups">
-        <div>
-          <span class="tag-group-label">For</span>
-          <div class="tag-row">${tagRow(session.audiences)}</div>
-        </div>
-        <div>
-          <span class="tag-group-label">TLF facets</span>
-          <div class="tag-row">${tagRow(session.facets, "facet")}</div>
-        </div>
-        <div>
-          <span class="tag-group-label">Focus</span>
-          <div class="tag-row">${tagRow(session.themes, "theme")}</div>
-        </div>
+        ${session.audiences.length ? `<div><span class="tag-group-label">For</span><div class="tag-row">${tagRow(session.audiences)}</div></div>` : ""}
+        ${session.facets.length ? `<div><span class="tag-group-label">TLF facets</span><div class="tag-row">${tagRow(session.facets, "facet")}</div></div>` : ""}
+        ${session.themes.length ? `<div><span class="tag-group-label">Focus</span><div class="tag-row">${tagRow(session.themes, "theme")}</div></div>` : ""}
       </div>`;
 
     detailChooseButton.classList.toggle("is-selected", chosen);
-    detailChooseButton.disabled = state.confirmed || capacity.full || chosen;
-    detailChooseButton.textContent = state.confirmed
+    detailChooseButton.disabled = state.confirmed || capacity.full || chosen || session.pending;
+    detailChooseButton.textContent = session.pending ? "Details to follow" : state.confirmed
       ? chosen ? "Saved in my pathway" : "Pathway already confirmed"
       : capacity.full
         ? "Session full"
@@ -521,7 +525,7 @@
     if (state.confirmed) return;
 
     const session = sessionById.get(id);
-    if (!session) return;
+    if (!session || session.pending) return;
 
     const capacity = capacityInfo(id);
     if (capacity.full) return;
@@ -551,17 +555,17 @@
       if (!session) {
         return `
           <div class="review-item empty">
-            <span>Session ${block}</span>
+            <span>Block ${block}</span>
             <strong>Choose a workshop</strong>
           </div>`;
       }
 
       return `
         <div class="review-item">
-          <span>Session ${block}</span>
+          <span>Block ${block}</span>
           <strong>${escapeHtml(session.title)}</strong>
-          <small>${escapeHtml(session.presenters)} · Room ${escapeHtml(session.room)}</small>
-          ${state.confirmed ? "" : `<button class="review-remove" type="button" data-remove-block="${block}" aria-label="Remove Session ${block} selection">Remove</button>`}
+          <small>${escapeHtml(session.presenters)}${session.room ? ` · Room ${escapeHtml(session.room)}` : ""}</small>
+          ${state.confirmed ? "" : `<button class="review-remove" type="button" data-remove-block="${block}" aria-label="Remove Block ${block} selection">Remove</button>`}
         </div>`;
     }).join("");
 
@@ -574,17 +578,13 @@
       submitButton.textContent = "Pathway confirmed";
       submitHelp.textContent = "Your confirmed pathway is saved on this browser.";
     } else {
-      const confirmationAvailable = registrationOpen || availabilityLoaded;
+      const confirmationAvailable = registrationOpen && availabilityLoaded;
       submitButton.disabled = !(detailsComplete() && allChoicesComplete() && confirmationAvailable);
-      submitButton.textContent = registrationOpen
-        ? "Confirm my pathway"
+      submitButton.textContent = !registrationOpen ? "Registration not yet open" : availabilityLoaded ? "Confirm my pathway" : "Confirmation unavailable";
+      submitHelp.textContent = !registrationOpen
+        ? "You can explore and keep your selections on this browser; no place is reserved until registration opens."
         : availabilityLoaded
-          ? "Save test pathway"
-          : "Confirmation unavailable";
-      submitHelp.textContent = registrationOpen
-        ? "Your name, email address and choices are used only to manage this event."
-        : availabilityLoaded
-          ? "Preview mode: this test pathway is saved only on this browser and is not submitted."
+          ? "Your name, email address and choices are used only to manage this event."
           : "Live capacity could not be checked, so confirmation is temporarily paused.";
     }
   }
@@ -679,11 +679,11 @@
 
       return `
         <article class="saved-card">
-          <span class="saved-block">Session ${block}</span>
+          <span class="saved-block">Block ${block}</span>
           <h3>${escapeHtml(session.title)}</h3>
           <span class="saved-presenter">${escapeHtml(session.presenters)}</span>
-          <span class="saved-room">Room ${escapeHtml(session.room)}</span>
-          <p>${escapeHtml(session.blurb)}</p>
+          ${session.room ? `<span class="saved-room">Room ${escapeHtml(session.room)}</span>` : ""}
+          <p>${escapeHtml(session.blurb || "Title and description to follow.")}</p>
           <div class="tag-row">${tagRow(session.facets, "facet")}</div>
           <div class="tag-row">${tagRow(session.audiences)}</div>
         </article>`;
@@ -727,7 +727,7 @@
             <button type="button" class="day-session ${mine ? "is-mine" : ""}" data-day-session="${session.id}">
               <span>
                 <strong>${escapeHtml(session.title)}</strong>
-                <small>Room ${escapeHtml(session.room)} · ${escapeHtml(audienceMini)} · ${escapeHtml(session.facets.join(" · "))}</small>
+                <small>${[session.room ? `Room ${session.room}` : "", audienceMini, session.facets.join(" · ")].filter(Boolean).map(escapeHtml).join(" · ")}</small>
               </span>
               ${mine
                 ? '<span class="mine-badge">MY SESSION</span>'
@@ -746,14 +746,15 @@
     if (!session) return;
     const capacity = capacityInfo(session.id);
     dayDetailContent.innerHTML = `
-      <p class="rail-kicker">SESSION ${session.block} · ROOM ${escapeHtml(session.room)}</p>
+      <p class="rail-kicker">BLOCK ${session.block}${session.room ? ` · ROOM ${escapeHtml(session.room)}` : ""}</p>
       <h2 id="dayDetailTitle">${escapeHtml(session.title)}</h2>
       <p class="presenter-line">${escapeHtml(session.presenters)}</p>
-      <p class="blurb-line">${escapeHtml(session.blurb)}</p>
+      <p class="blurb-line">${escapeHtml(session.blurb || "Title and description to follow.")}</p>
+      ${session.provisional ? '<p class="programme-note">A second offering is proposed and awaiting confirmation.</p>' : ""}
       <div class="tag-groups">
-        <div><span class="tag-group-label">For</span><div class="tag-row">${tagRow(session.audiences)}</div></div>
-        <div><span class="tag-group-label">TLF facets</span><div class="tag-row">${tagRow(session.facets, "facet")}</div></div>
-        <div><span class="tag-group-label">Focus</span><div class="tag-row">${tagRow(session.themes, "theme")}</div></div>
+        ${session.audiences.length ? `<div><span class="tag-group-label">For</span><div class="tag-row">${tagRow(session.audiences)}</div></div>` : ""}
+        ${session.facets.length ? `<div><span class="tag-group-label">TLF facets</span><div class="tag-row">${tagRow(session.facets, "facet")}</div></div>` : ""}
+        ${session.themes.length ? `<div><span class="tag-group-label">Focus</span><div class="tag-row">${tagRow(session.themes, "theme")}</div></div>` : ""}
       </div>
       ${capacity.label ? `<p class="dialog-capacity"><span class="capacity-pill ${capacity.className}">${escapeHtml(capacity.label)}</span></p>` : ""}
     `;
@@ -795,7 +796,7 @@
       } else {
         statusBanner.className = "status-banner status-waiting";
         statusBanner.innerHTML =
-          "<strong>Preview mode is on.</strong><span>You can complete the full attendee journey with these test sessions. Nothing will be submitted while registration is closed.</span>";
+          "<strong>Programme preview · registration not yet open.</strong><span>Explore all 27 listings across three blocks. You can save selections in this browser, but places are not yet reserved.</span>";
       }
 
       renderProgramme();
@@ -836,7 +837,7 @@
     }
 
     if (!allChoicesComplete()) {
-      throw new Error("Please choose one workshop in Session 1, Session 2 and Session 3.");
+      throw new Error("Please choose one session in Block 1, Block 2 and Block 3.");
     }
   }
 
@@ -853,14 +854,14 @@
         return;
       }
 
-      if (!registrationOpen && !availabilityLoaded) {
+      if (!registrationOpen || !availabilityLoaded) {
         throw new Error("Live capacity could not be checked. Please refresh and try again.");
       }
 
       submitButton.disabled = true;
-      submitButton.textContent = registrationOpen ? "Confirming…" : "Saving test pathway…";
+      submitButton.textContent = "Confirming…";
 
-      if (registrationOpen) {
+      {
         const response = await fetch(API_URL, {
           method: "POST",
           headers: { "Content-Type": "application/json", "Accept": "application/json" },
@@ -884,8 +885,6 @@
         }
 
         state.mode = "live";
-      } else {
-        state.mode = "preview";
       }
 
       state.confirmed = true;

@@ -1,35 +1,25 @@
-# From Framework to Practice — Session Sign-up
+# From Framework to Practice — AISG Teachers Teaching Teachers
 
-Static GitHub Pages registration site for AISG's **From Framework to Practice** Teachers Teach Teachers event on November 2, 2026.
+Official programme for **Monday, 2 November 2026** at AISG Science Park.
 
-## Current state
+## Programme
 
-- Three session blocks
-- Ten session options per block
-- One choice required per block
-- 15-person live capacity per session
-- First and last name only
-- No attendee login
-- Responsive AISG-inspired navy / red visual system
-- Accessible keyboard-selectable session cards and live form feedback
-- Shared registrations and capacity are stored in Supabase through a public Edge Function; the browser never receives a service-role key or participant list
+- **Three blocks, nine listings per block, 27 listings total.**
+- The organisers' 27-row allocation workbook is the source of session titles, presenter names and audiences. Descriptions are edited/condensed from the submitted blurbs for ease of online reading.
+- TLF facets are editorially inferred connections to AISG's six facets: Personalization, Agency, Authenticity, Creativity, Collaboration, Taking Action. They are not presenter-endorsed labels.
+- Three Tim Evans entries remain marked **TBC**, without invented titles or descriptions, and cannot be selected until details are supplied.
+- The repeat of **The Classroom as the Third Teacher** in Blocks 1 and 3 is provisional; confirmation is still required.
+- Rooms and block times have not been supplied, so none are fabricated.
+- Review pool logistics, presenter title cleanup and the shorter guided reading proposal before opening bookings.
 
-Registration is intentionally **closed** in the database until the final 30 session titles, presenter names, and blurbs are added.
+## Registration
 
-## Update session content
+The existing Supabase Edge Function and stable booking IDs `b1-s01` through `b3-s09` are retained. Registration remains controlled by the connected Supabase setting. The website does **not** issue test booking confirmations while registration is closed. Pending/TBC sessions are ineligible for booking.
 
-Edit `sessions.js`. Keep the existing `id`, `block`, and `slot` values unchanged. You can freely update:
+### Before opening registration
 
-- `title`
-- `presenters`
-- `blurb`
-
-The live capacity is linked to the stable session ID, not to the title.
-
-## Opening registration
-
-Set `public.fftp_settings.registration_open` to `true` in the connected Supabase project after the final programme has been checked.
+Verify that the Supabase database has current rows and capacities for all 27 active session IDs and does **not** allow old `s10` options. Enforce that provisional/pending sessions are not bookable at the server as well as in the browser. Confirm the repeat, presenters, rooms, and timings first.
 
 ## Deployment
 
-`.github/workflows/deploy-pages.yml` publishes the repository root to GitHub Pages whenever `main` changes.
+GitHub Pages deploys automatically when the `main` branch changes using `.github/workflows/deploy-pages.yml`.
