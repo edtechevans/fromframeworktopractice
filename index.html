@@ -12,7 +12,7 @@
   <meta property="og:description" content="Explore 27 sessions across three blocks, with connections to AISG’s six Transformative Learning Framework facets." />
   <meta property="og:type" content="website" />
   <title>From Framework to Practice | AISG</title>
-  <link rel="stylesheet" href="./styles.css?v=20261026-directory-portraits" />
+  <link rel="stylesheet" href="./styles.css?v=20261026-rooms-hero" />
 </head>
 <body>
   <a class="skip-link" href="#experience">Skip to the programme</a>
@@ -42,29 +42,11 @@
   </header>
 
   <main id="top">
-    <section class="hero">
+    <section class="hero" aria-labelledby="eventTitle">
       <div class="hero-grid">
         <div class="hero-copy">
-          <p class="eyebrow">TEACHERS TEACH TEACHERS</p>
-          <h1>From Framework <em>to</em> <span>Practice</span></h1>
-          <p class="hero-lede">
-            Three blocks. Nine sessions in each. Explore the programme, choose one in every block and review your learning day. Practical ideas for Engagement for All.
-          </p>
-
-          <div class="hero-meta" aria-label="Event details">
-            <span>Monday, November 2</span>
-            <i>•</i>
-            <span>3 blocks · 9 sessions each</span>
-            <i>•</i>
-            <span>27 sessions</span><i>•</i><span>20 places per session</span>
-            <i>•</i>
-            <span>No account required</span>
-          </div>
-
-          <div class="hero-actions">
-            <a class="primary-button" href="#experience">Explore sessions</a>
-            <button id="heroPathwayButton" class="secondary-button" type="button" hidden>View my saved pathway</button>
-          </div>
+          <h1 id="eventTitle">From Framework <em>to</em> <span>Practice</span></h1>
+          <p class="hero-date"><time datetime="2026-11-02">Monday, 2 November 2026</time></p>
         </div>
 
       </div>
@@ -72,6 +54,7 @@
     </section>
 
     <section id="experience" class="experience-shell">
+      <button id="heroPathwayButton" class="secondary-button pathway-shortcut" type="button" hidden>View my saved pathway</button>
       <div id="returningBanner" class="returning-banner" hidden>
         <div>
           <span class="returning-kicker">WELCOME BACK</span>
@@ -139,7 +122,7 @@
                 <span id="matchSummary" class="match-summary">Nine sessions per block</span>
               </div>
 
-              <p class="programme-context">Block times and room details will be added when confirmed.</p>
+              <p class="programme-context">Rooms are shown with each session. Block times will be added when confirmed.</p>
               <div class="programme-tools"><label for="sessionSearch">Find a session or presenter</label><div class="search-field"><span aria-hidden="true">⌕</span><input id="sessionSearch" type="search" placeholder="Search title, presenter or keyword" autocomplete="off" aria-controls="blocks" /><button id="clearSearch" type="button" hidden>Clear</button></div></div>
               <div id="blockTabs" class="block-tabs" role="tablist" aria-label="Programme blocks"></div>
               <p id="selectionFeedback" class="sr-only" role="status" aria-live="polite"></p>
@@ -268,8 +251,8 @@
     <div>Learn <i>•</i> Connect <i>•</i> Apply <i>•</i> Make a Difference</div>
   </footer>
 
-  <script src="./sessions.js?v=20261026-faculty-simple"></script>
+  <script src="./sessions.js?v=20261026-rooms-hero"></script>
   <script src="./speaker-profiles.js?v=20261026-directory-portraits"></script>
-  <script src="./app.js?v=20261026-public-headshots"></script>
+  <script src="./app.js?v=20261026-rooms-hero"></script>
 </body>
 </html>

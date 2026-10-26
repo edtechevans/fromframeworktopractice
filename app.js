@@ -559,6 +559,7 @@
         </div>
         <div class="session-card-presenter" aria-label="Presenters">${renderPresenterNames(session.presenters)}</div>
         <div class="session-mini-tags">
+          ${session.room ? `<span class="room-mini">Room ${escapeHtml(session.room)}</span>` : ""}
           ${tags}
           ${session.provisional?'<span class="mini-note">Repeat to confirm</span>':""}
           <span class="capacity-reading ${capacity.className}">${capacity.booked === null ? "Checking live places…" : `${capacity.booked} / ${capacity.capacity} signed up · ${capacity.remaining} left`}</span>
