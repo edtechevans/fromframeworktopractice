@@ -36,3 +36,7 @@ GitHub Pages deploys automatically when the `main` branch changes using `.github
 ## Live capacity display
 
 The public programme reads anonymous aggregate session availability (counts only, never names/emails) from the existing Supabase Edge Function, displays **signed up / 20** and remaining places on each card, and disables full sessions. Counts refresh when the page is opened or revisited and about every minute while visible. The database's row-locking `fftp_register` function remains the final authority against overbooking. Registration is controlled separately by `fftp_settings.registration_open` and is not opened by this change.
+
+## Presenter profiles
+
+Presenter names in the session listings and saved pathway now open a compact, keyboard-accessible profile on hover, focus or tap. The profiles are populated from `speaker-profiles.js`, containing only the 30 actual presenters. The speaker role is shown where verified; initials are displayed if an approved portrait is not provided. Directory portraits **have not** been copied from the private Ramsnet staff directory and should never be embedded using login-restricted image URLs. See [SPEAKER_PHOTOS.md](SPEAKER_PHOTOS.md) for the approved-image workflow.

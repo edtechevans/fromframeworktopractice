@@ -8,6 +8,11 @@
   const facets = window.FFTP_FACETS || [];
   const themes = window.FFTP_THEMES || [];
   const sessionById = new Map(sessions.map((session) => [session.id, session]));
+  const speakerProfiles = window.FFTP_SPEAKERS || {};
+  const speakerNames = new Set(sessions.flatMap((session) => session.presenters.split(/\s*&\s*/).map((name) => name.trim())));
+  let activeSpeakerTrigger = null;
+  let speakerPopover = null;
+  let speakerPinned = false;
   const availability = new Map();
 
   const defaultState = {
@@ -117,6 +122,116 @@
       { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" }[char]
     ));
   }
+
+  function renderPresenterNames(value) {
+  return String(value || "")
+    .split(/\s*&\s*/)
+    .map((raw) => raw.trim())
+    .filter((name) => name && speakerNames.has(name))
+    .map((name) =>
+      `<button type="button" class="presenter-link" data-speaker-name="${escapeHtml(name)}"
+        aria-label="Meet ${escapeHtml(name)}" aria-expanded="false">${escapeHtml(name)}</button>`
+    ).join('<span class="presenter-separator" aria-hidden="true"> &amp; </span>');
+}
+
+  function speakerInitials(name) {
+  const words = name.trim().split(/\s+/);
+  return words.length > 1 ? (words[0][0] + words[words.length - 1][0]).toUpperCase() : name.slice(0, 2).toUpperCase();
+}
+
+  function positionSpeakerPopover() {
+  if (!activeSpeakerTrigger || !speakerPopover || speakerPopover.hidden || !activeSpeakerTrigger.isConnected) {
+    closeSpeakerPopover();
+    return;
+  }
+  const r = activeSpeakerTrigger.getBoundingClientRect();
+  const width = Math.min(322, window.innerWidth - 24);
+  speakerPopover.style.width = `${width}px`;
+  const left = Math.max(12, Math.min(r.left, window.innerWidth - width - 12));
+  speakerPopover.style.left = `${left}px`;
+  const measuredHeight = speakerPopover.offsetHeight || 116;
+  const below = r.bottom + 10;
+  const above = r.top - measuredHeight - 10;
+  speakerPopover.style.top = `${below + measuredHeight <= window.innerHeight - 12 || above < 12 ? Math.max(12, Math.min(below, window.innerHeight - measuredHeight - 12)) : above}px`;
+}
+
+  function closeSpeakerPopover() {
+  if (activeSpeakerTrigger) {
+    activeSpeakerTrigger.setAttribute("aria-expanded", "false");
+    activeSpeakerTrigger.removeAttribute("aria-describedby");
+  }
+  activeSpeakerTrigger = null;
+  speakerPinned = false;
+  if (speakerPopover) speakerPopover.hidden = true;
+}
+
+  function openSpeakerPopover(trigger, pinned = false) {
+  if (!trigger || !speakerPopover) return;
+  const name = trigger.dataset.speakerName;
+  if (!speakerNames.has(name)) return;
+  if (activeSpeakerTrigger && activeSpeakerTrigger !== trigger) {
+    activeSpeakerTrigger.setAttribute("aria-expanded", "false");
+    activeSpeakerTrigger.removeAttribute("aria-describedby");
+  }
+  const meta = speakerProfiles[name] || {};
+  const role = typeof meta.role === "string" ? meta.role.trim() : "";
+  const photo = typeof meta.photo === "string" && /^\.\/assets\/speakers\/[a-z0-9-]+\.webp$/.test(meta.photo) ? meta.photo : "";
+  speakerPopover.innerHTML = `
+    <span class="speaker-avatar" aria-hidden="true">
+      <span class="speaker-initials">${escapeHtml(speakerInitials(name))}</span>
+      ${photo ? `<img src="${escapeHtml(photo)}" alt="" loading="lazy" decoding="async" />` : ""}
+    </span>
+    <span class="speaker-information">
+      <span class="speaker-eyebrow">Teachers Teaching Teachers</span>
+      <strong>${escapeHtml(name)}</strong>
+      <span class="speaker-role">${escapeHtml(role || "Presenter")}</span>
+    </span>`;
+  speakerPopover.querySelector("img")?.addEventListener("error", (event) => event.currentTarget.remove());
+  speakerPopover.hidden = false;
+  speakerPinned = pinned;
+  activeSpeakerTrigger = trigger;
+  trigger.setAttribute("aria-expanded", "true");
+  trigger.setAttribute("aria-describedby", speakerPopover.id);
+  positionSpeakerPopover();
+}
+
+  function setupSpeakerProfiles() {
+  speakerPopover = document.createElement("div");
+  speakerPopover.id = "speakerProfilePopover";
+  speakerPopover.className = "speaker-profile-popover";
+  speakerPopover.setAttribute("role", "tooltip");
+  speakerPopover.hidden = true;
+  document.body.appendChild(speakerPopover);
+  const hoverSupported = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+  if (hoverSupported) {
+    document.addEventListener("pointerover", (event) => {
+      const trigger = event.target.closest?.("[data-speaker-name]");
+      if (trigger && !speakerPinned) openSpeakerPopover(trigger);
+    });
+    document.addEventListener("pointerout", (event) => {
+      const trigger = event.target.closest?.("[data-speaker-name]");
+      if (trigger && trigger === activeSpeakerTrigger && !trigger.contains(event.relatedTarget) && !speakerPinned) closeSpeakerPopover();
+    });
+  }
+  document.addEventListener("focusin", (event) => {
+    const trigger = event.target.closest?.("[data-speaker-name]");
+    if (trigger) openSpeakerPopover(trigger, false);
+    else if (activeSpeakerTrigger) closeSpeakerPopover();
+  });
+  document.addEventListener("click", (event) => {
+    const trigger = event.target.closest?.("[data-speaker-name]");
+    if (trigger) {
+      if (activeSpeakerTrigger === trigger && speakerPinned) closeSpeakerPopover();
+      else openSpeakerPopover(trigger, true);
+    } else if (activeSpeakerTrigger) closeSpeakerPopover();
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape" || !activeSpeakerTrigger) return;
+    closeSpeakerPopover();
+  });
+  window.addEventListener("resize", positionSpeakerPopover);
+  window.addEventListener("scroll", positionSpeakerPopover, true);
+}
 
   function validEmail(value) {
     return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(String(value || "").trim());
@@ -362,6 +477,7 @@
   }
 
   function renderProgramme() {
+    closeSpeakerPopover();
     renderBlockTabs();
 
     const allBlockSessions = sessionsForBlock(activeBlock);
@@ -411,47 +527,50 @@
   }
 
   function renderSessionEntry(session,recommended=false){
-  const capacity=capacityInfo(session.id),chosen=state.selections[session.block]===session.id;
-  const expanded=inspectedSessionId===session.id;
-  const disabled=chosen||state.confirmed||capacity.full||session.pending||!availabilityLoaded;
-  const action=session.pending?"Details soon":chosen?"✓ Selected":capacity.full?"Full":!availabilityLoaded?"Checking":state.confirmed?"Closed":"Choose";
-  const tags=session.facets.length
-     ? session.facets.slice(0,2).map(f=>`<span class="facet-chip">${escapeHtml(f)}</span>`).join("")
-       +(session.facets.length>2?`<span class="facet-overflow">+${session.facets.length-2}</span>`:"")
-     : session.themes.slice(0,1).map(t=>`<span class="topic-chip">${escapeHtml(t)}</span>`).join("");
-  const repeatIn=session.repeatGroup==="macbook"?(session.block===1?3:1):null;
+  const capacity = capacityInfo(session.id), chosen = state.selections[session.block] === session.id;
+  const expanded = inspectedSessionId === session.id;
+  const disabled = chosen || state.confirmed || capacity.full || session.pending || !availabilityLoaded;
+  const action = session.pending ? "Details soon" : chosen ? "✓ Selected" : capacity.full ? "Full" : !availabilityLoaded ? "Checking" : state.confirmed ? "Closed" : "Choose";
+  const tags = session.facets.length
+    ? session.facets.slice(0, 2).map(f=>`<span class="facet-chip">${escapeHtml(f)}</span>`).join("")
+      + (session.facets.length > 2 ? `<span class="facet-overflow">+${session.facets.length - 2}</span>` : "")
+    : session.themes.slice(0,1).map(t=>`<span class="topic-chip">${escapeHtml(t)}</span>`).join("");
+  const repeatIn = session.repeatGroup === "macbook" ? (session.block === 1 ? 3 : 1) : null;
   return `
-  <article class="session-entry ${chosen?"is-chosen":""} ${recommended?"is-match":""} ${capacity.full?"is-full":""}" data-session-entry="${escapeHtml(session.id)}">
-    <button type="button" class="session-inspect" data-inspect="${escapeHtml(session.id)}" aria-label="View details for ${escapeHtml(session.title)}" aria-controls="session-details-${escapeHtml(session.id)}" aria-expanded="${expanded?"true":"false"}">
-      <span class="session-main">
-        <span class="session-title-row">
-          <span class="session-title">${escapeHtml(session.title)}</span>
+    <article class="session-entry ${chosen?"is-chosen":""} ${recommended?"is-match":""} ${capacity.full?"is-full":""}" data-session-entry="${escapeHtml(session.id)}">
+      <div class="session-main-area">
+        <div class="session-title-row">
+          <h4 class="session-title">${escapeHtml(session.title)}</h4>
           ${recommended&&!chosen?'<span class="match-badge">MATCH</span>':""}
-        </span>
-        <span class="session-card-presenter">${escapeHtml(session.presenters)}</span>
-        <span class="session-mini-tags">${tags}
+        </div>
+        <div class="session-card-presenter" aria-label="Presenters">${renderPresenterNames(session.presenters)}</div>
+        <div class="session-mini-tags">
+          ${tags}
           ${session.provisional?'<span class="mini-note">Repeat to confirm</span>':""}
           <span class="capacity-reading ${capacity.className}">${capacity.booked === null ? "Checking live places…" : `${capacity.booked} / ${capacity.capacity} signed up · ${capacity.remaining} left`}</span>
-        </span>
-        <span class="detail-hint">Details <span class="session-chevron" aria-hidden="true">⌄</span></span>
-      </span>
-    </button>
-    <button type="button" class="quick-choose ${chosen?"is-selected":""}" data-quick-choose="${escapeHtml(session.id)}"
-      aria-label="${chosen?"Selected":"Choose"} ${escapeHtml(session.title)} for Block ${session.block}"
-      ${disabled?"disabled":""}>${action}</button>
-    <div class="mobile-session-detail" id="session-details-${escapeHtml(session.id)}">
-      <p class="session-description">${escapeHtml(session.blurb||"Description to follow.")}</p>
-      ${session.audiences.length?`<div class="detail-group"><span class="detail-group-label">Suitable for</span><div class="tag-row">${tagRow(session.audiences)}</div></div>`:""}
-      ${session.facets.length?`<div class="detail-group"><span class="detail-group-label">TLF connections</span><div class="tag-row">${tagRow(session.facets,"facet")}</div></div>`:""}
-      ${session.themes.length?`<div class="detail-group"><span class="detail-group-label">Also connects to</span><div class="tag-row">${tagRow(session.themes,"theme")}</div></div>`:""}
-      ${repeatIn?`<p class="repeat-note">Also offered in Block ${repeatIn}.</p>`:""}
-      ${session.provisional?'<p class="programme-note">Repeat offering awaiting confirmation.</p>':""}
-      ${session.room?`<p class="mobile-room">Room ${escapeHtml(session.room)}</p>`:""}
-    </div>
-  </article>`;
+        </div>
+        <button type="button" class="session-details-button" data-inspect="${escapeHtml(session.id)}"
+          aria-label="${expanded?"Hide":"View"} details for ${escapeHtml(session.title)}"
+          aria-controls="session-details-${escapeHtml(session.id)}" aria-expanded="${expanded?"true":"false"}">
+          ${expanded?"Hide details":"Session details"} <span class="session-chevron" aria-hidden="true">⌄</span>
+        </button>
+      </div>
+      <button type="button" class="quick-choose ${chosen?"is-selected":""}" data-quick-choose="${escapeHtml(session.id)}"
+        aria-label="${chosen?"Selected":"Choose"} ${escapeHtml(session.title)} for Block ${session.block}"
+        ${disabled?"disabled":""}>${action}</button>
+      <div class="mobile-session-detail" id="session-details-${escapeHtml(session.id)}">
+        <p class="session-description">${escapeHtml(session.blurb||"Description to follow.")}</p>
+        ${session.audiences.length?`<div class="detail-group"><span class="detail-group-label">Suitable for</span><div class="tag-row">${tagRow(session.audiences)}</div></div>`:""}
+        ${session.facets.length?`<div class="detail-group"><span class="detail-group-label">TLF connections</span><div class="tag-row">${tagRow(session.facets,"facet")}</div></div>`:""}
+        ${session.themes.length?`<div class="detail-group"><span class="detail-group-label">Also connects to</span><div class="tag-row">${tagRow(session.themes,"theme")}</div></div>`:""}
+        ${repeatIn?`<p class="repeat-note">Also offered in Block ${repeatIn}.</p>`:""}
+        ${session.provisional?'<p class="programme-note">Repeat offering awaiting confirmation.</p>':""}
+        ${session.room?`<p class="mobile-room">Room ${escapeHtml(session.room)}</p>`:""}
+      </div>
+    </article>`;
 }
 
-  function wireProgrammeEvents() {
+    function wireProgrammeEvents() {
     blocksRoot.querySelectorAll("[data-inspect]").forEach((button) => {
       const id = button.dataset.inspect;
       button.addEventListener("click", () => inspectSession(id));
@@ -570,6 +689,7 @@
   }
 
   function renderReview() {
+    closeSpeakerPopover();
     const count = selectedCount();
     choiceCount.textContent = `${count} / 3`;
 
@@ -587,7 +707,7 @@
         <div class="review-item">
           <span>Block ${block}</span>
           <strong>${escapeHtml(session.title)}</strong>
-          <small>${escapeHtml(session.presenters)}${session.room ? ` · Room ${escapeHtml(session.room)}` : ""}</small>
+          <small>${renderPresenterNames(session.presenters)}${session.room ? ` · Room ${escapeHtml(session.room)}` : ""}</small>
           ${state.confirmed ? "" : `<button class="review-remove" type="button" data-remove-block="${block}" aria-label="Remove Block ${block} selection">Remove</button>`}
         </div>`;
     }).join("");
@@ -686,6 +806,7 @@
   }
 
   function renderPathwayView() {
+    closeSpeakerPopover();
     pathwayGreeting.textContent = state.name
       ? `${state.name.split(/\s+/)[0]}'s learning pathway`
       : "Your learning pathway";
@@ -704,7 +825,7 @@
         <article class="saved-card">
           <span class="saved-block">Block ${block}</span>
           <h3>${escapeHtml(session.title)}</h3>
-          <span class="saved-presenter">${escapeHtml(session.presenters)}</span>
+          <span class="saved-presenter">${renderPresenterNames(session.presenters)}</span>
           ${session.room ? `<span class="saved-room">Room ${escapeHtml(session.room)}</span>` : ""}
           <p>${escapeHtml(session.blurb || "Title and description to follow.")}</p>
           <div class="tag-row">${tagRow(session.facets, "facet")}</div>
@@ -940,6 +1061,7 @@
   }
 
   function initialise() {
+    setupSpeakerProfiles();
     nameInput.value = state.name || "";
     emailInput.value = state.email || "";
 
