@@ -123,6 +123,35 @@
     ));
   }
 
+  const facetThemes = new Map([
+    ["personalization", { name: "Personalization", group: "being" }],
+    ["agency", { name: "Agency", group: "being" }],
+    ["authenticity", { name: "Authenticity", group: "connecting" }],
+    ["creativity", { name: "Creativity", group: "connecting" }],
+    ["collaboration", { name: "Collaboration", group: "doing" }],
+    ["taking action", { name: "Taking Action", group: "doing" }]
+  ]);
+
+  function facetTheme(value) {
+    return facetThemes.get(String(value ?? "").trim().replace(/\s+/g, " ").toLowerCase()) || null;
+  }
+
+  function facetClasses(value) {
+    const theme = facetTheme(value);
+    return theme ? `tlf-facet tlf-${theme.group}` : "";
+  }
+
+  function renderFacetLabel(value, className = "facet-inline") {
+    const theme = facetTheme(value);
+    if (!theme) return escapeHtml(value);
+    return `<span class="${escapeHtml(className)} ${facetClasses(value)}" data-tlf-facet="${theme.name}">${escapeHtml(value)}</span>`;
+  }
+
+  function renderFacetText(value) {
+    return escapeHtml(value).replace(/\b(?:Personalization|Agency|Authenticity|Creativity|Collaboration|Taking\s+Action)\b/gi,
+      (name) => renderFacetLabel(name));
+  }
+
   function renderPresenterNames(value) {
   return String(value || "")
     .split(/\s*&\s*/)
@@ -352,7 +381,9 @@
   }
 
   function tagRow(tags, className = "") {
-    return tags.map((tag) => `<span class="info-tag ${className}">${escapeHtml(tag)}</span>`).join("");
+    return tags.map((tag) => facetTheme(tag)
+      ? renderFacetLabel(tag, `info-tag ${className}`)
+      : `<span class="info-tag ${className}">${escapeHtml(tag)}</span>`).join("");
   }
 
   function renderFilters() {
@@ -370,7 +401,8 @@
     focusFilters.innerHTML = focusOptions.map(({ value, label }) => {
       const pressed = state.focus.includes(value);
       return `
-        <button type="button" class="chip-button" data-focus="${escapeHtml(value)}"
+        <button type="button" class="chip-button ${facetClasses(value)}" data-focus="${escapeHtml(value)}"
+          data-tlf-facet="${escapeHtml(value)}"
           aria-pressed="${pressed ? "true" : "false"}">
           ${escapeHtml(label)}
         </button>`;
@@ -546,7 +578,7 @@
   const disabled = chosen || state.confirmed || capacity.full || session.pending || !availabilityLoaded;
   const action = session.pending ? "Details soon" : chosen ? "✓ Selected" : capacity.full ? "Full" : !availabilityLoaded ? "Checking" : state.confirmed ? "Closed" : "Choose";
   const tags = session.facets.length
-    ? session.facets.slice(0, 2).map(f=>`<span class="facet-chip">${escapeHtml(f)}</span>`).join("")
+    ? session.facets.slice(0, 2).map(f=>renderFacetLabel(f, "facet-chip")).join("")
       + (session.facets.length > 2 ? `<span class="facet-overflow">+${session.facets.length - 2}</span>` : "")
     : session.themes.slice(0,1).map(t=>`<span class="topic-chip">${escapeHtml(t)}</span>`).join("");
   const repeatIn = session.repeatGroup === "macbook" ? (session.block === 1 ? 3 : 1) : null;
@@ -554,7 +586,7 @@
     <article class="session-entry ${chosen?"is-chosen":""} ${recommended?"is-match":""} ${capacity.full?"is-full":""}" data-session-entry="${escapeHtml(session.id)}">
       <div class="session-main-area">
         <div class="session-title-row">
-          <h4 class="session-title">${escapeHtml(session.title)}</h4>
+          <h4 class="session-title">${renderFacetText(session.title)}</h4>
           ${recommended&&!chosen?'<span class="match-badge">MATCH</span>':""}
         </div>
         <div class="session-card-presenter" aria-label="Presenters">${renderPresenterNames(session.presenters)}</div>
@@ -574,7 +606,7 @@
         aria-label="${chosen?"Selected":"Choose"} ${escapeHtml(session.title)} for Block ${session.block}"
         ${disabled?"disabled":""}>${action}</button>
       <div class="mobile-session-detail" id="session-details-${escapeHtml(session.id)}">
-        <p class="session-description">${escapeHtml(session.blurb||"Description to follow.")}</p>
+        <p class="session-description">${renderFacetText(session.blurb||"Description to follow.")}</p>
         ${session.audiences.length?`<div class="detail-group"><span class="detail-group-label">Suitable for</span><div class="tag-row">${tagRow(session.audiences)}</div></div>`:""}
         ${session.facets.length?`<div class="detail-group"><span class="detail-group-label">TLF connections</span><div class="tag-row">${tagRow(session.facets,"facet")}</div></div>`:""}
         ${session.themes.length?`<div class="detail-group"><span class="detail-group-label">Also connects to</span><div class="tag-row">${tagRow(session.themes,"theme")}</div></div>`:""}
@@ -652,10 +684,10 @@
     detailCapacity.hidden = !capacity.label;
 
     sessionDetail.innerHTML = `
-      <h3>${escapeHtml(session.title)}</h3>
+      <h3>${renderFacetText(session.title)}</h3>
       ${session.room ? `<p class="room-line">Room ${escapeHtml(session.room)}</p>` : ""}
       <p class="presenter-line">${escapeHtml(session.presenters)}</p>
-      <p class="blurb-line">${escapeHtml(session.blurb || "Title and description to follow.")}</p>
+      <p class="blurb-line">${renderFacetText(session.blurb || "Title and description to follow.")}</p>
       ${session.provisional ? '<p class="programme-note">A second offering is proposed and awaiting confirmation.</p>' : ""}
 
       <div class="tag-groups">
@@ -690,7 +722,7 @@
     inspectedSessionId = "";
     renderProgramme();
     updateChrome();
-    selectionFeedback.textContent = `Selected ${session.title} for Block ${session.block}. You may change your choice.`;
+    selectionFeedback.innerHTML = renderFacetText(`Selected ${session.title} for Block ${session.block}. You may change your choice.`);
     blocksRoot.querySelector(`[data-inspect="${CSS.escape(id)}"]`)?.focus({preventScroll:true});
   }
 
@@ -721,7 +753,7 @@
       return `
         <div class="review-item">
           <span>Block ${block}</span>
-          <strong>${escapeHtml(session.title)}</strong>
+          <strong>${renderFacetText(session.title)}</strong>
           <small>${renderPresenterNames(session.presenters)}${session.room ? ` · Room ${escapeHtml(session.room)}` : ""}</small>
           ${state.confirmed ? "" : `<button class="review-remove" type="button" data-remove-block="${block}" aria-label="Remove Block ${block} selection">Remove</button>`}
         </div>`;
@@ -839,10 +871,10 @@
       return `
         <article class="saved-card">
           <span class="saved-block">Block ${block}</span>
-          <h3>${escapeHtml(session.title)}</h3>
+          <h3>${renderFacetText(session.title)}</h3>
           <span class="saved-presenter">${renderPresenterNames(session.presenters)}</span>
           ${session.room ? `<span class="saved-room">Room ${escapeHtml(session.room)}</span>` : ""}
-          <p>${escapeHtml(session.blurb || "Title and description to follow.")}</p>
+          <p>${renderFacetText(session.blurb || "Title and description to follow.")}</p>
           <div class="tag-row">${tagRow(session.facets, "facet")}</div>
           <div class="tag-row">${tagRow(session.audiences)}</div>
         </article>`;
@@ -885,8 +917,8 @@
           return `
             <button type="button" class="day-session ${mine ? "is-mine" : ""}" data-day-session="${session.id}">
               <span>
-                <strong>${escapeHtml(session.title)}</strong>
-                <small>${[session.room ? `Room ${session.room}` : "", audienceMini, session.facets.join(" · ")].filter(Boolean).map(escapeHtml).join(" · ")}</small>
+                <strong>${renderFacetText(session.title)}</strong>
+                <small>${[session.room ? `Room ${session.room}` : "", audienceMini, session.facets.join(" · ")].filter(Boolean).map(renderFacetText).join(" · ")}</small>
               </span>
               ${mine
                 ? '<span class="mine-badge">MY SESSION</span>'
@@ -906,9 +938,9 @@
     const capacity = capacityInfo(session.id);
     dayDetailContent.innerHTML = `
       <p class="rail-kicker">BLOCK ${session.block}${session.room ? ` · ROOM ${escapeHtml(session.room)}` : ""}</p>
-      <h2 id="dayDetailTitle">${escapeHtml(session.title)}</h2>
+      <h2 id="dayDetailTitle">${renderFacetText(session.title)}</h2>
       <p class="presenter-line">${escapeHtml(session.presenters)}</p>
-      <p class="blurb-line">${escapeHtml(session.blurb || "Title and description to follow.")}</p>
+      <p class="blurb-line">${renderFacetText(session.blurb || "Title and description to follow.")}</p>
       ${session.provisional ? '<p class="programme-note">A second offering is proposed and awaiting confirmation.</p>' : ""}
       <div class="tag-groups">
         ${session.audiences.length ? `<div><span class="tag-group-label">For</span><div class="tag-row">${tagRow(session.audiences)}</div></div>` : ""}
