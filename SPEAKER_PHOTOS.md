@@ -1,36 +1,55 @@
 # TTT presenter portraits and roles
 
-## Current progress (26 October 2026)
+## Verified catalogue — 26 October 2026
 
-The site has hover/focus/tap profiles for all **30 named presenters**. Seven presenter images are linked from pages that explicitly identify the subject by name:
+All **30 presenters** in the published programme have been matched to their labelled record in the [AISG Ramsnet faculty/staff directory](https://www.aisgz.org/ramsnet-caregiver/directory-faculty-staff/), using the user's authorised, signed-in session. No other faculty profiles are included in the event website.
 
-| Presenter | Image / current role source |
-| --- | --- |
-| Tim Evans | [AISG public leadership page](https://www.aisgz.org/about-us/leadership) |
-| Jamie Robb | [AISG public leadership page](https://www.aisgz.org/about-us/leadership) |
-| Ralph Emmerink | [AISG public leadership page](https://www.aisgz.org/about-us/leadership) |
-| Tania Mansfield | [AISG public leadership page](https://www.aisgz.org/about-us/leadership) |
-| Samantha Rogers | [AISG public leadership page](https://www.aisgz.org/about-us/leadership) |
-| Silky Vyas | [ACAMIS Technology Conference 2026](https://www.acamis.org/technology-conference-2026) |
-| Fuad Hasanagic | [AIFE: AI and Creativity presenter bio](https://aife.community/21cl/ai-and-creativity-what-helps-what-hurts-and-what-to-do-about-it/) |
+| Programme name | Directory name | Directory job title |
+| --- | --- | --- |
+| Adrienne Johnson | Adrienne Johnson | Lower Elementary School Librarian |
+| Amelie Sun | Amelie Sun | Early Years Counselor |
+| Angela McCloskey | Angela Mc Closkey | Grade 1 Teacher |
+| Ashley Faulkenberry | Ashley Faulkenberry | Elementary School EAL Teacher |
+| Audrey Lawler | Audrey Lawler | Upper Elementary School Homeroom Teacher |
+| Brittany Zhuang | Brittany Zhuang | Elementary School Counselor |
+| Brittney Young | Brittney Young | Secondary Counselor |
+| Elliot Fijman | Elliot Fijman | Elementary School Instructional Coach |
+| Emma Ryan | Emma Ryan | Assistant Athletics and Activities Director/Secondary Health and PE Teacher |
+| Fuad Hasanagic | Fuad Hasanagic | Secondary Language Acquisition Teacher |
+| Jake Charles | Jake Charles | Elementary School EAL Teacher |
+| Jamie Robb | Jamie Robb | Head of School |
+| Laurie MacNaughton | Laurie MacNaughton | Grade 5 Teacher |
+| Leighanna Stewart | Leighanna Stewart | Grade 2 Teacher |
+| Lotus Zhou | Lotus Zhou | Upper Elementary School Mandarin Teacher |
+| Marlee Charlton | Marlee Charlton | Secondary Individuals and Societies Teacher |
+| Meagan Elderkin | Meagan Elderkin | Grade 2 Teacher |
+| Mike Morrison | Michael Morrison | Grade 2 Teacher |
+| Nedra Brown | Nedra Brown | University and Future Pathways Counselor |
+| Ralph Emmerink | Ralph Emmerink | IB MYP Coordinator |
+| Roneil Omadat | Roneil Omadat | Secondary Individuals and Societies Teacher |
+| Samantha Rogers | Samantha Rogers | Student Support Services Coordinator |
+| Santisha Sonilal | Santisha Sonilal | Secondary Design Teacher |
+| Siddhartha Bose | Siddhartha Bose | Secondary Visual Arts Teacher |
+| Silky Vyas | Silky Vyas | Secondary Librarian and Information Literacy Specialist/EE Coordinator |
+| Tania Mansfield | Tania Mansfield | Upper Elementary Assistant Principal/PYP Coordinator |
+| Tim Evans | Tim Evans | Learning Technologies and Data Coordinator |
+| Will Henry | Will Henry | Grade 3 Teacher |
+| Yizhou Liu | Yizhou Liu | University and Future Pathways Counselor |
+| Zachary Brooks | Zachary Brooks | Aquatics Coordinator |
 
-The direct image URLs, exact person-name match and short job titles are recorded in `speaker-profiles.js`. Three additional job titles have been included where public sources support them (Emma Ryan, Elliot Fijman, Siddhartha Bose). Others show a neutral **Presenter** label pending verification.
+The programme uses **Angela McCloskey**, shown as **Angela Mc Closkey** in Ramsnet, and **Mike Morrison**, listed as **Michael Morrison**. These aliases are explicit in `speaker-profiles.js`. Brittany Zhuang and Brittney Young have separate records and portraits.
 
-**Images are not stored in this GitHub repository.** They are loaded from the source websites at the time a faculty member opens the profile. The source sites can change or restrict hotlinking; if a photo fails to load, initials display instead. For AISG assets, the app makes one fallback request to the corresponding public AISG OSS host.
+## Image delivery
 
-## Completing the remaining 23 photos
+- All 30 portraits are versioned in `assets/speakers/` and served by GitHub Pages alongside the programme. The browser does not need a Ramsnet login or an image-server referrer.
+- The original image URL is retained as `sourcePhoto` in the presenter catalogue for future maintenance. It is provenance metadata, not a browser fallback.
+- Images preserve their original proportions, are resized to at most 640 pixels on either side, and are encoded as WebP without source EXIF metadata. The UI crops them into its existing circular portrait frame.
+- The existing initials fallback remains available if a local asset fails to load.
 
-The Ramsnet staff directory requires school login and cannot be accessed from this ChatGPT session. The user has approved image use for this project, but there is no authenticated browser session here. To collect the remaining speaker headshots:
+## Scope and checks
 
-1. Open the signed-in Ramsnet directory in ChatGPT Work's cloud browser (sign in yourself) or export only the 23 remaining named speaker portraits from your authorised school account. Do not send credentials in chat.
-2. Verify each image matches the displayed faculty name and obtain the current job title.
-3. Crop/resize to a square portrait (prefer 320–600px WebP) and upload to `assets/speakers/` if permanent local hosting is desired.
-4. Update the speaker's `photo` in `speaker-profiles.js` to `./assets/speakers/firstname-lastname.webp`, and populate their `role`.
-5. Check the popup on desktop and touch devices. Avoid unverified lookalikes from search results.
-
-## Design and privacy
-
-- The programme displays **presenters only**, not all staff in the protected directory.
-- The popover appears on hover/focus/click/tap and shows the speaker's portrait (or initials), name, and role.
-- This remains a public school event website. No directory credentials, staff contact details, registration email addresses or private directory records are published.
-- The `photo` field accepts local approved WebP images and URLs from the three explicitly allowlisted public source hosts (AISG, ACAMIS and AIFE); other URLs are ignored until reviewed.
+- The 30 catalogue keys match the programme's 30 unique presenter names exactly.
+- Each portrait was taken from the image element in the same labelled directory card as its job title; all 30 original image files have different SHA-256 hashes.
+- No credentials, cookies, staff email addresses, telephone numbers or other directory fields are stored in this repository.
+- The registration implementation, session catalogue, backend settings and 20-person session limits are unchanged by this update.
+- When replacing a portrait, verify the labelled directory record, update its local asset and provenance, and check the profile with hover, keyboard focus and tap/click.

@@ -2192,7 +2192,7 @@ body{font-family:"Noto Sans",Inter,ui-sans-serif,-apple-system,BlinkMacSystemFon
   background:#eaf0f8;
   box-shadow:0 0 0 1px #d8e3ee;
 }
-.speaker-avatar img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.speaker-avatar img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 25%}
 .speaker-initials{font-size:1.35rem;font-weight:900;letter-spacing:-.035em;color:#355473}
 .speaker-information{display:flex;flex-direction:column;gap:.23rem;min-width:0}
 .speaker-information strong{display:block;font-size:1.02rem;line-height:1.27;color:var(--navy)}
