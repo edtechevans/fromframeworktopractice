@@ -1,0 +1,6 @@
+# Private staff goal inputs/exports must never be included in the website.
+sharepoint/private/
+*.goals.private.json
+*.goals.private.csv
+*.xlsx
+__pycache__/

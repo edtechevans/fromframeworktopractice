@@ -12,7 +12,7 @@
   <meta property="og:description" content="Explore 27 sessions across three blocks, with connections to AISG’s six Transformative Learning Framework facets." />
   <meta property="og:type" content="website" />
   <title>From Framework to Practice | AISG</title>
-  <link rel="stylesheet" href="./styles.css?v=20261026-facet-colours" />
+  <link rel="stylesheet" href="./styles.css?v=20261026-personal-goal" />
 </head>
 <body>
   <a class="skip-link" href="#experience">Skip to the programme</a>
@@ -54,6 +54,33 @@
     </section>
 
     <section id="experience" class="experience-shell">
+      <section id="personalGoalTile" class="personal-goal-tile" aria-labelledby="personalGoalHeading" data-state="sharepoint">
+        <div class="personal-goal-heading">
+          <div>
+            <p class="eyebrow">MY GROWTH &amp; REFLECTION</p>
+            <h2 id="personalGoalHeading">Your professional growth focus</h2>
+          </div>
+          <span id="personalGoalAccount" class="personal-goal-account"></span>
+        </div>
+        <p id="personalGoalStatus" class="personal-goal-status" role="status" aria-live="polite">Your chosen facet, domain and professional goal will appear here in the AISG SharePoint version.</p>
+        <div id="personalGoalFields" class="personal-goal-fields" hidden>
+          <dl class="personal-goal-focus">
+            <div>
+              <dt>Chosen Facet</dt>
+              <dd><span id="personalGoalFacet" class="info-tag facet"></span></dd>
+            </div>
+            <div>
+              <dt>Chosen Domain</dt>
+              <dd id="personalGoalDomain"></dd>
+            </div>
+          </dl>
+          <div class="personal-goal-copy">
+            <h3>Professional Goal</h3>
+            <p id="personalGoalStatement" class="personal-goal-statement"></p>
+            <button id="personalGoalToggle" class="text-button" type="button" aria-controls="personalGoalStatement" aria-expanded="false" hidden>Read full goal</button>
+          </div>
+        </div>
+      </section>
       <button id="heroPathwayButton" class="secondary-button pathway-shortcut" type="button" hidden>View my saved pathway</button>
       <div id="returningBanner" class="returning-banner" hidden>
         <div>
@@ -254,5 +281,7 @@
   <script src="./sessions.js?v=20261026-rooms-hero"></script>
   <script src="./speaker-profiles.js?v=20261026-directory-portraits"></script>
   <script src="./app.js?v=20261026-facet-colours"></script>
+  <script src="./goal-settings.js?v=20261026-personal-goal"></script>
+  <script src="./goal-tile.js?v=20261026-personal-goal"></script>
 </body>
 </html>

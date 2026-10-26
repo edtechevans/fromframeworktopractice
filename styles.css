@@ -2218,9 +2218,9 @@ body{font-family:"Noto Sans",Inter,ui-sans-serif,-apple-system,BlinkMacSystemFon
 @media(prefers-reduced-motion:reduce){.session-details-button .session-chevron{transition:none}}
 
 /* One TLF palette across filters, facet tags, prose and saved pathways. */
-.tlf-being{--facet-colour:var(--tlf-being);--facet-ink:#fff;--facet-soft:#fbebee;--facet-text:var(--tlf-being)}
-.tlf-connecting{--facet-colour:var(--tlf-connecting);--facet-ink:#fff;--facet-soft:#edf0f6;--facet-text:var(--tlf-connecting)}
-.tlf-doing{--facet-colour:var(--tlf-doing);--facet-ink:var(--tlf-connecting);--facet-soft:#ededed;--facet-text:#454545}
+.tlf-being,[data-tlf-facet="Personalization"],[data-tlf-facet="Agency"]{--facet-colour:var(--tlf-being);--facet-ink:#fff;--facet-soft:#fbebee;--facet-text:var(--tlf-being)}
+.tlf-connecting,[data-tlf-facet="Authenticity"],[data-tlf-facet="Creativity"]{--facet-colour:var(--tlf-connecting);--facet-ink:#fff;--facet-soft:#edf0f6;--facet-text:var(--tlf-connecting)}
+.tlf-doing,[data-tlf-facet="Collaboration"],[data-tlf-facet="Taking Action"]{--facet-colour:var(--tlf-doing);--facet-ink:var(--tlf-connecting);--facet-soft:#ededed;--facet-text:#454545}
 .tlf-facet{print-color-adjust:exact;-webkit-print-color-adjust:exact}
 .tlf-facet.facet-chip,.tlf-facet.info-tag{
   background:var(--facet-colour);
@@ -2245,11 +2245,32 @@ body{font-family:"Noto Sans",Inter,ui-sans-serif,-apple-system,BlinkMacSystemFon
   box-shadow:inset 0 0 0 1px var(--facet-ink),0 0 0 1px var(--facet-colour);
 }
 .facet-inline.tlf-facet{color:var(--facet-text);font-weight:750}
-.facet-inline.tlf-doing{
+.facet-inline.tlf-doing,.facet-inline[data-tlf-facet="Collaboration"],.facet-inline[data-tlf-facet="Taking Action"]{
   color:var(--facet-ink);
   background:var(--facet-colour);
   padding:.015em .18em;
   border-radius:.2em;
   -webkit-box-decoration-break:clone;
   box-decoration-break:clone;
+}
+
+/* The authenticated growth tile is independent of event registration. */
+.personal-goal-tile{margin:0 0 1.25rem;padding:1.1rem 1.2rem;border:1px solid var(--line);border-left:4px solid var(--tlf-connecting);border-radius:var(--radius);background:#fff;box-shadow:var(--shadow)}
+.personal-goal-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem}
+.personal-goal-heading .eyebrow{margin:0 0 .25rem;font-size:.59rem}
+.personal-goal-heading h2{margin:0;color:var(--navy);font-size:1.12rem;line-height:1.3}
+.personal-goal-account{max-width:40%;font-size:.75rem;font-weight:750;color:var(--muted);text-align:right;overflow-wrap:anywhere}
+.personal-goal-status{margin:.7rem 0 0;color:var(--muted);font-size:.84rem;line-height:1.55}
+.personal-goal-focus{display:grid;grid-template-columns:minmax(140px,.6fr) minmax(0,2fr);gap:1.1rem;margin:1rem 0 0}
+.personal-goal-focus dt,.personal-goal-copy h3{margin:0 0 .4rem;color:var(--muted);font-size:.7rem;font-weight:800;letter-spacing:.025em}
+.personal-goal-focus dd{margin:0;color:var(--ink);font-size:.86rem;line-height:1.5}
+.personal-goal-copy{margin-top:1rem;padding-top:.85rem;border-top:1px solid var(--line)}
+.personal-goal-statement{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;margin:0;white-space:pre-wrap;overflow-wrap:anywhere;color:var(--ink);font-size:.86rem;line-height:1.65}
+.personal-goal-statement.is-expanded{display:block;overflow:visible}
+.personal-goal-copy .text-button{margin-top:.4rem;font-size:.75rem}
+@media(max-width:720px){
+ .personal-goal-tile{padding:.95rem .9rem;margin-bottom:1rem}
+ .personal-goal-heading{display:block}
+ .personal-goal-account{display:block;max-width:100%;text-align:left;margin-top:.35rem}
+ .personal-goal-focus{grid-template-columns:1fr;gap:.85rem}
 }
