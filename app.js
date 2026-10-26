@@ -175,7 +175,12 @@
   }
   const meta = speakerProfiles[name] || {};
   const role = typeof meta.role === "string" ? meta.role.trim() : "";
-  const photo = typeof meta.photo === "string" && /^\.\/assets\/speakers\/[a-z0-9-]+\.webp$/.test(meta.photo) ? meta.photo : "";
+  const candidate = typeof meta.photo === "string" ? meta.photo : "";
+  const allowedPhoto = /^\.\/assets\/speakers\/[a-z0-9-]+\.webp$/.test(candidate)
+    || /^https:\/\/resource\.aisgz\.org\/aisg-website\/prod\/[A-Za-z0-9_./%-]+\.(?:jpg|jpeg|png|webp)$/i.test(candidate)
+    || /^https:\/\/www\.acamis\.org\/sites\/default\/files\/inline-images\/[A-Za-z0-9._%-]+\.(?:jpg|jpeg|png|webp)$/i.test(candidate)
+    || /^https:\/\/aife\.community\/wp-content\/uploads\/[A-Za-z0-9_./%-]+\.(?:jpg|jpeg|png|webp)$/i.test(candidate);
+  const photo = allowedPhoto ? candidate : "";
   speakerPopover.innerHTML = `
     <span class="speaker-avatar" aria-hidden="true">
       <span class="speaker-initials">${escapeHtml(speakerInitials(name))}</span>
@@ -186,7 +191,16 @@
       <strong>${escapeHtml(name)}</strong>
       <span class="speaker-role">${escapeHtml(role || "Presenter")}</span>
     </span>`;
-  speakerPopover.querySelector("img")?.addEventListener("error", (event) => event.currentTarget.remove());
+  speakerPopover.querySelector("img")?.addEventListener("error", (event) => {
+    const img = event.currentTarget;
+    // Public AISG portraits may also be served from their OSS mirror.
+    if (img.dataset.triedMirror !== "yes" && photo.startsWith("https://resource.aisgz.org/aisg-website/prod/")) {
+      img.dataset.triedMirror = "yes";
+      img.src = photo.replace("https://resource.aisgz.org/", "https://aisg-website.oss-cn-guangzhou.aliyuncs.com/");
+    } else {
+      img.remove();
+    }
+  });
   speakerPopover.hidden = false;
   speakerPinned = pinned;
   activeSpeakerTrigger = trigger;

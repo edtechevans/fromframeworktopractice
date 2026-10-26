@@ -1,25 +1,36 @@
-# Speaker portraits and roles — AISG TTT
+# TTT presenter portraits and roles
 
-## Status
+## Current progress (26 October 2026)
 
-The website currently recognises **30 distinct presenters** from its 27 sessions, and provides a presenter-name popover on mouse hover, keyboard focus or tap. The popover shows a circular image, presenter's name and job role, with initials and “Presenter” used when an approved picture or verified role has not been supplied.
+The site has hover/focus/tap profiles for all **30 named presenters**. Seven presenter images are linked from pages that explicitly identify the subject by name:
 
-**No portraits have been copied from the sign-in-only Ramsnet caregiver/staff directory.** The GitHub Pages site is public, so putting photos in `assets/speakers/` makes them publicly accessible. Obtain appropriate school approval/usage permission before republishing directory portraits.
+| Presenter | Image / current role source |
+| --- | --- |
+| Tim Evans | [AISG public leadership page](https://www.aisgz.org/about-us/leadership) |
+| Jamie Robb | [AISG public leadership page](https://www.aisgz.org/about-us/leadership) |
+| Ralph Emmerink | [AISG public leadership page](https://www.aisgz.org/about-us/leadership) |
+| Tania Mansfield | [AISG public leadership page](https://www.aisgz.org/about-us/leadership) |
+| Samantha Rogers | [AISG public leadership page](https://www.aisgz.org/about-us/leadership) |
+| Silky Vyas | [ACAMIS Technology Conference 2026](https://www.acamis.org/technology-conference-2026) |
+| Fuad Hasanagic | [AIFE: AI and Creativity presenter bio](https://aife.community/21cl/ai-and-creativity-what-helps-what-hurts-and-what-to-do-about-it/) |
 
-## Safest import process
+The direct image URLs, exact person-name match and short job titles are recorded in `speaker-profiles.js`. Three additional job titles have been included where public sources support them (Emma Ryan, Elliot Fijman, Siddhartha Bose). Others show a neutral **Presenter** label pending verification.
 
-1. Sign into the AISG Ramsnet directory **in your own authorised browser session**. Do not paste your password, session cookies or single-sign-on tokens into chat, GitHub or the website.
-2. Export/download only the headshots of the **30 presenters** listed in `speaker-profiles.js`, with their current job titles. Do not export the full staff directory.
-3. Confirm the school is comfortable with those particular photos and roles appearing on the public conference registration page.
-4. Provide the approved image files to the website maintainer, ideally cropped square and optimised as WebP (around 320–600 px square); name the files `firstname-lastname.webp` and put them in `assets/speakers/`.
-5. Update the matching person's entry in `speaker-profiles.js` with `"role": "Verified current job title"` and `"photo": "./assets/speakers/firstname-lastname.webp"`. Keep unavailable fields empty.
-6. Preview on desktop and mobile, check all photo/name pairs, and push to GitHub.
+**Images are not stored in this GitHub repository.** They are loaded from the source websites at the time a faculty member opens the profile. The source sites can change or restrict hotlinking; if a photo fails to load, initials display instead. For AISG assets, the app makes one fallback request to the corresponding public AISG OSS host.
 
-## UI behaviour
+## Completing the remaining 23 photos
 
-- Hover over a speaker name to view the mini profile without leaving the session card.
-- Tap or click the name on mobile or desktop to hold the mini profile open; tap elsewhere or press Escape to dismiss.
-- The popup is positioned within the viewport, and a neutral initials avatar appears if the approved picture is missing or cannot load.
-- No sign-up names or emails are added to this public profile catalogue.
+The Ramsnet staff directory requires school login and cannot be accessed from this ChatGPT session. The user has approved image use for this project, but there is no authenticated browser session here. To collect the remaining speaker headshots:
 
-**Important:** A directory image URL that requires login will not reliably load for faculty using the public site, and direct linking could expose private access parameters. Use approved, locally hosted images instead.
+1. Open the signed-in Ramsnet directory in ChatGPT Work's cloud browser (sign in yourself) or export only the 23 remaining named speaker portraits from your authorised school account. Do not send credentials in chat.
+2. Verify each image matches the displayed faculty name and obtain the current job title.
+3. Crop/resize to a square portrait (prefer 320–600px WebP) and upload to `assets/speakers/` if permanent local hosting is desired.
+4. Update the speaker's `photo` in `speaker-profiles.js` to `./assets/speakers/firstname-lastname.webp`, and populate their `role`.
+5. Check the popup on desktop and touch devices. Avoid unverified lookalikes from search results.
+
+## Design and privacy
+
+- The programme displays **presenters only**, not all staff in the protected directory.
+- The popover appears on hover/focus/click/tap and shows the speaker's portrait (or initials), name, and role.
+- This remains a public school event website. No directory credentials, staff contact details, registration email addresses or private directory records are published.
+- The `photo` field accepts local approved WebP images and URLs from the three explicitly allowlisted public source hosts (AISG, ACAMIS and AIFE); other URLs are ignored until reviewed.
