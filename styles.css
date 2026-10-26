@@ -2078,3 +2078,30 @@ body{font-family:"Noto Sans",Inter,ui-sans-serif,-apple-system,BlinkMacSystemFon
 }
 
 .programme-context{margin:.75rem 0 .25rem;font-size:.74rem;line-height:1.5;color:#607185}
+
+/* The programme starts sooner: remove oversized ornamental hero area */
+.hero{border-bottom:1px solid var(--line)}
+.hero-grid{
+  max-width:1320px;
+  min-height:0;
+  grid-template-columns:minmax(0,1fr);
+  gap:0;
+  padding:clamp(1.25rem,3vw,2.15rem) clamp(1rem,3vw,2rem) clamp(1.25rem,3vw,2rem);
+}
+.hero h1{max-width:100%;font-size:clamp(2.4rem,4.4vw,3.85rem);line-height:1.03}
+.hero-lede{max-width:860px;margin-top:.55rem;font-size:.94rem;line-height:1.55}
+.hero-meta{margin-top:.6rem}
+.hero-actions{margin-top:.75rem}
+.hero-landscape,.hero-framework{display:none!important}
+@media(max-width:720px){
+ .hero-grid{display:block;min-height:0;padding:1.25rem .85rem 1.4rem}
+ .hero h1{font-size:clamp(2.2rem,10vw,3rem);max-width:100%;line-height:1}
+ .hero-lede{max-width:100%;font-size:.88rem;line-height:1.5;margin-top:.7rem}
+ .hero-meta{max-width:100%}
+ .hero-actions{width:100%;max-width:320px;margin-top:.8rem}
+}
+@media(max-width:380px){
+ .hero-grid{padding:.95rem .8rem 1.2rem}
+ .hero h1{font-size:2.14rem}
+ .hero-actions{width:100%}
+}

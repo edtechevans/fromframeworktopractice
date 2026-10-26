@@ -24,3 +24,11 @@ Verify that the Supabase database has current rows and capacities for all 27 act
 ## Deployment
 
 GitHub Pages deploys automatically when the `main` branch changes using `.github/workflows/deploy-pages.yml`.
+
+## Reporting and operations (October 2026)
+
+- Browser sign-up posts `name`, `email` and three session IDs to the `from-framework-to-practice-register` Supabase Edge Function. Data is stored in Supabase rather than in the public GitHub Pages repository.
+- The Edge Function reads `fftp_settings`, `fftp_sessions`, `fftp_registration_choices`; the `fftp_register` database function processes bookings. The registration schema and private reporting query must be verified in the live database before enabling bookings.
+- The linked Supabase project (`ncrwtmhjrgsritsluipz`) was reported **INACTIVE** by the Supabase connector on 26 October 2026, and table inspection was unavailable. Restore the project and validate its capacity/session catalogue (nine IDs per block) before opening registration.
+- A secure organiser report should join attendee name/email with each block's session ID and title and registration timestamp, and offer a separate capacity summary; do not expose names and emails through public GitHub Pages or a public Edge Function.
+- The decorative TLF framework artwork and hero landscape were removed to bring the programme higher on the page. TLF facets remain in session tags and filters.
