@@ -19,7 +19,7 @@ The existing Supabase Edge Function and stable booking IDs `b1-s01` through `b3-
 
 ### Before opening registration
 
-Verify that the Supabase database has current rows and capacities for all 27 active session IDs and does **not** allow old `s10` options. Enforce that provisional/pending sessions are not bookable at the server as well as in the browser. Confirm the repeat, presenters, rooms, and timings first.
+The backend catalogue has been reconciled to exactly 27 session IDs (nine in each block), at 15 places per session. The obsolete `s10` records have been removed, and duplicate-email, session-capacity, invalid-ID and wrong-block checks have passed a rolled-back database test. Before opening public registration, confirm the provisional repeat, presenters, rooms and timings, and verify the browser-to-Edge-Function journey.
 
 ## Deployment
 
@@ -28,7 +28,7 @@ GitHub Pages deploys automatically when the `main` branch changes using `.github
 ## Reporting and operations (October 2026)
 
 - Browser sign-up posts `name`, `email` and three session IDs to the `from-framework-to-practice-register` Supabase Edge Function. Data is stored in Supabase rather than in the public GitHub Pages repository.
-- The Edge Function reads `fftp_settings`, `fftp_sessions`, `fftp_registration_choices`; the `fftp_register` database function processes bookings. The registration schema and private reporting query must be verified in the live database before enabling bookings.
-- The linked Supabase project (`ncrwtmhjrgsritsluipz`) was reported **INACTIVE** by the Supabase connector on 26 October 2026, and table inspection was unavailable. Restore the project and validate its capacity/session catalogue (nine IDs per block) before opening registration.
-- A secure organiser report should join attendee name/email with each block's session ID and title and registration timestamp, and offer a separate capacity summary; do not expose names and emails through public GitHub Pages or a public Edge Function.
+- The Edge Function reads `fftp_settings`, `fftp_sessions`, `fftp_registration_choices`; the `fftp_register` database function processes bookings. The database function checks one selection per block, atomic 15-place limits and case-insensitive duplicate emails.
+- On 26 October 2026, the Supabase project (`ncrwtmhjrgsritsluipz`) was successfully restored and validated as **ACTIVE_HEALTHY**. Its session catalogue contains 27 IDs (nine per block), all with 15 places, and no existing registrations. Booking remained **closed** after testing.
+- Private, non-exposed views are implemented in the `fftp_reports` schema: `faculty_registrations`, `session_availability`, and `event_summary`. Anonymous and regular authenticated users have no read permissions. See [ORGANISER_REPORTS.md](ORGANISER_REPORTS.md) for access instructions and CSV exports.
 - The decorative TLF framework artwork and hero landscape were removed to bring the programme higher on the page. TLF facets remain in session tags and filters.
