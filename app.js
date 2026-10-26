@@ -146,21 +146,21 @@
 
   function capacityInfo(sessionId) {
     const data = availability.get(sessionId);
-    if (!registrationOpen || !availabilityLoaded || !data) {
-      return { label: "", className: "neutral", full: false, remaining: null };
+    if (!availabilityLoaded || !data) {
+      return { label: "Checking places", className: "neutral", full: false, remaining: null, booked: null, capacity: 20 };
     }
-    if (data.full) {
-      return { label: "Full", className: "full", full: true, remaining: 0 };
+    const cap = Number(data.capacity);
+    const booked = Number(data.booked);
+    if (!Number.isFinite(cap) || cap <= 0 || !Number.isFinite(booked) || booked < 0) {
+      return { label: "Unavailable", className: "neutral", full: false, remaining: null, booked: null, capacity: 20 };
     }
-    if (data.remaining <= 4) {
-      return {
-        label: `${data.remaining} ${data.remaining === 1 ? "place" : "places"} left`,
-        className: "limited",
-        full: false,
-        remaining: data.remaining
-      };
-    }
-    return { label: "", className: "available", full: false, remaining: data.remaining };
+    const full = booked >= cap || Boolean(data.full);
+    const remaining = Math.max(0, cap - booked);
+    return {
+      label: full ? "Full" : remaining <= 4 ? `${remaining} left` : `${booked}/${cap} booked`,
+      className: full ? "full" : remaining <= 4 ? "limited" : "available",
+      full, remaining, booked, capacity: cap
+    };
   }
 
   function filtersActive() {
@@ -383,7 +383,7 @@
       <section class="block-panel" role="tabpanel">
         <div class="block-panel-heading">
           <strong>Block ${activeBlock}</strong>
-          <span>${blockSessions.length} sessions · up to 15 participants each</span>
+          <span>${blockSessions.length} sessions · 20 places per session</span>
         </div>
 
         <div class="session-list">
@@ -413,8 +413,8 @@
   function renderSessionEntry(session,recommended=false){
   const capacity=capacityInfo(session.id),chosen=state.selections[session.block]===session.id;
   const expanded=inspectedSessionId===session.id;
-  const disabled=chosen||state.confirmed||capacity.full||session.pending;
-  const action=session.pending?"Details soon":chosen?"✓ Selected":capacity.full?"Full":state.confirmed?"Closed":"Choose";
+  const disabled=chosen||state.confirmed||capacity.full||session.pending||!availabilityLoaded;
+  const action=session.pending?"Details soon":chosen?"✓ Selected":capacity.full?"Full":!availabilityLoaded?"Checking":state.confirmed?"Closed":"Choose";
   const tags=session.facets.length
      ? session.facets.slice(0,2).map(f=>`<span class="facet-chip">${escapeHtml(f)}</span>`).join("")
        +(session.facets.length>2?`<span class="facet-overflow">+${session.facets.length-2}</span>`:"")
@@ -431,7 +431,7 @@
         <span class="session-card-presenter">${escapeHtml(session.presenters)}</span>
         <span class="session-mini-tags">${tags}
           ${session.provisional?'<span class="mini-note">Repeat to confirm</span>':""}
-          ${capacity.label?`<span class="capacity-pill ${capacity.className}">${escapeHtml(capacity.label)}</span>`:""}
+          <span class="capacity-reading ${capacity.className}">${capacity.booked === null ? "Checking live places…" : `${capacity.booked} / ${capacity.capacity} signed up · ${capacity.remaining} left`}</span>
         </span>
         <span class="detail-hint">Details <span class="session-chevron" aria-hidden="true">⌄</span></span>
       </span>
@@ -531,7 +531,7 @@
       </div>`;
 
     detailChooseButton.classList.toggle("is-selected", chosen);
-    detailChooseButton.disabled = state.confirmed || capacity.full || chosen || session.pending;
+    detailChooseButton.disabled = state.confirmed || capacity.full || chosen || session.pending || !availabilityLoaded;
     detailChooseButton.textContent = session.pending ? "Details to follow" : state.confirmed
       ? chosen ? "Saved in my pathway" : "Pathway already confirmed"
       : capacity.full
@@ -548,7 +548,7 @@
     if (!session || session.pending) return;
 
     const capacity = capacityInfo(id);
-    if (capacity.full) return;
+    if (!availabilityLoaded || capacity.remaining === null || capacity.full) return;
 
     state.selections[session.block] = id;
     persistState();
@@ -797,6 +797,10 @@
 
       const data = await response.json();
       registrationOpen = Boolean(data.registrationOpen);
+      if (!Array.isArray(data.sessions) || data.sessions.length !== sessions.length || data.sessions.some(item => Number(item.capacity) !== 20)) {
+        throw new Error("Session capacity data is out of date");
+      }
+      availability.clear();
       availabilityLoaded = true;
 
       for (const item of data.sessions || []) {
@@ -828,6 +832,7 @@
     } catch {
       registrationOpen = false;
       availabilityLoaded = false;
+      availability.clear();
       statusBanner.hidden = false;
       statusBanner.className = "status-banner status-error";
       statusBanner.innerHTML =
@@ -1028,6 +1033,12 @@
     }
 
     loadAvailability();
+    window.setInterval(() => {
+      if (document.visibilityState === "visible") loadAvailability();
+    }, 60000);
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "visible") loadAvailability();
+    });
   }
 
   initialise();

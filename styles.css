@@ -2105,3 +2105,12 @@ body{font-family:"Noto Sans",Inter,ui-sans-serif,-apple-system,BlinkMacSystemFon
  .hero h1{font-size:2.14rem}
  .hero-actions{width:100%}
 }
+
+/* Live workshop availability */
+.capacity-reading{display:block;margin-top:.3rem;font-size:.72rem;font-weight:800;color:#315f52}
+.capacity-reading.limited{color:#9a6500}
+.capacity-reading.full{color:#aa273b}
+.capacity-reading.neutral{color:#6b788a}
+.session-entry.is-full{opacity:1;border-color:#e1c2c7;background:#fcf6f7}
+.session-entry.is-full .quick-choose{background:#f4dfe3;border-color:#e5b6c0;color:#96243b}
+.session-entry .session-mini-tags{display:flex;flex-wrap:wrap}
