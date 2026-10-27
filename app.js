@@ -474,7 +474,7 @@
 
   function syncResponsiveLayout() {
     detailsCard.classList.add("final-details");
-    detailsCard.hidden = !registrationOpen || (!allChoicesComplete() && !state.confirmed);
+    detailsCard.hidden = false;
   }
 
   function updateMobileDock() {
@@ -846,6 +846,8 @@
 
   function updateChrome() {
     const count = selectedCount();
+    const hint = document.getElementById("presenterHint");
+    if (hint) hint.textContent = !validEmail(state.email) ? "Enter your school email below first so we can identify your presenting blocks." : !presenterChecked ? "Checking your presenting commitments…" : presentingBlocks.length ? `You are presenting in ${presentingBlocks.map(x=>"Block "+x).join(", ")}. Choose workshops only in your other blocks.` : "Choose one workshop in each block.";
     navPathwayCount.textContent = String(count);
 
     navPathway.hidden = !state.confirmed;
