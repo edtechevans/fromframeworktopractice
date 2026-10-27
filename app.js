@@ -33,6 +33,29 @@
   let inspectedSessionId = "";
   let registrationOpen = false;
   let availabilityLoaded = false;
+  let presentingBlocks = [];
+  let presenterChecked = false;
+  let presenterLookupVersion = 0;
+  const isPresenting = (block) => presentingBlocks.includes(Number(block));
+  const requiredCount = () => 3 - presentingBlocks.length;
+  const choicesComplete = () => presenterChecked && [1,2,3].every((block) => isPresenting(block) ? !state.selections[block] : Boolean(state.selections[block]));
+  async function lookupPresenter() {
+    const email = state.email.trim().toLowerCase();
+    const version = ++presenterLookupVersion;
+    presenterChecked = false;
+    if (!validEmail(email)) { presentingBlocks = []; updateChrome(); renderProgramme(); return; }
+    try {
+      const response = await fetch(API_URL + "?presenterEmail=" + encodeURIComponent(email), {cache:"no-store"});
+      if (!response.ok) throw new Error("Presenter lookup failed");
+      const data = await response.json();
+      if (version !== presenterLookupVersion) return;
+      presentingBlocks = Array.isArray(data.presentingBlocks) ? data.presentingBlocks.filter(x => [1,2,3].includes(x)) : [];
+      presenterChecked = true;
+      for (const block of presentingBlocks) state.selections[block] = "";
+      persistState();
+    } catch { if (version !== presenterLookupVersion) return; presentingBlocks = []; presenterChecked = false; }
+    updateChrome(); renderProgramme();
+  }
 
   const builderView = document.getElementById("builderView");
   const pathwayView = document.getElementById("pathwayView");
@@ -289,7 +312,7 @@
   }
 
   function allChoicesComplete() {
-    return selectedCount() === 3;
+    return choicesComplete();
   }
 
   function abbreviateAudience(label) {
@@ -461,9 +484,9 @@
     if (!show) return;
 
     const count = selectedCount();
-    if (count < 3) {
-      const nextBlock = [1, 2, 3].find((block) => !state.selections[block]) || activeBlock;
-      mobileDockStatus.textContent = `${count} of 3 workshops chosen`;
+    if (!choicesComplete()) {
+      const nextBlock = [1, 2, 3].find((block) => !isPresenting(block) && !state.selections[block]) || activeBlock;
+      mobileDockStatus.textContent = `${count} of ${requiredCount()} workshops chosen`;
       mobileDockAction.textContent = count === 0 ? "Choose Block 1" : `Choose Block ${nextBlock}`;
       mobileDockAction.dataset.action = "block";
       mobileDockAction.dataset.block = String(nextBlock);
@@ -479,7 +502,7 @@
     }
 
     if (!detailsComplete()) {
-      mobileDockStatus.textContent = "3 of 3 workshops chosen";
+      mobileDockStatus.textContent = `${count} of ${requiredCount()} workshops chosen`;
       mobileDockAction.textContent = "Add my details";
       mobileDockAction.dataset.action = "details";
       delete mobileDockAction.dataset.block;
@@ -503,7 +526,7 @@
           aria-selected="${active ? "true" : "false"}">
           <span>${escapeHtml(block.label)}</span>
           <small class="block-tab-time">${escapeHtml(block.time)}</small>
-          <small>${chosen ? "✓ Selected" : "9 sessions"}</small>
+          <small>${isPresenting(block.block) ? "Presenting · unavailable" : chosen ? "✓ Selected" : "9 sessions"}</small>
         </button>`;
     }).join("");
 
@@ -590,8 +613,8 @@
   function renderSessionEntry(session,recommended=false){
   const capacity = capacityInfo(session.id), chosen = state.selections[session.block] === session.id;
   const expanded = inspectedSessionId === session.id;
-  const disabled = chosen || state.confirmed || capacity.full || session.pending || !availabilityLoaded;
-  const action = session.pending ? "Details soon" : chosen ? "✓ Selected" : capacity.full ? "Full" : !availabilityLoaded ? "Checking" : state.confirmed ? "Closed" : "Choose";
+  const disabled = isPresenting(session.block) || chosen || state.confirmed || capacity.full || session.pending || !availabilityLoaded;
+  const action = isPresenting(session.block) ? "You’re presenting" : session.pending ? "Details soon" : chosen ? "✓ Selected" : capacity.full ? "Full" : !availabilityLoaded ? "Checking" : state.confirmed ? "Closed" : "Choose";
   const tags = session.facets.length
     ? session.facets.slice(0, 2).map(f=>renderFacetLabel(f, "facet-chip")).join("")
       + (session.facets.length > 2 ? `<span class="facet-overflow">+${session.facets.length - 2}</span>` : "")
@@ -713,8 +736,8 @@
       </div>`;
 
     detailChooseButton.classList.toggle("is-selected", chosen);
-    detailChooseButton.disabled = state.confirmed || capacity.full || chosen || session.pending || !availabilityLoaded;
-    detailChooseButton.textContent = session.pending ? "Details to follow" : state.confirmed
+    detailChooseButton.disabled = isPresenting(session.block) || state.confirmed || capacity.full || chosen || session.pending || !availabilityLoaded;
+    detailChooseButton.textContent = isPresenting(session.block) ? "You’re presenting in this block" : session.pending ? "Details to follow" : state.confirmed
       ? chosen ? "Saved in my pathway" : "Pathway already confirmed"
       : capacity.full
         ? "Session full"
@@ -727,7 +750,7 @@
     if (state.confirmed) return;
 
     const session = sessionById.get(id);
-    if (!session || session.pending) return;
+    if (!session || session.pending || !presenterChecked || isPresenting(session.block)) return;
 
     const capacity = capacityInfo(id);
     if (!availabilityLoaded || capacity.remaining === null || capacity.full) return;
@@ -754,11 +777,12 @@
   function renderReview() {
     closeSpeakerPopover();
     const count = selectedCount();
-    choiceCount.textContent = `${count} / 3`;
+    choiceCount.textContent = `${count} / ${requiredCount()}`;
 
     reviewSelections.innerHTML = [1, 2, 3].map((block) => {
       const session = sessionById.get(state.selections[block]);
       if (!session) {
+        if (isPresenting(block)) return `<div class="review-item is-presenting"><span>Block ${block}</span><small class="review-time">${escapeHtml(blockTime(block))}</small><strong>You’re presenting</strong><small>No workshop booking needed</small></div>`;
         return `
           <div class="review-item empty">
             <span>Block ${block}</span>
@@ -799,9 +823,9 @@
 
   function updateProgress() {
     const complete = {
-      1: Boolean(state.selections[1]),
-      2: Boolean(state.selections[2]),
-      3: Boolean(state.selections[3]),
+      1: isPresenting(1) || Boolean(state.selections[1]),
+      2: isPresenting(2) || Boolean(state.selections[2]),
+      3: isPresenting(3) || Boolean(state.selections[3]),
       details: detailsComplete(),
       confirm: state.confirmed
     };
@@ -1053,7 +1077,7 @@
     }
 
     if (!allChoicesComplete()) {
-      throw new Error("Please choose one session in Block 1, Block 2 and Block 3.");
+      throw new Error(presenterChecked ? "Please choose one workshop for each block where you are not presenting." : "Please enter your email address so we can check your presenting commitments.");
     }
   }
 
@@ -1149,7 +1173,7 @@
     updateChrome();
 
     nameInput.addEventListener("input", saveDraftFromInputs);
-    emailInput.addEventListener("input", saveDraftFromInputs);
+    emailInput.addEventListener("input", () => { saveDraftFromInputs(); lookupPresenter(); });
 
     clearFilters.addEventListener("click", () => {
       state.audiences = [];
@@ -1222,6 +1246,7 @@
       showBuilder(false);
     }
 
+    lookupPresenter();
     loadAvailability();
     window.setInterval(() => {
       if (document.visibilityState === "visible") loadAvailability();
